@@ -1,0 +1,108 @@
+// MathArena data model — generic across every competition.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Contest {
+  id           String    @id // "AMC10A", "AIME", "MATHCOUNTS_STATE", "BMT", "PUMAC"
+  name         String
+  level        String // "middle" | "high" | "olympiad"
+  answerFormat String // "multiple_choice" | "integer" | "short_answer"
+  numProblems  Int
+  hardnessBase Int // calibration anchor for the global difficulty scale
+  problems     Problem[]
+}
+
+model Problem {
+  id               String         @id @default(cuid())
+  contestId        String
+  year             Int
+  round            String? // "Sprint","Target","Chapter","State" (null for AMC/AIME)
+  number           Int
+  statement        String // LaTeX/markdown
+  choices          String? // JSON string {"A":"...","B":"..."} ; null for integer-answer contests
+  answer           String // "C" or "204"
+  hasDiagram       Boolean        @default(false)
+  diagramUrl       String? // remote AoPS url (browser loads it)
+  diagramPath      String? // local path after `npm run scrape` downloads it
+  localDifficulty  Int // 1-4, position within its own contest
+  globalDifficulty Int // 1-10, normalized across all contests
+  source           String         @default("AoPS Wiki")
+  sourceUrl        String
+  createdAt        DateTime       @default(now())
+  contest          Contest        @relation(fields: [contestId], references: [id])
+  topics           ProblemTopic[]
+  solutions        Solution[]
+  attempts         Attempt[]
+
+  @@unique([contestId, year, round, number])
+}
+
+model Topic {
+  id       String         @id @default(cuid())
+  name     String         @unique
+  slug     String         @unique
+  color    String
+  problems ProblemTopic[]
+}
+
+model ProblemTopic {
+  problemId  String
+  topicId    String
+  isPrimary  Boolean @default(false)
+  confidence Float?
+  taggedBy   String  @default("ai") // "ai" | "human"
+  problem    Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  topic      Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, topicId])
+}
+
+model Solution {
+  id        String  @id @default(cuid())
+  problemId String
+  order     Int     @default(1)
+  content   String
+  source    String  @default("AoPS Wiki")
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  attempts     Attempt[]
+  sessions     StudySession[]
+}
+
+model StudySession {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String // "diagnostic" | "practice"
+  config      String // JSON string
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempts    Attempt[]
+}
+
+model Attempt {
+  id           String        @id @default(cuid())
+  userId       String
+  problemId    String
+  sessionId    String?
+  selected     String
+  isCorrect    Boolean
+  timeSpentSec Int?
+  createdAt    DateTime      @default(now())
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem      Problem       @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  session      StudySession? @relation(fields: [sessionId], references: [id])
+}

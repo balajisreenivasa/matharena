@@ -1,0 +1,24 @@
+node_modules
+.next
+.env
+scripts/cache
+*.log
+
+# SQLite database — rebuild locally with `npx prisma db push && npm run seed`
+*.db
+*.db-journal
+
+# Generated datasets (rebuilt by `npm run import` / `npm run classify`)
+data/problems.json
+data/problems.raw.json
+data/problems.rejected.json
+data/vendor/
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Editor / OS noise
+.vscode
+.idea
+.DS_Store
+Thumbs.db

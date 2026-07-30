@@ -1,0 +1,114 @@
+{
+  "_note": "Hand-verified sample from 2024 AMC 10A so the app runs out of the box. Replace/expand with the real archive via `npm run build:data`. Answers verified against the official AoPS answer key.",
+  "contests": [
+    { "id": "AMC10A", "name": "AMC 10A", "level": "middle", "answerFormat": "multiple_choice", "numProblems": 25, "hardnessBase": 3 }
+  ],
+  "topics": [
+    { "name": "Algebra", "slug": "algebra", "color": "#2563eb" },
+    { "name": "Geometry", "slug": "geometry", "color": "#059669" },
+    { "name": "Number Theory", "slug": "number-theory", "color": "#d97706" },
+    { "name": "Counting & Probability", "slug": "counting-probability", "color": "#7c3aed" }
+  ],
+  "problems": [
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 1,
+      "statement": "What is the value of $9{,}901\\cdot 101 - 99\\cdot 10{,}101$?",
+      "choices": { "A": "2", "B": "20", "C": "200", "D": "202", "E": "2020" },
+      "answer": "A", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 1, "globalDifficulty": 2,
+      "topics": [{ "name": "Algebra", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_1",
+      "solutions": ["$9{,}901\\cdot 101 = 1{,}000{,}001$ and $99\\cdot 10{,}101 = 999{,}999$, so the difference is $1{,}000{,}001 - 999{,}999 = 2$. The answer is $(A)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 3,
+      "statement": "Let $n$ be the least prime number that can be written as the sum of five distinct prime numbers. What is the sum of the digits of $n$?",
+      "choices": { "A": "5", "B": "7", "C": "8", "D": "10", "E": "13" },
+      "answer": "B", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 1, "globalDifficulty": 2,
+      "topics": [{ "name": "Number Theory", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_3",
+      "solutions": ["A sum of five distinct primes is smallest when we use small primes. To land on a prime (and keep the sum odd) we skip $2$: $3+5+7+11+17 = 43$, which is prime. The digit sum is $4+3 = 7$. The answer is $(B)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 7,
+      "statement": "The product of three integers is $60$. What is the least possible positive sum of these integers?",
+      "choices": { "A": "2", "B": "3", "C": "5", "D": "6", "E": "13" },
+      "answer": "B", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 2, "globalDifficulty": 3,
+      "topics": [{ "name": "Number Theory", "isPrimary": true }, { "name": "Algebra", "isPrimary": false }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_7",
+      "solutions": ["Using two negative factors keeps the product positive while shrinking the sum. Taking $(-6)\\cdot(-1)\\cdot 10 = 60$ gives sum $10 - 6 - 1 = 3$, the least positive value. The answer is $(B)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 9,
+      "statement": "There are $6$ juniors and $6$ seniors. In how many ways can they be split into $3$ teams of $4$ so that each team has exactly $2$ juniors and $2$ seniors?",
+      "choices": { "A": "720", "B": "1350", "C": "2700", "D": "3280", "E": "8100" },
+      "answer": "B", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 2, "globalDifficulty": 4,
+      "topics": [{ "name": "Counting & Probability", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_9",
+      "solutions": ["Split the $6$ juniors into three pairs in $\\frac{6!}{2!^3\\cdot 3!} = 15$ ways; these pairs become the three (now distinct) teams. Distribute the $6$ seniors into those three teams in $\\frac{6!}{2!^3} = 90$ ways. Total: $15 \\cdot 90 = 1350$. The answer is $(B)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 11,
+      "statement": "How many ordered pairs of integers $(m, n)$ satisfy $\\sqrt{n^2 - 49} = m$?",
+      "choices": { "A": "1", "B": "2", "C": "3", "D": "4", "E": "\\text{infinitely many}" },
+      "answer": "D", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 2, "globalDifficulty": 4,
+      "topics": [{ "name": "Number Theory", "isPrimary": true }, { "name": "Algebra", "isPrimary": false }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_11",
+      "solutions": ["Squaring gives $n^2 - m^2 = 49$, so $(n-m)(n+m) = 49$ with $m \\ge 0$. The valid factorizations give $(m, n) = (24, 25),\\ (24, -25),\\ (0, 7),\\ (0, -7)$ — four pairs. The answer is $(D)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 12,
+      "statement": "Zelda scored $1700$ points on August 1. The bar chart shows how her score changed on each of the next five days. What was her average daily score over these six days?",
+      "choices": { "A": "1700", "B": "1702", "C": "1703", "D": "1713", "E": "1715" },
+      "answer": "E", "hasDiagram": true, "diagramUrl": "https://artofproblemsolving.com/wiki/images/e/e6/Screenshot_2024-11-08_1.51.51_PM.png",
+      "localDifficulty": 2, "globalDifficulty": 3,
+      "topics": [{ "name": "Algebra", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_12",
+      "solutions": ["Apply each day's change from the chart to the running total to get the six daily scores, then average them; the mean works out to $1715$. The answer is $(E)$. (Sample solution — the full worked solution is pulled from AoPS when you build the real dataset.)"]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 16,
+      "statement": "The figure below is made of rectangles, each similar to the enclosing rectangle. The numbers give the areas of some rectangles. What is the length $AB$?",
+      "choices": { "A": "4+4\\sqrt5", "B": "10\\sqrt2", "C": "5+5\\sqrt5", "D": "10\\sqrt[4]{8}", "E": "20" },
+      "answer": "D", "hasDiagram": true, "diagramUrl": "https://artofproblemsolving.com/wiki/images/c/c3/Screenshot_2024-11-08_2.08.49_PM.png",
+      "localDifficulty": 3, "globalDifficulty": 6,
+      "topics": [{ "name": "Geometry", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_16",
+      "solutions": ["Since every sub-rectangle is similar to the whole, their side ratios are all equal. Writing the side lengths in terms of that common ratio and matching the given areas yields $AB = 10\\sqrt[4]{8}$. The answer is $(D)$. (Sample solution.)"]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 18,
+      "statement": "For how many integer bases $b$ with $5 \\le b \\le 2024$ is the base-$b$ number $2024_b$ divisible by $16$? Let $K$ be this count. What is the sum of the digits of $K$?",
+      "choices": { "A": "16", "B": "17", "C": "18", "D": "20", "E": "21" },
+      "answer": "D", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 3, "globalDifficulty": 6,
+      "topics": [{ "name": "Number Theory", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_18",
+      "solutions": ["$2024_b = 2b^3 + 2b + 4$. Dividing by $2$, we need $b^3 + b + 2 \\equiv 0 \\pmod 8$, which holds exactly when $b \\equiv 3, 6, 7 \\pmod 8$. Counting such $b$ in $[5, 2024]$ gives $K = 252 + 253 + 253 = 758$, whose digit sum is $20$. The answer is $(D)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 23,
+      "statement": "Integers $a$, $b$, and $c$ satisfy $ab + c = 100$, $bc + a = 87$, and $ca + b = 60$. What is $ab + bc + ca$?",
+      "choices": { "A": "212", "B": "247", "C": "258", "D": "276", "E": "284" },
+      "answer": "D", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 4, "globalDifficulty": 7,
+      "topics": [{ "name": "Algebra", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_23",
+      "solutions": ["Adding all three equations gives $ab + bc + ca + (a + b + c) = 247$. Subtracting equations pairwise factors nicely (e.g. $(a-c)(b-1) = 13$); solving the system gives $a + b + c = -29$. Therefore $ab + bc + ca = 247 - (-29) = 276$. The answer is $(D)$."]
+    },
+    {
+      "contestId": "AMC10A", "year": 2024, "number": 24,
+      "statement": "A bee starts at $(0,0,0)$ and rolls a fair six-sided die four times; the faces move it $\\pm 1$ along the $x$, $y$, or $z$ axis. What is the probability its path traverses four distinct edges of the unit cube?",
+      "choices": { "A": "\\frac{1}{54}", "B": "\\frac{7}{54}", "C": "\\frac{1}{6}", "D": "\\frac{5}{18}", "E": "\\frac{2}{5}" },
+      "answer": "B", "hasDiagram": false, "diagramUrl": null,
+      "localDifficulty": 4, "globalDifficulty": 8,
+      "topics": [{ "name": "Counting & Probability", "isPrimary": true }],
+      "sourceUrl": "https://artofproblemsolving.com/wiki/index.php/2024_AMC_10A_Problems/Problem_24",
+      "solutions": ["Of the $6^4 = 1296$ equally likely roll sequences, exactly $168$ trace four distinct edges of the unit cube, giving probability $\\frac{168}{1296} = \\frac{7}{54}$. The answer is $(B)$. (Sample solution.)"]
+    }
+  ]
+}
