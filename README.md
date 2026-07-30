@@ -56,7 +56,16 @@ Two known gaps in the source data, both reported by the importers:
 - **The AIME CSV holds 933 rows**, not the ~1,005 a complete 1983–2024 archive would have,
   so some years are short a few problems. That is upstream, not an import bug.
 
-Run `npm run verify` to re-check the seeded bank and the answer-matching logic (22 assertions).
+## Testing
+
+```bash
+npm run typecheck   # tsc --noEmit
+npm run verify      # 42 assertions: answer matching, LaTeX tokenizer, CSV parser, seeded bank
+npm run test        # Playwright: 10 end-to-end tests against a real browser
+```
+
+`npm run test` starts a dev server automatically (or reuses one). First run needs
+`npx playwright install chromium`.
 
 Topic tagging (`npm run classify`) is only needed for sources that don't ship labels. It runs an
 offline keyword heuristic by default; `npm run classify -- --ai` refines only the ambiguous

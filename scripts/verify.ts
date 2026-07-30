@@ -2,7 +2,9 @@
 // Run: npx tsx scripts/verify.ts
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { renderToStaticMarkup } from "react-dom/server";
 import { answersMatch } from "../src/components/PracticeClient";
+import { RichText, splitMath } from "../src/components/Math";
 import { extractBoxed } from "./adapters/math-dataset";
 import { parseCsv } from "./adapters/aime-dataset";
 
@@ -34,6 +36,56 @@ async function main() {
   not(check("nested braces", extractBoxed("\\boxed{\\frac{1}{2}}"), "\\frac{1}{2}"));
   not(check("last of several", extractBoxed("\\boxed{1} then \\boxed{2}"), "2"));
   not(check("none", extractBoxed("no answer here"), null));
+
+  console.log("--- RichText rendering ---");
+  const render = (s: string) => renderToStaticMarkup(RichText({ text: s }) as any);
+  // KaTeX embeds the original TeX in a MathML <annotation> for accessibility/copy.
+  // That is not visible text, so strip it before asserting nothing raw leaked.
+  const visible = (s: string) => render(s).replace(/<annotation[^>]*>[\s\S]*?<\/annotation>/g, "");
+  const inline = render("What is $x+1$?");
+  not(check("inline $...$ renders KaTeX", inline.includes("katex"), true));
+  not(check("inline is not display mode", inline.includes("katex-display"), false));
+  not(check("prose survives", inline.includes("What is"), true));
+
+  // The bug this guards: 1,838 problems use \[...\] and rendered as raw source.
+  const display = render("Let \\[f(x) = x^2\\] be a function.");
+  not(check("\\[...\\] renders KaTeX", display.includes("katex"), true));
+  not(check("\\[...\\] is display mode", display.includes("katex-display"), true));
+  not(check("no raw \\[ left behind", visible("Let \\[f(x) = x^2\\] be a function.").includes("\\["), false));
+
+  const dd = render("Thus $$a^2+b^2=c^2$$ holds.");
+  not(check("$$...$$ renders display", dd.includes("katex-display"), true));
+
+  const paren = render("Let \\(y\\) be odd.");
+  not(check("\\(...\\) renders inline", paren.includes("katex") && !paren.includes("katex-display"), true));
+
+  const plain = render("Three faucets fill a tub in 6 minutes.");
+  not(check("plain prose renders no KaTeX", plain.includes("katex"), false));
+
+  // A real statement from the bank, with a piecewise block.
+  const real = render("Let \\[f(x) = \\left\\{\\begin{array}{cl} ax+3, &\\text{ if }x>2 \\end{array}\\right.\\]Find $a+b$.");
+  not(check("piecewise + inline in one statement", real.includes("katex-display") && real.includes("katex"), true));
+  not(check(
+    "no raw \\begin left behind",
+    visible("Let \\[f(x) = \\left\\{\\begin{array}{cl} ax+3, &\\text{ if }x>2 \\end{array}\\right.\\]Find $a+b$.").includes("\\begin{"),
+    false
+  ));
+
+  // Bare \begin{align*} with no $ or \[ wrapper: ~20% of solutions and 180 statements.
+  const bare = "We solve: \\begin{align*} x+y &= 20 \\\\ 60x-30y &= 660 \\end{align*} so $x=6$.";
+  const bareOut = render(bare);
+  not(check("bare \\begin{align*} renders as display", bareOut.includes("katex-display"), true));
+  not(check("bare env leaves no raw source", visible(bare).includes("\\begin{"), false));
+  not(check("prose around bare env survives", bareOut.includes("We solve"), true));
+
+  not(check("tokenizer: nested env consumed whole",
+    splitMath("a \\begin{array}{c}\\begin{array}{c}1\\end{array}\\end{array} b").length, 3));
+  not(check("tokenizer: unsupported env left as text",
+    splitMath("x \\begin{tabular}{c}1\\end{tabular} y").every((s) => "text" in s), true));
+  not(check("tokenizer: unterminated $ is literal text",
+    splitMath("costs $5 to enter").every((s) => "text" in s), true));
+  not(check("tokenizer: $$ beats $",
+    (splitMath("$$a$$") as any)[0].display, true));
 
   console.log("--- parseCsv ---");
   not(check("quoted comma", parseCsv('a,b\n"x,y",z')[1], ["x,y", "z"]));
