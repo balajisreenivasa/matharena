@@ -87,6 +87,14 @@ async function main() {
     console.log(`  seeded ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
   }
 
+  // Drop contests left with no problems (e.g. from a previous dataset) so the
+  // dashboard's contest count reflects what's actually loaded.
+  const empty = await db.contest.findMany({ where: { problems: { none: {} } }, select: { id: true } });
+  if (empty.length) {
+    await db.contest.deleteMany({ where: { id: { in: empty.map((c) => c.id) } } });
+    console.log(`Pruned ${empty.length} contest(s) with no problems: ${empty.map((c) => c.id).join(", ")}`);
+  }
+
   const n = await db.problem.count();
   const withoutAnswer = await db.problem.count({ where: { answer: "" } });
   console.log(`Done. ${n} problems seeded.`);

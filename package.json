@@ -7,13 +7,15 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "verify": "tsx scripts/verify.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "seed": "tsx scripts/seed.ts",
     "scrape": "tsx scripts/scrape.ts",
+    "import": "tsx scripts/import.ts",
     "classify": "tsx scripts/classify.ts",
-    "build:data": "tsx scripts/scrape.ts && tsx scripts/classify.ts && tsx scripts/seed.ts",
+    "build:data": "tsx scripts/import.ts && tsx scripts/classify.ts && tsx scripts/seed.ts",
     "db:push": "prisma db push"
   },
   "prisma": {
@@ -34,7 +36,6 @@
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
     "cheerio": "^1.0.0",
-    "hyparquet": "^1.26.2",
     "postcss": "^8.4.47",
     "prisma": "^5.22.0",
     "tailwindcss": "^3.4.13",

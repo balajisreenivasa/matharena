@@ -184,8 +184,15 @@ async function main() {
   const ambiguous: any[] = [];
   let cached = 0;
   let byHeuristic = 0;
+  let preLabeled = 0;
 
   for (const p of raw.problems) {
+    // Some sources (e.g. the MATH dataset) ship their own topic labels. Those are
+    // authoritative — never overwrite them with a guess.
+    if (p.topics?.length) {
+      preLabeled++;
+      continue;
+    }
     const key = `${p.contestId}_${p.year}_${p.number}`;
     if (cache[key]) {
       p.topics = cache[key];
@@ -202,7 +209,9 @@ async function main() {
     }
   }
 
-  console.log(`Heuristic: ${byHeuristic} confident, ${cached} from cache, ${ambiguous.length} ambiguous.`);
+  console.log(
+    `Pre-labeled by source: ${preLabeled}. Heuristic: ${byHeuristic} confident, ${cached} from cache, ${ambiguous.length} ambiguous.`
+  );
 
   if (ambiguous.length && useAi) {
     const backend = resolveBackend();

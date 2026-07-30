@@ -38,13 +38,25 @@ npm run import            # fetch + normalize open datasets -> data/problems.jso
 npm run seed              # load into the database
 ```
 
-| Source | License | Problems | Notes |
+| Source | License | Seeded | Notes |
 | --- | --- | --- | --- |
-| [MATH](https://huggingface.co/datasets/EleutherAI/hendrycks_math) | MIT | ~12.5k | ships its own topic + 5-level difficulty labels |
-| [AIME 1983–2024](https://huggingface.co/datasets/gneubig/aime-1983-2024) | CC0 | ~933 | exact year, problem number, integer answer |
+| [MATH](https://huggingface.co/datasets/EleutherAI/hendrycks_math) | MIT | 11,370 | ships its own topic + 5-level difficulty labels |
+| [AIME 1983–2024](https://huggingface.co/datasets/gneubig/aime-1983-2024) | CC0 | 932 | exact year, problem number, integer answer |
 
-MATH problems are free-response — they have no A–E choices and no contest/year attribution,
-so they render with a typed-answer input. The AIME set keeps full attribution and integer answers.
+**12,302 problems total.** Both sources are free-response, so problems render with a
+typed-answer input rather than A–E buttons. Answer checking normalizes common LaTeX
+variants (`\dfrac12` = `\frac{1}{2}` = `0.5`) and compares numerically where possible;
+since that can't be perfect, a wrong verdict offers an "I had this right" override.
+
+Two known gaps in the source data, both reported by the importers:
+
+- **1,126 MATH problems are skipped** because their statement depends on an `[asy]`
+  Asymptote figure that the dataset ships as source code, not a rendered image. A figure-less
+  geometry problem is unsolvable, so importing them would only pollute practice sets.
+- **The AIME CSV holds 933 rows**, not the ~1,005 a complete 1983–2024 archive would have,
+  so some years are short a few problems. That is upstream, not an import bug.
+
+Run `npm run verify` to re-check the seeded bank and the answer-matching logic (22 assertions).
 
 Topic tagging (`npm run classify`) is only needed for sources that don't ship labels. It runs an
 offline keyword heuristic by default; `npm run classify -- --ai` refines only the ambiguous
