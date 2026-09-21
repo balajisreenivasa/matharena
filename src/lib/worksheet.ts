@@ -59,27 +59,47 @@ function shuffle<T>(arr: T[]): T[] {
 const clamp = (x: number) => Math.max(1, Math.min(10, x));
 const ALL_SKILL_IDS = SKILLS.map((s) => s.id);
 
+// One query per build instead of one per pick: load every problem the student has
+// not attempted (ids, difficulty, contest, skills, topics; ~4 MB for 17k problems) and
+// filter in memory. Cached briefly per user so a build's dozens of picks share it.
+type PoolRow = { id: string; globalDifficulty: number; contestId: string; number: number; round: string | null; skillIds: string[]; topicSlugs: string[] };
+const poolCache = new Map<string, { at: number; rows: PoolRow[] }>();
+const POOL_TTL_MS = 20_000;
+
+async function loadPool(userId: string): Promise<PoolRow[]> {
+  const hit = poolCache.get(userId);
+  if (hit && Date.now() - hit.at < POOL_TTL_MS) return hit.rows;
+  const rows = await db.problem.findMany({
+    where: { attempts: { none: { userId } } },
+    select: { id: true, globalDifficulty: true, contestId: true, number: true, round: true, skills: { select: { skillId: true } }, topics: { select: { topic: { select: { slug: true } } } } },
+  });
+  const pool: PoolRow[] = rows.map((r) => ({ id: r.id, globalDifficulty: r.globalDifficulty, contestId: r.contestId, number: r.number, round: r.round, skillIds: r.skills.map((s) => s.skillId), topicSlugs: r.topics.map((t) => t.topic.slug) }));
+  poolCache.set(userId, { at: Date.now(), rows: pool });
+  return pool;
+}
+
+export function invalidatePool(userId: string) {
+  poolCache.delete(userId);
+}
+
+const AIME_IDS = new Set(["AIME", "AIME_I", "AIME_II"]);
+
 async function query(o: PickOpts, widen: number): Promise<{ id: string; globalDifficulty: number }[]> {
   const lo = clamp(o.band[0] - widen);
   const hi = clamp(o.band[1] + widen);
-  return db.problem.findMany({
-    where: {
-      globalDifficulty: { gte: lo, lte: hi },
-      ...(o.skillId
-        ? { skills: { some: { skillId: o.skillId } } }
-        : o.topicSlug
-          ? { topics: { some: { topic: { slug: o.topicSlug } } } }
-          : {}),
-      id: { notIn: [...o.exclude] },
-      // Never re-serve anything attempted outside the review queue.
-      attempts: { none: { userId: o.userId } },
-      // AIME beyond #5 is out of AMC 10 range; MATH precalculus only feeds geo-trig.
-      OR: [{ contestId: { notIn: ["AIME", "AIME_I", "AIME_II"] } }, { number: { lte: 5 } }],
-      ...(o.skillId === "geo-trig" ? {} : { round: { not: "precalculus" } }),
-    },
-    select: { id: true, globalDifficulty: true },
-    take: 300,
-  });
+  const pool = await loadPool(o.userId);
+  const out: { id: string; globalDifficulty: number }[] = [];
+  for (const p of pool) {
+    if (p.globalDifficulty < lo || p.globalDifficulty > hi) continue;
+    if (o.skillId ? !p.skillIds.includes(o.skillId) : o.topicSlug ? !p.topicSlugs.includes(o.topicSlug) : false) continue;
+    if (o.exclude.has(p.id)) continue;
+    // AIME beyond #5 is out of AMC 10 range; MATH precalculus only feeds geo-trig.
+    if (AIME_IDS.has(p.contestId) && p.number > 5) continue;
+    if (o.skillId !== "geo-trig" && p.round === "precalculus") continue;
+    out.push({ id: p.id, globalDifficulty: p.globalDifficulty });
+    if (out.length >= 300) break;
+  }
+  return out;
 }
 
 // Pick `n` problems, widening the band and then falling back to the parent topic

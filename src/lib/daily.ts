@@ -266,7 +266,10 @@ export async function digest(learner: Learner, date: string, log: (s: string) =>
 // Run a mode for every student profile. `evening` on a Sunday also sends the digest,
 // which lets a two-job cron (Vercel Hobby) cover all three mails.
 export async function runDaily(mode: Mode, date = todayStr(), opts: { force?: boolean; log?: (s: string) => void } = {}): Promise<RunReport> {
-  const log = opts.log ?? ((s) => console.log(s));
+  const t0 = Date.now();
+  const base = opts.log ?? ((s) => console.log(s));
+  // Always echo to the server console too, with elapsed time, so hosted logs show where time goes.
+  const log = (s: string) => { base(s); if (opts.log) console.log(`[daily ${mode} +${Date.now() - t0}ms] ${s}`); };
   const report: RunReport = { mode, date, results: [] };
   const learners = await listLearners();
   if (!learners.length) log("  no student profiles yet (create one at /signup)");
