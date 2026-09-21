@@ -1,1 +1,239 @@
-{}
+{
+  "alg-linear": [
+    { "label": "MATHCOUNTS Mini #19: Turning word problems into algebra equations", "url": "https://www.mathcounts.org/resources/mini-19-turning-word-problems-algebra-equations", "kind": "video", "note": "Rusczyk video lesson + activity sheet with solutions; setting up equations from word problems (AMC 10 #1-6 level)." },
+    { "label": "MATHCOUNTS Mini #28: New approaches to rate x time = distance", "url": "https://www.mathcounts.org/resources/mini-28-new-approaches-rate-x-time-distance", "kind": "video", "note": "Video lesson + problem sheet with solutions on d = rt tricks; easy-medium." },
+    { "label": "MATHCOUNTS practice plan: Distance = Rate x Time", "url": "https://www.mathcounts.org/resources/distance-rate-x-time", "kind": "drill", "note": "Free student handout and coach version with full solutions; warm-up, video, guided practice." },
+    { "label": "Brilliant wiki: Systems of linear equations", "url": "https://brilliant.org/wiki/system-of-linear-equations/", "kind": "wiki", "note": "Substitution/elimination with worked word problems; foundation level." },
+    { "label": "CEMC Math Circles (Gr 7/8): Systems of Equations lesson (PDF)", "url": "https://www.cemc.uwaterloo.ca/sites/default/files/documents/2024/Junior7_8_20211013_SystemsOfEquations.pdf", "kind": "wiki", "note": "University of Waterloo math circle handout; gentle introduction with problems (problem set + solutions linked from the Math Circles page)." },
+    { "label": "CEMC Open Courseware: Linear Relations & Analytic Geometry (Gr 9/10)", "url": "https://courseware.cemc.uwaterloo.ca/42", "kind": "drill", "note": "Free narrated lessons with exercises and full solutions on linear equations, systems and slope; no login." },
+    { "label": "Omega Learn video: Advanced Systems of Equations (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=00Ngozqw2d0", "kind": "video", "note": "Harder systems and substitution tricks; AMC 10 mid-paper level." }
+  ],
+  "alg-ratios": [
+    { "label": "MATHCOUNTS Mini #59: Ratios", "url": "https://www.mathcounts.org/resources/mini-59-ratios", "kind": "video", "note": "Video lesson + activity sheet with solutions on ratios, percents and fractions; easy-medium." },
+    { "label": "MATHCOUNTS Mini #17: Arithmetic sequences, mean and median", "url": "https://www.mathcounts.org/resources/mini-17-relationships-between-arithmetic-sequences-mean-and-median", "kind": "video", "note": "Averages of evenly spaced lists; mean vs median problems; medium." },
+    { "label": "MATHCOUNTS practice plan: Percentages", "url": "https://www.mathcounts.org/resources/percentages", "kind": "drill", "note": "Markups, markdowns, interest, percent-of; handout + coach solutions; medium." },
+    { "label": "MATHCOUNTS practice plan: Averages", "url": "https://www.mathcounts.org/resources/averages", "kind": "drill", "note": "Mean/median problems with solutions and linked videos; easy-medium." },
+    { "label": "Brilliant wiki: Percentages", "url": "https://brilliant.org/wiki/percentages/", "kind": "wiki", "note": "Percent change, successive percents, worked examples; foundation level." },
+    { "label": "Brilliant wiki: Ratio and proportion", "url": "https://brilliant.org/wiki/ratio-and-proportion/", "kind": "wiki", "note": "Simplifying ratios, solving proportions, mixture-style problems; foundation level." },
+    { "label": "CEMC Problem Set Generator (pick topic, Pascal/Cayley/Gauss problems)", "url": "https://www.cemc.uwaterloo.ca/resources/problem-set-generator", "kind": "problems", "note": "Builds a printable set of past Waterloo contest problems filtered by topic and difficulty (A/B/C); solutions via past-contest PDFs." }
+  ],
+  "alg-quadratics": [
+    { "label": "David Altizio handout: Vieta's Formulas (PDF)", "url": "https://davidaltizio.web.illinois.edu/Vietas%20Formulas.pdf", "kind": "wiki", "note": "Math-league handout by an AMC/AIME problem writer; theory + problems; AMC 10 #10-20." },
+    { "label": "Brilliant wiki: Vieta's formula", "url": "https://brilliant.org/wiki/vietas-formula/", "kind": "wiki", "note": "Sum/product of roots for quadratics and higher degree with examples." },
+    { "label": "Brilliant wiki: Completing the square", "url": "https://brilliant.org/wiki/completing-the-square/", "kind": "wiki", "note": "Vertex form, min/max of quadratics; foundation level." },
+    { "label": "Omega Learn video: Vieta's Formulas (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=czk6OsfrbxQ", "kind": "video", "note": "Chapter lecture from the free Mastering AMC 10/12 book; AMC 10 level examples." },
+    { "label": "MATHCOUNTS Mini #38: Solving quadratics using substitution/simplification", "url": "https://www.mathcounts.org/resources/mini-38-solving-quadratic-equations-using-substitution-simplification", "kind": "video", "note": "Video + activity sheet with solutions; medium." },
+    { "label": "CEMC Open Courseware: Quadratic Relations (Gr 9/10)", "url": "https://courseware.cemc.uwaterloo.ca/43", "kind": "drill", "note": "Five units (factored/vertex form, solving, line-parabola intersections) with exercises and full solutions." }
+  ],
+  "alg-exponents": [
+    { "label": "Brilliant wiki: Logarithms", "url": "https://brilliant.org/wiki/logarithms/", "kind": "wiki", "note": "Definition, log rules, change of base, worked problems; AMC 10 #10-20." },
+    { "label": "Brilliant wiki: Exponent rules (exponential functions - properties)", "url": "https://brilliant.org/wiki/exponential-functions-properties/", "kind": "wiki", "note": "Product/quotient/power rules, negative and fractional exponents with examples." },
+    { "label": "Omega Learn video: Logarithms (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=BaZWIIjk-2s", "kind": "video", "note": "Chapter lecture from the free book; AMC 10/12 log problems." },
+    { "label": "Eddie Woo video: Introduction to Logarithms (1 of 2: Definition)", "url": "https://www.youtube.com/watch?v=ntBWrcbAhaY", "kind": "video", "note": "Clear classroom-style introduction if logs are new; foundation level." },
+    { "label": "MATHCOUNTS Mini #10: Squares of binomials, repeating decimals and radical expressions", "url": "https://www.mathcounts.org/resources/mini-10-squares-binomials-working-repeating-decimals-and-radical-expressions", "kind": "video", "note": "Simplifying nested radicals via (a+b)^2; video + sheet with solutions." },
+    { "label": "CEMC Open Courseware: Number Sense & Algebraic Expressions (exponents, radicals)", "url": "https://courseware.cemc.uwaterloo.ca/41", "kind": "drill", "note": "Units on exponent laws and radical expressions with exercises and solutions; free, no login." }
+  ],
+  "alg-inequalities": [
+    { "label": "Brilliant wiki: AM-GM inequality", "url": "https://brilliant.org/wiki/arithmetic-mean-geometric-mean/", "kind": "wiki", "note": "Statement, proof sketch, equality case; AMC 10 #15-25 optimization." },
+    { "label": "Brilliant wiki: Applying AM-GM", "url": "https://brilliant.org/wiki/applying-the-arithmetic-mean-geometric-mean/", "kind": "wiki", "note": "Five techniques for using AM-GM on min/max problems with examples." },
+    { "label": "Omega Learn video: Inequalities (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=gqWlcaNLeXk", "kind": "video", "note": "Chapter lecture: AM-GM, Cauchy, bounding; AMC 10/12 level." },
+    { "label": "MATHCOUNTS Mini #67: Optimization problems", "url": "https://www.mathcounts.org/resources/mini-67-optimization-problems", "kind": "video", "note": "Video + activity sheet with solutions; max/min without calculus." },
+    { "label": "MATHCOUNTS Mini #45: Maximum area of inscribed rectangles and triangles", "url": "https://www.mathcounts.org/resources/mini-45-maximum-area-inscribed-rectangles-triangles", "kind": "video", "note": "Completing-the-square style optimization in geometry; difficult." },
+    { "label": "CEMC Open Courseware: Introduction to Functions, unit 4 (inequalities, absolute values)", "url": "https://courseware.cemc.uwaterloo.ca/44", "kind": "drill", "note": "Lessons and solved exercises on solving inequalities and absolute-value equations." }
+  ],
+  "alg-sequences": [
+    { "label": "David Altizio handout: Sequences and Series (PDF)", "url": "https://davidaltizio.web.illinois.edu/Sequences%20and%20Series.pdf", "kind": "wiki", "note": "Arithmetic/geometric/telescoping with contest problems; AMC 10 #8-20." },
+    { "label": "Brilliant wiki: Arithmetic progressions", "url": "https://brilliant.org/wiki/arithmetic-progressions/", "kind": "wiki", "note": "nth term, sum formulas, worked problems; foundation level." },
+    { "label": "Brilliant wiki: Telescoping series", "url": "https://brilliant.org/wiki/telescoping-series/", "kind": "wiki", "note": "Partial fractions and cancellation patterns; AMC 10 #12-20." },
+    { "label": "Brilliant wiki: Sum of n, n^2, n^3", "url": "https://brilliant.org/wiki/sum-of-n-n2-or-n3/", "kind": "wiki", "note": "Closed forms for power sums; useful for series problems." },
+    { "label": "Omega Learn video: Arithmetic Sequences (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=qL0OOYZiaqA", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn video: Geometric Sequences (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=3wNLfRyRrMo", "kind": "video", "note": "Chapter lecture from the free book; finite and infinite geometric sums." },
+    { "label": "MATHCOUNTS Mini #12: Arithmetic and geometric sequences", "url": "https://www.mathcounts.org/resources/mini-12-arithmetic-and-geometric-sequences", "kind": "video", "note": "Video + activity sheet with solutions; medium." },
+    { "label": "CEMC Open Courseware: Sequences and Series (Gr 11)", "url": "https://courseware.cemc.uwaterloo.ca/45", "kind": "drill", "note": "Representing sequences, arithmetic/geometric series with exercises and solutions." }
+  ],
+  "alg-functions": [
+    { "label": "Brilliant wiki: Floor function", "url": "https://brilliant.org/wiki/floor-function/", "kind": "wiki", "note": "Properties, floor equations, Legendre-style applications; AMC 10 #12-22." },
+    { "label": "Brilliant wiki: Functions", "url": "https://brilliant.org/wiki/functions/", "kind": "wiki", "note": "Domain/range, composition, inverses; foundation level." },
+    { "label": "Brilliant wiki: Absolute value", "url": "https://brilliant.org/wiki/absolute-value/", "kind": "wiki", "note": "Properties, V/W-shaped graphs, equations and optimization with examples." },
+    { "label": "Omega Learn video: Floor & Ceiling Functions (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=0oVPbOKWbRE", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "MATHCOUNTS Mini #86: Non-standard operators in algebraic expressions", "url": "https://www.mathcounts.org/resources/mini-86-non-standard-operators-algebraic-expressions", "kind": "video", "note": "Custom-defined operations / functional notation problems; video + solutions." },
+    { "label": "CEMC Open Courseware: Introduction to Functions (Gr 11)", "url": "https://courseware.cemc.uwaterloo.ca/44", "kind": "drill", "note": "Representing, transforming and inverting functions with solved exercises." }
+  ],
+  "alg-polynomials": [
+    { "label": "Brilliant wiki: Remainder and factor theorem", "url": "https://brilliant.org/wiki/remainder-factor-theorem/", "kind": "wiki", "note": "f(c) as remainder, factor theorem, rational root theorem; AMC 10 #12-20." },
+    { "label": "David Altizio handout: Algebraic Manipulations Part II (PDF)", "url": "https://davidaltizio.web.illinois.edu/Algebraic%20Manipulations%20Part%20II.pdf", "kind": "wiki", "note": "Symmetric expressions, substitution and factoring tricks with problems; AMC 10/12." },
+    { "label": "Omega Learn lecture: Quadratics, Polynomials, Vieta's Formulas, Roots (AMC 10/12 Fundamentals)", "url": "https://www.youtube.com/watch?v=3dfbWzOfJAI", "kind": "video", "note": "Full class lecture from Omega Learn's free AMC 10/12 course." },
+    { "label": "Omega Learn video: Algebraic Manipulations (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=SpSuqWY01SE", "kind": "video", "note": "Chapter lecture: factoring identities, x+y / xy systems." },
+    { "label": "MATHCOUNTS Mini #53: A different way to think about polynomials", "url": "https://www.mathcounts.org/resources/mini-53-different-way-think-about-polynomials", "kind": "video", "note": "Video + activity sheet with solutions; difficult." },
+    { "label": "MATHCOUNTS Mini #65: Seeing symmetry in systems of equations", "url": "https://www.mathcounts.org/resources/mini-65-seeing-symmetry-systems-equations", "kind": "video", "note": "Symmetric systems solved by adding/subtracting; easy-medium." }
+  ],
+  "geo-angles": [
+    { "label": "David Altizio handout: Angle Chasing (PDF)", "url": "https://davidaltizio.web.illinois.edu/AngleChasing.pdf", "kind": "wiki", "note": "Angle-chasing techniques with diagrams and contest problems; AMC 10 #5-15." },
+    { "label": "Omega Learn video: Angle Chasing (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=O_o_-yjGrOU", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "MATHCOUNTS practice plan: Interior Angles", "url": "https://www.mathcounts.org/resources/interior-angles", "kind": "drill", "note": "Polygon interior/exterior angle problems with handout + solutions; easy." },
+    { "label": "Brilliant wiki: Triangle inequality", "url": "https://brilliant.org/wiki/triangle-inequality/", "kind": "wiki", "note": "Statement and problems on possible side lengths; foundation level." },
+    { "label": "Brilliant wiki: Properties of isosceles triangles", "url": "https://brilliant.org/wiki/properties-of-isosceles-triangles/", "kind": "wiki", "note": "Base angles, altitude/median coincidence; angle-finding problems." },
+    { "label": "Brilliant wiki: General polygons - angles", "url": "https://brilliant.org/wiki/general-polygons-angles/", "kind": "wiki", "note": "(n-2)180 interior sum, 360 exterior sum, examples." },
+    { "label": "MATHCOUNTS Mini #58: Labeling figures - a geometry problem-solving strategy", "url": "https://www.mathcounts.org/resources/mini-58-labeling-figures-geometry-problem-solving-strategy", "kind": "video", "note": "How to mark diagrams with unknown angles/lengths; video + solutions." }
+  ],
+  "geo-similar": [
+    { "label": "David Altizio handout: Similar Figures (PDF)", "url": "https://davidaltizio.web.illinois.edu/SimilarFigures.pdf", "kind": "wiki", "note": "Similar-triangle setups with contest problems; AMC 10 #8-18." },
+    { "label": "Brilliant wiki: Congruent and similar triangles", "url": "https://brilliant.org/wiki/congruent-and-similar-triangles/", "kind": "wiki", "note": "SSS/SAS/AA criteria and ratio problems; foundation level." },
+    { "label": "Brilliant wiki: Pythagorean theorem", "url": "https://brilliant.org/wiki/pythagorean-theorem/", "kind": "wiki", "note": "Proofs, triples, applications; foundation level." },
+    { "label": "Omega Learn video: Similar Triangles (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=hDsoyvFWYxc", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn video: Special Triangles (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=BIyhEjVp0iM", "kind": "video", "note": "30-60-90, 45-45-90 and common triples." },
+    { "label": "MATHCOUNTS practice plan: Special Right Triangles", "url": "https://www.mathcounts.org/resources/special-right-triangles", "kind": "drill", "note": "Derivations plus practice with coach solutions; medium." },
+    { "label": "MATHCOUNTS Mini #30: Similar triangles and proportional reasoning", "url": "https://www.mathcounts.org/resources/mini-30-similar-triangles-and-proportional-reasoning", "kind": "video", "note": "Video + activity sheet with solutions; difficult." },
+    { "label": "MATHCOUNTS Mini #22: 30-60-90 right triangles", "url": "https://www.mathcounts.org/resources/mini-22-geometry30-60-90-right-triangles", "kind": "video", "note": "Video + activity sheet with solutions; medium." }
+  ],
+  "geo-area": [
+    { "label": "Brilliant wiki: Heron's formula", "url": "https://brilliant.org/wiki/herons-formula/", "kind": "wiki", "note": "Area from three sides with proof and examples." },
+    { "label": "Brilliant wiki: Area of a polygon (shoelace formula)", "url": "https://brilliant.org/wiki/area-of-a-polygon/", "kind": "wiki", "note": "Shoelace/surveyor's formula with proof and worked coordinate examples." },
+    { "label": "Brilliant wiki: Irregular polygons", "url": "https://brilliant.org/wiki/irregular-polygons/", "kind": "wiki", "note": "Decomposition methods for areas of irregular shapes." },
+    { "label": "MATHCOUNTS Mini #18: Areas of irregular convex polygons", "url": "https://www.mathcounts.org/resources/mini-18-areas-irregular-convex-polygons", "kind": "video", "note": "Video + activity sheet with solutions; difficult." },
+    { "label": "MATHCOUNTS practice plan: Ratios and Area", "url": "https://www.mathcounts.org/resources/ratios-and-area", "kind": "drill", "note": "Area ratios of triangles sharing heights/bases; handout + solutions." },
+    { "label": "Omega Learn video: Area of Funky Circular Regions (Mastering AMC 8)", "url": "https://www.youtube.com/watch?v=VlFS8FK0UZw", "kind": "video", "note": "Shaded-region area with circles; AMC 8 / early AMC 10 level." },
+    { "label": "CEMC Problem of the Week archive (Gr 9/10 booklet, geometry & measurement theme)", "url": "https://www.cemc.uwaterloo.ca/resources/potw-archive", "kind": "problems", "note": "Yearly PDF booklets of all problems with full solutions, organized by theme." }
+  ],
+  "geo-circles": [
+    { "label": "Brilliant wiki: Power of a point", "url": "https://brilliant.org/wiki/power-of-a-point/", "kind": "wiki", "note": "Chord/secant/tangent products with examples; AMC 10 #12-22." },
+    { "label": "Brilliant wiki: Circles", "url": "https://brilliant.org/wiki/circles/", "kind": "wiki", "note": "Arc length, sectors, central/inscribed angles, intersecting chords; foundation level." },
+    { "label": "Omega Learn lecture: Circular Geometry, Power of a Point, Cyclic Quadrilaterals (AMC 10/12 Fundamentals)", "url": "https://www.youtube.com/watch?v=NsQbhYfGh1Q", "kind": "video", "note": "Full class lecture from Omega Learn's free course." },
+    { "label": "MATHCOUNTS Mini #34: Circles and right triangles", "url": "https://www.mathcounts.org/resources/mini-34-geometry-circles-and-right-triangles", "kind": "video", "note": "Video + activity sheet with solutions." },
+    { "label": "MATHCOUNTS Mini #11: Tangent segments and similar triangles", "url": "https://www.mathcounts.org/resources/mini-11-tangent-segments-similar-triangles", "kind": "video", "note": "Equal tangent lengths plus similarity; medium." },
+    { "label": "MATHCOUNTS Mini #80: Circles and triangles revisited", "url": "https://www.mathcounts.org/resources/mini-80-circles-and-triangles-revisited", "kind": "video", "note": "Inscribed/circumscribed circle problems; video + solutions." }
+  ],
+  "geo-coordinate": [
+    { "label": "Brilliant wiki: Distance formula", "url": "https://brilliant.org/wiki/distance-formula/", "kind": "wiki", "note": "Distance, collinearity and shape identification in the plane; foundation level." },
+    { "label": "Brilliant wiki: Area of a polygon (shoelace formula)", "url": "https://brilliant.org/wiki/area-of-a-polygon/", "kind": "wiki", "note": "Area from coordinates; the key coordinate-geometry area tool." },
+    { "label": "Omega Learn video: Coordinate Geometry (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=abEqJRPo0XE", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "MATHCOUNTS Mini #41: Analytic geometry", "url": "https://www.mathcounts.org/resources/mini-41-analytic-geometry", "kind": "video", "note": "Video + activity sheet with solutions; lines, slopes, intersections." },
+    { "label": "MATHCOUNTS Mini #78: More analytic geometry", "url": "https://www.mathcounts.org/resources/mini-78-more-analytic-geometry", "kind": "video", "note": "Follow-up lesson; video + solutions." },
+    { "label": "CEMC Open Courseware: Linear Relations & Analytic Geometry (Gr 9/10)", "url": "https://courseware.cemc.uwaterloo.ca/42", "kind": "drill", "note": "Slope, midpoint, line equations, verifying geometric properties analytically; exercises with solutions." }
+  ],
+  "geo-polygons": [
+    { "label": "Brilliant wiki: Regular polygons", "url": "https://brilliant.org/wiki/regular-polygons/", "kind": "wiki", "note": "Interior angles, area formulas, hexagon-as-six-triangles; foundation to medium." },
+    { "label": "Brilliant wiki: Cyclic quadrilaterals", "url": "https://brilliant.org/wiki/cyclic-quadrilaterals/", "kind": "wiki", "note": "Opposite angles, Ptolemy, Brahmagupta; AMC 10 #15-22." },
+    { "label": "Brilliant wiki: General polygons - angles", "url": "https://brilliant.org/wiki/general-polygons-angles/", "kind": "wiki", "note": "Interior/exterior angle sums with examples." },
+    { "label": "Omega Learn video: Polygons Part 1/2 (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=otV5GN8qzso", "kind": "video", "note": "Chapter lecture from the free book (Part 2 is linked from the channel)." },
+    { "label": "MATHCOUNTS Mini #21: Counting rectangles in a grid / squares in a lattice", "url": "https://www.mathcounts.org/resources/mini-21-counting-rectangles-gridsquares-lattice-grid", "kind": "video", "note": "Grid/tiling counting; video + solutions; medium." },
+    { "label": "MATHCOUNTS practice plan: Interior Angles", "url": "https://www.mathcounts.org/resources/interior-angles", "kind": "drill", "note": "Find the number of sides from angle data; handout + solutions." }
+  ],
+  "geo-solid": [
+    { "label": "Brilliant wiki: Volume of a cylinder", "url": "https://brilliant.org/wiki/volume-cylinder/", "kind": "wiki", "note": "Prism/cylinder volume with worked examples; foundation level." },
+    { "label": "Brilliant wiki: Surface area of a sphere", "url": "https://brilliant.org/wiki/surface-area-sphere/", "kind": "wiki", "note": "4 pi r^2 with Archimedes' hat-box argument." },
+    { "label": "Omega Learn video: 3D Geometry Part 1/2 (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=CSwulfVFyxs", "kind": "video", "note": "Chapter lecture from the free book; volumes, cross-sections." },
+    { "label": "MATHCOUNTS Mini #72: 3-D geometry", "url": "https://www.mathcounts.org/resources/mini-72-3-d-geometry", "kind": "video", "note": "Video + activity sheet with solutions." },
+    { "label": "MATHCOUNTS Mini #97: Three-dimensional figures", "url": "https://www.mathcounts.org/resources/mini-97-three-dimensional-figures", "kind": "video", "note": "Video + activity sheet with solutions." },
+    { "label": "CEMC Open Courseware: Measurement, Geometry and Trigonometry (Gr 9/10)", "url": "https://courseware.cemc.uwaterloo.ca/46", "kind": "drill", "note": "Unit 1 covers measurement of 3D solids and optimization with solved exercises." }
+  ],
+  "geo-trig": [
+    { "label": "Brilliant wiki: Cosine rule (law of cosines)", "url": "https://brilliant.org/wiki/cosine-rule/", "kind": "wiki", "note": "Statement, proof, when to use; AMC 10 #15-25." },
+    { "label": "Brilliant wiki: Sine rule (law of sines)", "url": "https://brilliant.org/wiki/sine-rule/", "kind": "wiki", "note": "Statement and applications including circumradius form." },
+    { "label": "Omega Learn video: Geometric Trigonometry (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=nA3rOztKDBs", "kind": "video", "note": "Law of sines/cosines and (1/2)ab sin C area in contest problems." },
+    { "label": "Omega Learn video: Algebraic Trigonometry (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=6Nza7tKFQnY", "kind": "video", "note": "Identities and trig algebra needed for AMC 12-style trig." },
+    { "label": "Eddie Woo playlist: Non-right-angled Trigonometry", "url": "https://www.youtube.com/playlist?list=PL5KkMZvBpo5B5FcF3HXrhcVGSdYa8E9mJ", "kind": "video", "note": "Classroom derivations of sine/cosine rules and area formula; foundation level." },
+    { "label": "CEMC Open Courseware: Measurement, Geometry and Trigonometry, unit 3 (Trigonometry)", "url": "https://courseware.cemc.uwaterloo.ca/46", "kind": "drill", "note": "Free lessons and exercises with solutions on right-triangle and oblique-triangle trig." }
+  ],
+  "nt-divisibility": [
+    { "label": "David Altizio handout: Introduction to Number Theory - Divisors and Divisibility (PDF)", "url": "https://davidaltizio.web.illinois.edu/Divisors%20and%20Divisibility%20Overview.pdf", "kind": "wiki", "note": "Prime factorization, counting divisors, contest problems; AMC 10 #5-15." },
+    { "label": "Brilliant wiki: Prime factorization", "url": "https://brilliant.org/wiki/prime-factorization/", "kind": "wiki", "note": "Fundamental theorem of arithmetic, factor trees, applications; foundation level." },
+    { "label": "Brilliant wiki: Divisibility rules", "url": "https://brilliant.org/wiki/divisibility-rules/", "kind": "wiki", "note": "Rules for 2-12 and beyond, derived via modular arithmetic." },
+    { "label": "MATHCOUNTS practice plan: Divisibility Rules", "url": "https://www.mathcounts.org/resources/divisibility-rules", "kind": "drill", "note": "Video lesson + handout and coach solutions; difficult." },
+    { "label": "Omega Learn video: Divisibility & Legendre's (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=p5f1u44-pvQ", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "MIT OCW 6.042J reading: Chapter 4 Number Theory (PDF)", "url": "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/resources/mit6_042jf10_chap04/", "kind": "wiki", "note": "Rigorous but readable notes on divisibility, gcd, primes, modular arithmetic; stretch reading." }
+  ],
+  "nt-gcd-lcm": [
+    { "label": "Brilliant wiki: Greatest common divisor", "url": "https://brilliant.org/wiki/greatest-common-divisor/", "kind": "wiki", "note": "Definitions, prime-factorization method, Euclidean algorithm; foundation level." },
+    { "label": "Brilliant wiki: Euclidean algorithm", "url": "https://brilliant.org/wiki/euclidean-algorithm/", "kind": "wiki", "note": "Algorithm, proof, extended version with examples." },
+    { "label": "Brilliant wiki: Lowest common multiple", "url": "https://brilliant.org/wiki/lowest-common-multiple/", "kind": "wiki", "note": "LCM via max exponents and lcm = ab/gcd." },
+    { "label": "MATHCOUNTS practice plan: Least Common Multiple", "url": "https://www.mathcounts.org/resources/least-common-multiple", "kind": "drill", "note": "Handout + coach solutions; medium." },
+    { "label": "Omega Learn video: GCD/LCM & Euclidean Algorithm (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=yh70NBCxQzg", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn lecture: GCD/LCM, Modular Arithmetic, Diophantine Equations (AMC 10/12 Fundamentals)", "url": "https://www.youtube.com/watch?v=zfChnbMGLVQ", "kind": "video", "note": "Full class lecture covering the three number-theory pillars." }
+  ],
+  "nt-modular": [
+    { "label": "David Altizio handout: Modular Arithmetic (PDF)", "url": "https://davidaltizio.web.illinois.edu/ModularArithmetic.pdf", "kind": "wiki", "note": "Congruences, inverses, units digits with contest problems; AMC 10 #8-20." },
+    { "label": "Brilliant wiki: Modular arithmetic", "url": "https://brilliant.org/wiki/modular-arithmetic/", "kind": "wiki", "note": "Congruence, operations, inverses, many worked examples." },
+    { "label": "Brilliant wiki: Finding the last digit of a power", "url": "https://brilliant.org/wiki/finding-the-last-digit-of-a-power/", "kind": "wiki", "note": "Cycles of units digits, last two digits, Euler's theorem." },
+    { "label": "Berkeley Math Circle handout: Modular Arithmetic I (Intermediate I, 2023)", "url": "https://mathcircle.berkeley.edu/sites/default/files/handouts/2023/Int%20I%20Modular%20Arithmetic%20I.pdf", "kind": "wiki", "note": "Math circle session with problems; Part II linked from the 2023-2024 archive page." },
+    { "label": "MATHCOUNTS practice plan: Modular Arithmetic", "url": "https://www.mathcounts.org/resources/modular-arithmetic", "kind": "drill", "note": "Remainders of huge numbers; handout + coach solutions." },
+    { "label": "Omega Learn video: Modular Arithmetic (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=orrw4VydBTk", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "MATHCOUNTS Mini #14: Riddles with remainders and perfect squares", "url": "https://www.mathcounts.org/resources/mini-14-number-senseriddles-remainders-and-perfect-squares", "kind": "video", "note": "Chinese-remainder-style riddles; video + solutions." }
+  ],
+  "nt-bases": [
+    { "label": "Brilliant wiki: Number base", "url": "https://brilliant.org/wiki/number-base/", "kind": "wiki", "note": "Conversions between bases, arithmetic in other bases, problems." },
+    { "label": "MATHCOUNTS practice plan: Basics of Bases", "url": "https://www.mathcounts.org/resources/basics-bases", "kind": "drill", "note": "Integer, fractional and negative bases; handout + coach solutions; difficult." },
+    { "label": "MATHCOUNTS Mini #49: Bases and powers", "url": "https://www.mathcounts.org/resources/mini-49-bases-and-powers", "kind": "video", "note": "Video + activity sheet with solutions." },
+    { "label": "MATHCOUNTS Mini #79: More bases and powers", "url": "https://www.mathcounts.org/resources/mini-79-more-bases-and-powers", "kind": "video", "note": "Follow-up lesson; video + solutions." },
+    { "label": "Brilliant wiki: Divisibility rules (digit-based tests)", "url": "https://brilliant.org/wiki/divisibility-rules/", "kind": "wiki", "note": "Digit-sum and alternating-sum rules used in digit problems." }
+  ],
+  "nt-diophantine": [
+    { "label": "David Altizio handout: More Diophantine Equations (PDF)", "url": "https://davidaltizio.web.illinois.edu/More%20Diophantine%20Equations%20Overview.pdf", "kind": "wiki", "note": "Factoring, bounding and modular tricks with contest problems; AMC 10 #12-22." },
+    { "label": "CEMC Math Circles (Gr 9/10): Linear Diophantine Equations Part I lesson (PDF)", "url": "https://www.cemc.uwaterloo.ca/sites/default/files/documents/2024/Intermediate_9Feb2022_LDEsPart1_0.pdf", "kind": "wiki", "note": "Waterloo math circle lesson; problem set and solutions (and Part II) linked from the Math Circles page." },
+    { "label": "CEMC Math Circles presentations index (all grades, lessons + problem sets + solutions)", "url": "https://www.cemc.uwaterloo.ca/events/mathcircle_presentations_sr.html", "kind": "problems", "note": "Index page with lesson/problem/solution PDFs including LDEs I & II for grades 9/10." },
+    { "label": "Brilliant wiki: Diophantine equations - solve by factoring", "url": "https://brilliant.org/wiki/diophantine-equations-solve-by-factoring/", "kind": "wiki", "note": "Product-equals-constant method incl. Simon's Favorite Factoring Trick." },
+    { "label": "Brilliant wiki: Quadratic Diophantine equations - solve by factoring", "url": "https://brilliant.org/wiki/quadratic-diophantine-equations-solve-by-factoring/", "kind": "wiki", "note": "Difference of squares and SFFT on quadratic Diophantine equations." },
+    { "label": "Omega Learn video: Diophantine Equations (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=euz1azVKUYs", "kind": "video", "note": "Chapter lecture from the free book." }
+  ],
+  "nt-factorials-powers": [
+    { "label": "Brilliant wiki: Trailing number of zeros", "url": "https://brilliant.org/wiki/trailing-number-of-zeros/", "kind": "wiki", "note": "Counting factors of 5 in n! and generalizing to other bases." },
+    { "label": "Brilliant wiki: Floor function (Legendre's formula section)", "url": "https://brilliant.org/wiki/floor-function/", "kind": "wiki", "note": "Includes the floor-sum formula for the exponent of a prime in n!." },
+    { "label": "MATHCOUNTS Mini #91: Factorials", "url": "https://www.mathcounts.org/resources/mini-91-factorials", "kind": "video", "note": "Video + activity sheet with solutions; medium." },
+    { "label": "Omega Learn video: Divisibility & Legendre's (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=p5f1u44-pvQ", "kind": "video", "note": "Chapter lecture covering Legendre's formula for prime powers in n!." },
+    { "label": "MATHCOUNTS Mini #71: Number sense problems with patterns and remainders", "url": "https://www.mathcounts.org/resources/mini-71-number-sense-problems-patterns-and-remainders", "kind": "video", "note": "Remainders of large products/factorial-like expressions; video + solutions." }
+  ],
+  "cp-counting-basics": [
+    { "label": "David Altizio handout: Introduction to Counting and Probability (PDF)", "url": "https://davidaltizio.web.illinois.edu/IntroProbability.pdf", "kind": "wiki", "note": "Multiplication principle, permutations, combinations, basic probability with problems; AMC 10 #3-12." },
+    { "label": "Brilliant wiki: Permutations", "url": "https://brilliant.org/wiki/permutations/", "kind": "wiki", "note": "n!, arrangements with repeats and restrictions; foundation level." },
+    { "label": "MATHCOUNTS practice plan: The Fundamental Counting Principle", "url": "https://www.mathcounts.org/resources/fundamental-counting-principle", "kind": "drill", "note": "Handout + coach solutions; easy." },
+    { "label": "MATHCOUNTS Mini #2: Counting methods / number of arrangements", "url": "https://www.mathcounts.org/resources/mini-2-counting-methodsnumber-arrangements", "kind": "video", "note": "Video + activity sheet with solutions; easy." },
+    { "label": "MATHCOUNTS Mini #50: Counting possibilities", "url": "https://www.mathcounts.org/resources/mini-50-counting-possibilities", "kind": "video", "note": "Video + activity sheet with solutions; difficult." },
+    { "label": "Omega Learn video: Permutations & Word Rearrangements (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=RldWnL4-BfI", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn lecture: Permutations, Combinations, Casework, Complementary Counting (AMC 10/12 Fundamentals)", "url": "https://www.youtube.com/watch?v=0W3VmFp55cM", "kind": "video", "note": "Full class lecture; a complete first pass through counting." },
+    { "label": "MIT OCW 6.042J reading: Chapter 11 Cardinality Rules (PDF)", "url": "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/resources/mit6_042jf10_chap11/", "kind": "wiki", "note": "Sum/product/division rules, bijections, binomial theorem; stretch reading." }
+  ],
+  "cp-casework": [
+    { "label": "Brilliant wiki: Casework", "url": "https://brilliant.org/wiki/casework/", "kind": "wiki", "note": "Splitting into cases across counting, number theory and logic with examples." },
+    { "label": "Omega Learn video: Casework (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=kxgUdv_L-ys", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn video: Complementary Counting (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=vxTBkiHKfdY", "kind": "video", "note": "Chapter lecture: count the complement for 'at least one' problems." },
+    { "label": "MATHCOUNTS Mini #62: Solving counting problems using cases", "url": "https://www.mathcounts.org/resources/mini-62-solving-counting-problems-using-cases", "kind": "video", "note": "Video + activity sheet with solutions." },
+    { "label": "MATHCOUNTS Mini #77: More counting using cases", "url": "https://www.mathcounts.org/resources/mini-77-more-counting-using-cases", "kind": "video", "note": "Follow-up casework lesson; video + solutions." },
+    { "label": "Eddie Woo playlist: Working with Combinatorics", "url": "https://www.youtube.com/playlist?list=PL5KkMZvBpo5BoekiiL-6NzgRFo4JFnz7k", "kind": "video", "note": "Classroom series on arrangements with restrictions and cases; foundation level." }
+  ],
+  "cp-probability": [
+    { "label": "Brilliant wiki: Probability - rule of sum", "url": "https://brilliant.org/wiki/probability-rule-of-sum/", "kind": "wiki", "note": "Adding probabilities for exclusive vs overlapping events; foundation level." },
+    { "label": "Brilliant wiki: Conditional probability", "url": "https://brilliant.org/wiki/conditional-probability/", "kind": "wiki", "note": "P(A|B) with dice and card examples." },
+    { "label": "MATHCOUNTS Mini #1 (Part 1): Probability / rolling dice", "url": "https://www.mathcounts.org/resources/mini-1-part-1-probabilityrolling-dice", "kind": "video", "note": "Video + activity sheet with solutions; easy." },
+    { "label": "MATHCOUNTS Mini #99: Conditional probability", "url": "https://www.mathcounts.org/resources/mini-99-conditional-probability", "kind": "video", "note": "Video + activity sheet with solutions." },
+    { "label": "MATHCOUNTS practice plan: Ratios & Simple Probability", "url": "https://www.mathcounts.org/resources/ratios-simple-probability", "kind": "drill", "note": "Probability as a ratio of outcomes; handout + solutions; easy." },
+    { "label": "Omega Learn video: Combinations & Probability (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=mIJ8VMuuVvA", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "MIT OCW 6.042J reading: Chapter 14 Events and Probability Spaces (PDF)", "url": "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/resources/mit6_042jf10_chap14/", "kind": "wiki", "note": "Tree diagrams and the four-step method (Monty Hall); stretch reading." }
+  ],
+  "cp-stars-bars": [
+    { "label": "Brilliant wiki: Stars and bars", "url": "https://brilliant.org/wiki/stars-and-bars/", "kind": "wiki", "note": "Theorem, examples and practice for distributing identical objects." },
+    { "label": "Brilliant wiki: Principle of inclusion and exclusion (PIE)", "url": "https://brilliant.org/wiki/principle-of-inclusion-and-exclusion-pie/", "kind": "wiki", "note": "Two- and three-set PIE with examples." },
+    { "label": "Omega Learn video: Stars and Bars (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=yGJwp72qPzk", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn video: Principle of Inclusion & Exclusion (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=jRZQUv4hY_k", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Video: AMC 10 Skills - Stars and Bars (5 examples)", "url": "https://www.youtube.com/watch?v=PGDaKxFVS9Q", "kind": "video", "note": "Five worked AMC-style stars-and-bars problems." },
+    { "label": "Berkeley Math Circle handout: Counting - Partitions (2018)", "url": "https://mathcircle.berkeley.edu/sites/default/files/handouts/2018/Counting%20Partitions.pdf", "kind": "wiki", "note": "Short math-circle handout on partition-style counting; beginner-intermediate." }
+  ],
+  "cp-expected": [
+    { "label": "Brilliant wiki: Expected value", "url": "https://brilliant.org/wiki/expected-value/", "kind": "wiki", "note": "Definition, properties, linearity, worked problems." },
+    { "label": "Brilliant wiki: Linearity of expectation", "url": "https://brilliant.org/wiki/linearity-of-expectation/", "kind": "wiki", "note": "Sum of expectations even for dependent variables; indicator-variable problems." },
+    { "label": "Brilliant wiki: Geometric probability (1-dimensional)", "url": "https://brilliant.org/wiki/1-dimensional-geometric-probability/", "kind": "wiki", "note": "Length/area-based probability for continuous outcomes." },
+    { "label": "Omega Learn video: Expected Value (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=EE-TtptBHeI", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn video: Geometric Probability (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=LwtoLiBwO-E", "kind": "video", "note": "Chapter lecture from the free book." },
+    { "label": "Omega Learn lecture: Probability, Expected Value, Geometric Probability, States (AMC 10/12 Fundamentals)", "url": "https://www.youtube.com/watch?v=IRyWOZQMTV8", "kind": "video", "note": "Full class lecture including state/recursion methods." },
+    { "label": "MATHCOUNTS Mini #15: Probability with geometry representations", "url": "https://www.mathcounts.org/resources/mini-15-probability-geometry-representations", "kind": "video", "note": "Geometric probability via area; video + solutions." },
+    { "label": "MIT OCW 6.042J reading: Chapter 18 Expectation (PDF)", "url": "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/resources/mit6_042jf10_chap18/", "kind": "wiki", "note": "Linearity of expectation with classic examples; stretch reading." }
+  ],
+  "cp-paths-recursion": [
+    { "label": "Brilliant wiki: Rectangular grid walk (no restriction)", "url": "https://brilliant.org/wiki/rectangular-grid-walk-no-restriction/", "kind": "wiki", "note": "Binomial counting of lattice paths plus recursive/DP approach and blocked cells." },
+    { "label": "Brilliant wiki: Recurrence relations", "url": "https://brilliant.org/wiki/recurrence-relations/", "kind": "wiki", "note": "Setting up and solving recurrences (Tower of Hanoi, Fibonacci-type)." },
+    { "label": "MATHCOUNTS Mini #7: Counting paths along a grid", "url": "https://www.mathcounts.org/resources/mini-7-countingpaths-along-grid", "kind": "video", "note": "Video + activity sheet with solutions; difficult." },
+    { "label": "MATHCOUNTS Mini #85: Counting paths", "url": "https://www.mathcounts.org/resources/mini-85-counting-paths", "kind": "video", "note": "Follow-up path-counting lesson; video + solutions." },
+    { "label": "MATHCOUNTS practice plan: Counting Paths Along a Grid", "url": "https://www.mathcounts.org/resources/counting-paths-along-grid", "kind": "drill", "note": "Handout + coach solutions; 65+ minute plan." },
+    { "label": "Omega Learn video: Recursion (Mastering AMC 10/12)", "url": "https://www.youtube.com/watch?v=WpSpnx8PPnc", "kind": "video", "note": "Chapter lecture from the free book; staircase/tiling recursions." },
+    { "label": "MIT OCW 6.042J reading: Chapter 10 Recurrences (PDF)", "url": "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/resources/mit6_042jf10_chap10/", "kind": "wiki", "note": "Solving linear recurrences; stretch reading." }
+  ]
+}
