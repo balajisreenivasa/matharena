@@ -8,6 +8,11 @@ for the parent.
 
 Built with Next.js 14 + SQLite/Prisma + KaTeX + Tailwind. Node 18.18+.
 
+## Hosted
+
+The family instance runs at https://matharena-dun.vercel.app (Vercel + Neon + Resend, all free tiers; see
+[docs/DEPLOY.md](docs/DEPLOY.md) for setup, backups and maintenance). The local setup below is the fallback and the dev environment.
+
 ## Run it
 
 ```powershell

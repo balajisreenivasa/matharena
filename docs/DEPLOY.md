@@ -114,3 +114,57 @@ scripts\unregister-tasks.cmd
 
 Keep the URL within the family. The bank includes MAA-owned AMC problems for personal practice; the
 app is login-only and should stay that way.
+
+---
+
+## Current state (set up 2026-09-20)
+
+| Piece | Where |
+|---|---|
+| App | https://matharena-dun.vercel.app (Vercel project `matharena`, deployed from this folder with `vercel --prod`) |
+| Database | Neon project `plain-rain-99154336`, branch `production`, database `neondb` |
+| Mail | Resend, test sender `onboarding@resend.dev`; delivers only to jsbalaji@gmail.com until a domain is verified |
+| Cron | Vercel: morning 10:00 UTC (6 AM EDT / 5 AM EST), evening 00:00 UTC (8 PM EDT / 7 PM EST; Sunday adds the digest) |
+| Secrets | Vercel project env (Production). Local `.env` keeps `DATABASE_URL_NEON`, `DIRECT_URL_NEON`, `CRON_SECRET`, `RESEND_API_KEY`, `APP_URL_VERCEL` for scripts |
+| Local fallback | Unchanged: `npm run dev` on this PC with `prisma/matharena.db` (SQLite). The two databases are independent copies |
+
+## Maintenance
+
+**Day to day: nothing.** The app sleeps between requests; cron sends the mails; Neon and Vercel free tiers need no upkeep.
+
+**Weekly (2 minutes): back up her progress.**
+```powershell
+npm.cmd run db:backup      # writes data/backups/neon-<timestamp>.json (bank + profiles + progress)
+```
+Keep the last few. Restore into any database with `IMPORT_FILE=data/backups/<file>.json npm run db:import`
+(pointing `DATABASE_URL` at the target; see step 2 above).
+
+**When code changes (after any edit to this repo):**
+```powershell
+npm.cmd run typecheck; npm.cmd run verify     # gate
+vercel --prod --yes                           # deploy (or connect GitHub in Vercel → Settings → Git for auto-deploys)
+```
+If `prisma/schema.prisma` changed: also `npm run schema:pg` and commit the generated Postgres schema; the deploy applies it.
+
+**When the problem bank changes (re-seed locally, then push the new rows):**
+```powershell
+npm.cmd run db:export
+$env:DATABASE_URL=(Get-Content .env | Select-String '^DATABASE_URL_NEON=').ToString().Split('"')[1]
+$env:PRISMA_CLIENT_PATH="$PWD\node_modules\.prisma\client-pg"
+npx tsx scripts/import-db.ts          # bulk tables only add what's missing; profiles are refreshed
+```
+Careful: this overwrites hosted profile/progress rows with the local copies. Run `db:backup` first, and don't do this
+while she is mid-worksheet.
+
+**Rotate a secret:** `vercel env rm NAME production --yes` then `printf '%s' "newvalue" | vercel env add NAME production`,
+then `vercel --prod --yes`. (The Resend key was pasted in chat once; rotate it in Resend → API Keys when convenient.)
+
+**Send mail to more addresses:** verify a domain in Resend (free, needs DNS access) and set `MAIL_FROM` to an address on
+it; then her own email can be the student address in Settings.
+
+**If Vercel ever goes away:** the local app still works and `data/backups/*.json` restores everything with `db:import`.
+
+**Test the cron by hand:**
+```powershell
+curl -H "Authorization: Bearer <CRON_SECRET>" "https://matharena-dun.vercel.app/api/cron?mode=evening&force=1"
+```

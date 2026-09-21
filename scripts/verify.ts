@@ -59,6 +59,20 @@ async function main() {
   not(check("near miss numeric", answersMatch("0.33", "\\frac{1}{3}"), false));
   not(check("interval string", answersMatch("[0,3)", "[0,3)"), true));
 
+  console.log("--- dates under a UTC server with APP_TZ ---");
+  // Regression: a midnight-parsed date shifted into New York time formatted as the
+  // previous day, so addDays() never advanced and the hosted calendar looped forever.
+  {
+    const { spawnSync } = await import("node:child_process");
+    const r = spawnSync(process.platform === "win32" ? "npx.cmd" : "npx", ["tsx", "scripts/check-dates-tz.ts"], {
+      env: { ...process.env, TZ: "UTC", APP_TZ: "America/New_York" },
+      encoding: "utf8",
+      shell: process.platform === "win32",
+    });
+    not(check("addDays advances across a timezone shift", (r.stdout ?? "").trim(), "2026-09-22 45"));
+    if (r.stderr?.trim()) console.log("  (stderr) " + r.stderr.trim().split("\n")[0]);
+  }
+
   console.log("--- extractBoxed ---");
   not(check("simple", extractBoxed("so \\boxed{42}."), "42"));
   not(check("nested braces", extractBoxed("\\boxed{\\frac{1}{2}}"), "\\frac{1}{2}"));
