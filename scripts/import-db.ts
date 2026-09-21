@@ -9,7 +9,10 @@
 import "dotenv/config";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PrismaClient } from "@prisma/client";
+// PRISMA_CLIENT_PATH lets a Postgres client generated to a side directory be used
+// without overwriting the local SQLite client (see docs/DEPLOY.md).
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { PrismaClient } = require(process.env.PRISMA_CLIENT_PATH ?? "@prisma/client") as typeof import("@prisma/client");
 
 const db = new PrismaClient();
 const CHUNK = 500;

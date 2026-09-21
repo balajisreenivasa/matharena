@@ -29,3 +29,4 @@ blob-report
 .DS_Store
 Thumbs.db
 data/outbox/
+prisma/schema.postgres.local.prisma
