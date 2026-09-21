@@ -1,0 +1,275 @@
+// GENERATED from schema.prisma by scripts/make-postgres-schema.ts — do not edit by hand.
+// Used for hosted deployments (Neon/Vercel): prisma generate --schema=prisma/schema.postgres.prisma
+// MathArena data model — generic across every competition, plus the adaptive
+// daily-plan layer (skills, mastery, worksheets, study plan, mock exams).
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Contest {
+  id           String    @id // "AMC10A", "AIME", "MATHCOUNTS_STATE", "BMT", "PUMAC"
+  name         String
+  level        String // "middle" | "high" | "olympiad"
+  answerFormat String // "multiple_choice" | "integer" | "short_answer"
+  numProblems  Int
+  hardnessBase Int // calibration anchor for the global difficulty scale
+  problems     Problem[]
+}
+
+model Problem {
+  id               String         @id @default(cuid())
+  contestId        String
+  year             Int
+  round            String? // "Sprint","Target","Chapter","State" (null for AMC/AIME)
+  number           Int
+  statement        String // LaTeX/markdown
+  choices          String? // JSON string {"A":"...","B":"..."} ; null for integer-answer contests
+  answer           String // "C" or "204"
+  hasDiagram       Boolean        @default(false)
+  diagramUrl       String? // remote AoPS url (browser loads it)
+  diagramPath      String? // local path after `npm run scrape` downloads it
+  localDifficulty  Int // 1-4, position within its own contest
+  globalDifficulty Int // 1-10, normalized across all contests
+  source           String         @default("AoPS Wiki")
+  sourceUrl        String
+  createdAt        DateTime       @default(now())
+  contest          Contest        @relation(fields: [contestId], references: [id])
+  topics           ProblemTopic[]
+  skills           ProblemSkill[]
+  solutions        Solution[]
+  attempts         Attempt[]
+
+  @@unique([contestId, year, round, number])
+  @@index([globalDifficulty])
+}
+
+model Topic {
+  id       String         @id @default(cuid())
+  name     String         @unique
+  slug     String         @unique
+  color    String
+  problems ProblemTopic[]
+}
+
+model ProblemTopic {
+  problemId  String
+  topicId    String
+  isPrimary  Boolean @default(false)
+  confidence Float?
+  taggedBy   String  @default("ai") // "ai" | "human"
+  problem    Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  topic      Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, topicId])
+}
+
+// A fine-grained AMC 10 skill (e.g. "Modular arithmetic"), defined in
+// src/curriculum/skills.ts and mirrored here so problems and mastery can join on it.
+model Skill {
+  id         String         @id // slug, e.g. "nt-modular"
+  name       String
+  topicSlug  String // parent topic slug: algebra | geometry | number-theory | counting-probability
+  order      Int
+  problems   ProblemSkill[]
+  masteries  SkillMastery[]
+  worksheets Worksheet[]
+}
+
+model ProblemSkill {
+  problemId String
+  skillId   String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, skillId])
+  @@index([skillId])
+}
+
+model Solution {
+  id        String  @id @default(cuid())
+  problemId String
+  order     Int     @default(1)
+  content   String
+  source    String  @default("AoPS Wiki")
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String?
+  grade        Int?
+  role         String         @default("student") // "student" | "parent"
+  lastLoginAt  DateTime?
+  createdAt    DateTime       @default(now())
+  lessonProgress LessonProgress[]
+  attempts     Attempt[]
+  sessions     StudySession[]
+  masteries    SkillMastery[]
+  worksheets   Worksheet[]
+  plan         StudyPlan?
+  mockExams    MockExam[]
+}
+
+// Running estimate of how well the learner knows one skill. `score` is 0..1 and
+// moves with an exponential moving average weighted by problem difficulty.
+model SkillMastery {
+  id            String    @id @default(cuid())
+  userId        String
+  skillId       String
+  score         Float     @default(0.35)
+  attempts      Int       @default(0)
+  correct       Int       @default(0)
+  streak        Int       @default(0)
+  lastPracticed DateTime?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill         Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}
+
+model StudyPlan {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  startDate      String // YYYY-MM-DD
+  examADate      String // YYYY-MM-DD
+  examBDate      String // YYYY-MM-DD
+  minutesPerDay  Int      @default(70)
+  problemsPerDay Int      @default(8)
+  restDays       String   @default("[]") // JSON array of weekday numbers (0=Sun)
+  pauseDates     String   @default("[]") // JSON array of YYYY-MM-DD with no assignment; the schedule pushes past them
+  deliverTo      String? // student email for the 6:00 AM worksheet
+  parentEmail    String? // parent: cc on the morning mail, 8:00 PM summary, Sunday digest
+  deliverAt      String   @default("06:00") // HH:MM local
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// One assigned set of problems: a daily worksheet, the diagnostic, a mock exam, or a review.
+model Worksheet {
+  id           String    @id @default(cuid())
+  userId       String
+  date         String // YYYY-MM-DD it was assigned for
+  kind         String // "daily" | "diagnostic" | "mock" | "review"
+  skillId      String? // the lesson skill for a daily worksheet
+  title        String
+  items        String // JSON [{problemId, role}] — role: warmup|lesson|mixed|challenge|diagnostic|mock
+  status       String    @default("pending") // pending | in_progress | done
+  score        Int?
+  total        Int?
+  timeLimitSec Int?
+  sentAt       DateTime?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill        Skill?    @relation(fields: [skillId], references: [id])
+  attempts     Attempt[]
+
+  @@index([userId, date])
+}
+
+model StudySession {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String // "diagnostic" | "practice"
+  config      String // JSON string
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempts    Attempt[]
+}
+
+model Attempt {
+  id           String        @id @default(cuid())
+  userId       String
+  problemId    String
+  sessionId    String?
+  worksheetId  String?
+  selected     String // "" = left blank
+  isCorrect    Boolean
+  confidence   String? // "sure" | "unsure" | "guessed"
+  errorTag     String? // "C" concept | "S" setup | "E" execution | "R" misread | "T" time
+  timeSpentSec Int?
+  createdAt    DateTime      @default(now())
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem      Problem       @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  session      StudySession? @relation(fields: [sessionId], references: [id])
+  worksheet    Worksheet?    @relation(fields: [worksheetId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([worksheetId])
+}
+
+// Interactive lesson progress: checkpoint questions, "try it first" worked examples,
+// and the end-of-lesson quiz (a 5-problem worksheet from the bank).
+model LessonProgress {
+  id                 String    @id @default(cuid())
+  userId             String
+  skillId            String
+  status             String    @default("started") // started | read | quiz_passed
+  checkpointsCorrect Int       @default(0)
+  checkpointsTotal   Int       @default(0)
+  examplesCorrect    Int       @default(0)
+  examplesTotal      Int       @default(0)
+  quizWorksheetId    String?
+  quizScore          Int?
+  quizTotal          Int?
+  data               String    @default("{}") // JSON: per-checkpoint/example answers
+  startedAt          DateTime  @default(now())
+  completedAt        DateTime?
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}
+
+// A lesson page opened on a given day (so Today and the evening mail can show it was read).
+model LessonView {
+  id       String   @id @default(cuid())
+  userId   String
+  skillId  String
+  date     String // YYYY-MM-DD
+  viewedAt DateTime @default(now())
+
+  @@unique([userId, skillId, date])
+}
+
+// Spaced-repetition queue: a missed problem comes back after 1, 3, 7, then 14 days;
+// a correct redo advances the interval, a wrong redo resets it, retiring after 14.
+model ReviewItem {
+  id            String @id @default(cuid())
+  userId        String
+  problemId     String
+  dueDate       String // YYYY-MM-DD
+  intervalIndex Int    @default(0) // index into [1, 3, 7, 14]
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, problemId])
+  @@index([userId, dueDate])
+}
+
+// A full past AMC paper done on paper (from the AoPS wiki) and logged by hand.
+model MockExam {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String // YYYY-MM-DD
+  contest   String // "AMC10A" | "AMC10B" | "AMC8" | ...
+  year      Int
+  correct   Int
+  blank     Int
+  wrong     Int
+  score     Float // AMC scoring: 6*correct + 1.5*blank
+  missed    String   @default("[]") // JSON array of problem numbers missed/blank
+  notes     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

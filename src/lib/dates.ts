@@ -2,7 +2,26 @@
 // for "today" is the same row whether it is built at 6:30am by the scheduler or
 // at 8pm by the student.
 
+// The family's calendar timezone. A hosted server runs in UTC, so "today" must be
+// computed in the student's zone or the 8 PM summary would describe tomorrow.
+export const APP_TZ = process.env.APP_TZ || process.env.TZ || "";
+
+const fmtCache = new Map<string, Intl.DateTimeFormat>();
+function fmtFor(tz: string): Intl.DateTimeFormat {
+  let f = fmtCache.get(tz);
+  if (!f) {
+    f = new Intl.DateTimeFormat("en-CA", { timeZone: tz || undefined, year: "numeric", month: "2-digit", day: "2-digit" });
+    fmtCache.set(tz, f);
+  }
+  return f;
+}
+
 export function toISODate(d: Date): string {
+  if (APP_TZ) {
+    try {
+      return fmtFor(APP_TZ).format(d); // en-CA gives YYYY-MM-DD
+    } catch {}
+  }
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");

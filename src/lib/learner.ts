@@ -59,7 +59,11 @@ export async function getLearnerById(id: string): Promise<Learner | null> {
 
 // Students with a password (real profiles). Scripts loop over these.
 export async function listLearners(): Promise<Learner[]> {
-  const users = await db.user.findMany({ where: { passwordHash: { not: null }, role: "student" }, include: { plan: true }, orderBy: { createdAt: "asc" } });
+  const users = await db.user.findMany({
+    where: { passwordHash: { not: null }, role: "student", NOT: { email: { endsWith: "@matharena.test" } } }, // test accounts get no mail
+    include: { plan: true },
+    orderBy: { createdAt: "asc" },
+  });
   const out: Learner[] = [];
   for (const u of users) out.push(await withPlan(u));
   return out;

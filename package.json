@@ -19,7 +19,12 @@
     "build:data": "tsx scripts/import.ts && tsx scripts/classify.ts && tsx scripts/seed.ts",
     "db:push": "prisma db push",
     "tag": "tsx scripts/tag.ts",
-    "daily": "tsx scripts/daily.ts"
+    "daily": "tsx scripts/daily.ts",
+    "schema:pg": "tsx scripts/make-postgres-schema.ts",
+    "vercel-build": "prisma generate --schema=prisma/schema.postgres.prisma && prisma db push --schema=prisma/schema.postgres.prisma --skip-generate --accept-data-loss && next build",
+    "db:export": "tsx scripts/export-db.ts",
+    "db:import": "tsx scripts/import-db.ts",
+    "postinstall": "prisma generate"
   },
   "prisma": {
     "seed": "tsx scripts/seed.ts"

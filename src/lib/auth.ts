@@ -14,11 +14,17 @@ let cachedSecret: string | null = null;
 export function authSecret(): string {
   if (cachedSecret) return cachedSecret;
   if (process.env.AUTH_SECRET) return (cachedSecret = process.env.AUTH_SECRET);
-  const dir = join(process.cwd(), "data");
-  const file = join(dir, ".auth-secret");
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  if (!existsSync(file)) writeFileSync(file, randomBytes(32).toString("hex"));
-  return (cachedSecret = readFileSync(file, "utf8").trim());
+  // Local fallback: a random secret kept in data/.auth-secret. Hosted filesystems are
+  // read-only, so there AUTH_SECRET must be set explicitly.
+  try {
+    const dir = join(process.cwd(), "data");
+    const file = join(dir, ".auth-secret");
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+    if (!existsSync(file)) writeFileSync(file, randomBytes(32).toString("hex"));
+    return (cachedSecret = readFileSync(file, "utf8").trim());
+  } catch {
+    throw new Error("AUTH_SECRET is not set and data/.auth-secret is not writable. Hosted deployments must define AUTH_SECRET (any long random string) in the environment.");
+  }
 }
 
 // ---- passwords -------------------------------------------------------------
