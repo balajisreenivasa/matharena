@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { SKILLS, TOPIC_META, tagSkills, type TopicSlug } from "../src/curriculum/skills";
+import { SUBSKILLS, tagSubSkills } from "../src/curriculum/subskills";
 
 const db = new PrismaClient();
 
@@ -115,6 +116,16 @@ export async function tagSkillsForAllProblems() {
       create: { id: s.id, name: s.name, topicSlug: s.topicSlug, order: s.order },
     });
   }
+  // Sub-skills share the table; order = parent order * 100 + position.
+  for (const sub of SUBSKILLS) {
+    const parent = SKILLS.find((s) => s.id === sub.parentId)!;
+    const order = parent.order * 100 + SUBSKILLS.filter((x) => x.parentId === sub.parentId).indexOf(sub) + 1;
+    await db.skill.upsert({
+      where: { id: sub.id },
+      update: { name: sub.name, topicSlug: parent.topicSlug, order },
+      create: { id: sub.id, name: sub.name, topicSlug: parent.topicSlug, order },
+    });
+  }
   await db.problemSkill.deleteMany({});
 
   const problems = await db.problem.findMany({
@@ -133,6 +144,10 @@ export async function tagSkillsForAllProblems() {
     for (const skillId of ids) {
       links.push({ problemId: p.id, skillId });
       perSkill[skillId] = (perSkill[skillId] ?? 0) + 1;
+    }
+    for (const subId of tagSubSkills(p.statement, ids, [...slugs])) {
+      links.push({ problemId: p.id, skillId: subId });
+      perSkill[subId] = (perSkill[subId] ?? 0) + 1;
     }
   }
   for (let i = 0; i < links.length; i += 1000) {

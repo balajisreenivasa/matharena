@@ -102,12 +102,17 @@ export function planConfig(plan: StudyPlan): PlanConfig {
 
 export type MasteryRow = MasteryState & { skillId: string; lastPracticed: Date | null; effective: number };
 
-// Every skill, with a default row for anything not yet practised.
+// Every lesson skill, with a default row for anything not yet practised.
 export async function getMasteryMap(userId: string): Promise<Record<string, MasteryRow>> {
-  const rows = await db.skillMastery.findMany({ where: { userId } });
+  return getMasteryMapFor(userId, SKILLS.map((s) => s.id));
+}
+
+// Same for an arbitrary id list (sub-skills live in the same table with "sub-" ids).
+export async function getMasteryMapFor(userId: string, ids: string[]): Promise<Record<string, MasteryRow>> {
+  const rows = await db.skillMastery.findMany({ where: { userId, skillId: { in: ids } } });
   const byId: Record<string, MasteryRow> = {};
-  for (const s of SKILLS) {
-    byId[s.id] = { skillId: s.id, ...INITIAL_MASTERY, lastPracticed: null, effective: INITIAL_MASTERY.score };
+  for (const id of ids) {
+    byId[id] = { skillId: id, ...INITIAL_MASTERY, lastPracticed: null, effective: INITIAL_MASTERY.score };
   }
   for (const r of rows) {
     byId[r.skillId] = {

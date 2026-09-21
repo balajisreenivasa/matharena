@@ -70,5 +70,16 @@ export async function POST(req: Request) {
     },
   });
 
+  // A finished lesson quiz records its score on the lesson; 80% passes.
+  if (done && worksheet.kind === "lesson-quiz" && worksheet.skillId) {
+    const passed = score >= Math.ceil(items.length * 0.8);
+    const row = await db.lessonProgress.findUnique({ where: { userId_skillId: { userId: learner.id, skillId: worksheet.skillId } } });
+    await db.lessonProgress.upsert({
+      where: { userId_skillId: { userId: learner.id, skillId: worksheet.skillId } },
+      update: { quizWorksheetId: worksheet.id, quizScore: score, quizTotal: items.length, status: passed ? "quiz_passed" : row?.status === "quiz_passed" ? "quiz_passed" : row?.status ?? "started", completedAt: passed ? new Date() : row?.completedAt ?? null },
+      create: { userId: learner.id, skillId: worksheet.skillId, quizWorksheetId: worksheet.id, quizScore: score, quizTotal: items.length, status: passed ? "quiz_passed" : "started", completedAt: passed ? new Date() : null },
+    });
+  }
+
   return NextResponse.json({ attempts: created, worksheet: { status: updated.status, score: updated.score, total: updated.total } });
 }

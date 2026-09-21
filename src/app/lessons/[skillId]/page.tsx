@@ -2,17 +2,18 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { SKILL_BY_ID, TOPIC_META } from "@/curriculum/skills";
 import { lessonFor } from "@/curriculum/lessons";
-import { RichText } from "@/components/Math";
-import { getLearner, getMasteryMap } from "@/lib/learner";
+import { subSkillsOf, PREREQS } from "@/curriculum/subskills";
+import { resourcesFor, PAST_PAPERS } from "@/curriculum/resources";
+import { getLearner, getMasteryMap, getMasteryMapFor } from "@/lib/learner";
 import { LEVEL_COLOR, masteryLevel } from "@/lib/mastery";
 import { createSkillPractice } from "@/lib/worksheet";
 import { todayStr } from "@/lib/dates";
 import { db } from "@/lib/db";
-import { resourcesFor, PAST_PAPERS } from "@/curriculum/resources";
-
-const KIND_ICON: Record<string, string> = { wiki: "📖", book: "📚", problems: "🧩", video: "▶", drill: "🎯" };
+import { LessonClient, type LessonProgressView } from "@/components/LessonClient";
 
 export const dynamic = "force-dynamic";
+
+const KIND_ICON: Record<string, string> = { wiki: "📖", book: "📚", problems: "🧩", video: "▶", drill: "🎯" };
 
 export default async function LessonPage({ params }: { params: { skillId: string } }) {
   const skill = SKILL_BY_ID[params.skillId];
@@ -21,15 +22,32 @@ export default async function LessonPage({ params }: { params: { skillId: string
   const learner = await getLearner();
   const mastery = (await getMasteryMap(learner.id))[skill.id];
   const lvl = masteryLevel(mastery.effective, mastery.attempts);
+  const subs = subSkillsOf(skill.id);
+  const subMastery = await getMasteryMapFor(learner.id, subs.map((s) => s.id));
   const bank = await db.problemSkill.count({ where: { skillId: skill.id } });
   const resources = resourcesFor(skill.id);
-  // Opening the lesson counts as reading it for Today's checklist and the evening mail.
+  const prereqs = PREREQS[skill.id] ?? [];
+
   const date = todayStr();
   await db.lessonView.upsert({
     where: { userId_skillId_date: { userId: learner.id, skillId: skill.id, date } },
     update: {},
     create: { userId: learner.id, skillId: skill.id, date },
   });
+
+  const row = await db.lessonProgress.findUnique({ where: { userId_skillId: { userId: learner.id, skillId: skill.id } } });
+  let data: { checkpoints: Record<string, { answer: string; correct: boolean }>; examples: Record<string, { answer: string; correct: boolean }> } = { checkpoints: {}, examples: {} };
+  try {
+    if (row) data = { checkpoints: JSON.parse(row.data).checkpoints ?? {}, examples: JSON.parse(row.data).examples ?? {} };
+  } catch {}
+  const initial: LessonProgressView = {
+    status: row?.status ?? "started",
+    checkpoints: data.checkpoints,
+    examples: data.examples,
+    quizScore: row?.quizScore ?? null,
+    quizTotal: row?.quizTotal ?? null,
+    quizWorksheetId: row?.quizWorksheetId ?? null,
+  };
 
   async function startPractice() {
     "use server";
@@ -40,58 +58,38 @@ export default async function LessonPage({ params }: { params: { skillId: string
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="mb-4 text-sm"><Link href="/lessons" className="font-medium text-blue-600 hover:underline">← All lessons</Link></div>
-      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-4 flex justify-between text-sm">
+        <Link href="/lessons" className="font-medium text-blue-600 hover:underline">← All lessons</Link>
+        <Link href="/skills" className="font-medium text-blue-600 hover:underline">Skill tree →</Link>
+      </div>
+      <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <span className="rounded-full px-2.5 py-0.5 font-semibold text-white" style={{ backgroundColor: TOPIC_META[skill.topicSlug].color }}>{TOPIC_META[skill.topicSlug].name}</span>
           <span className="rounded-full border border-slate-300 px-2.5 py-0.5 text-slate-600">Lesson {skill.order} · tier {skill.tier} · AMC 10 {skill.amcRange}</span>
-          <span className="rounded-full px-2.5 py-0.5 font-semibold text-white" style={{ backgroundColor: LEVEL_COLOR[lvl] }}>{lvl}{mastery.attempts ? ` · ${mastery.correct}/${mastery.attempts}` : ""}</span>
+          <span className="rounded-full px-2.5 py-0.5 font-semibold text-white" style={{ backgroundColor: LEVEL_COLOR[lvl] }}>{lvl}{mastery.attempts ? ` · ${mastery.correct}/${mastery.attempts} · ${Math.round(mastery.effective * 100)}%` : ""}</span>
           <span className="ml-auto text-slate-400">{bank} problems in the bank</span>
         </div>
         <h1 className="mt-3 text-2xl font-black text-slate-900">{skill.name}</h1>
-        {lesson ? <p className="mt-2 leading-relaxed text-slate-700"><RichText text={lesson.summary} /></p> : <p className="mt-2 text-slate-500">Lesson text not written yet.</p>}
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {subs.map((s) => {
+            const m = subMastery[s.id];
+            const l = masteryLevel(m.effective, m.attempts);
+            return (
+              <span key={s.id} className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-700" title={`${l}${m.attempts ? ` · ${m.correct}/${m.attempts}` : ""}`}>
+                <span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: LEVEL_COLOR[l] }} />{s.name}{m.attempts ? ` ${Math.round(m.effective * 100)}%` : ""}
+              </span>
+            );
+          })}
+        </div>
+        {prereqs.length > 0 && (
+          <div className="mt-2 text-xs text-slate-500">Builds on: {prereqs.map((p, i) => <span key={p}>{i > 0 && ", "}<Link href={`/lessons/${p}`} className="text-blue-700 hover:underline">{SKILL_BY_ID[p]?.name}</Link></span>)}</div>
+        )}
         <form action={startPractice} className="mt-4">
-          <button className="rounded-xl bg-slate-900 px-5 py-2 font-semibold text-white hover:bg-slate-700">Practice this skill (8 problems)</button>
+          <button className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Extra practice (8 problems)</button>
         </form>
       </div>
 
-      {lesson && (
-        <div className="space-y-6">
-          <Section title="Key ideas">
-            <ul className="list-disc space-y-2 pl-5">
-              {lesson.keyIdeas.map((k, i) => <li key={i}><RichText text={k} /></li>)}
-            </ul>
-          </Section>
-          <Section title="Formulas & facts to know cold">
-            <ul className="space-y-2">
-              {lesson.formulas.map((f, i) => <li key={i} className="rounded-lg bg-slate-50 px-3 py-2"><RichText text={f} /></li>)}
-            </ul>
-          </Section>
-          <Section title="Worked examples">
-            <div className="space-y-5">
-              {lesson.workedExamples.map((ex, i) => (
-                <div key={i} className="rounded-xl border border-slate-200 p-4">
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Example {i + 1}</div>
-                  <div className="leading-relaxed text-slate-900"><RichText text={ex.problem} /></div>
-                  <details className="mt-3">
-                    <summary className="cursor-pointer text-sm font-semibold text-blue-700">Show solution</summary>
-                    <div className="mt-2 leading-relaxed text-slate-800"><RichText text={ex.solution} /></div>
-                  </details>
-                </div>
-              ))}
-            </div>
-          </Section>
-          <Section title="Pitfalls">
-            <ul className="list-disc space-y-2 pl-5">
-              {lesson.pitfalls.map((k, i) => <li key={i}><RichText text={k} /></li>)}
-            </ul>
-          </Section>
-          <Section title="On the AMC 10">
-            <p className="leading-relaxed"><RichText text={lesson.amcStrategy} /></p>
-            <p className="mt-2 text-xs text-slate-500">About {lesson.estimatedMinutes} minutes to read.</p>
-          </Section>
-        </div>
-      )}
+      {lesson ? <LessonClient skillId={skill.id} skillName={skill.name} lesson={lesson} initial={initial} /> : <p className="text-slate-500">Lesson text not written yet.</p>}
 
       {resources.length > 0 && (
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
@@ -115,14 +113,5 @@ export default async function LessonPage({ params }: { params: { skillId: string
         </section>
       )}
     </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6">
-      <h2 className="mb-3 text-lg font-bold text-slate-800">{title}</h2>
-      <div className="text-slate-800">{children}</div>
-    </section>
   );
 }

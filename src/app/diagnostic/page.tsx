@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 // The diagnostic has two halves:
 //   1. Paper: the full 2015 AMC 10A (75 min), logged on /mock. Sets the score target.
-//   2. In-app: one problem per skill, untimed, skip what's unfamiliar. Seeds mastery
+//   2. In-app: two problems per skill (easy + core), untimed, skip what's unfamiliar. Seeds mastery
 //      and the starting band for every skill.
 // This page explains, launches, and afterwards shows the baseline.
 export default async function DiagnosticPage() {
@@ -45,7 +45,11 @@ export default async function DiagnosticPage() {
   for (const it of items) {
     if (!it.skillId) continue;
     const a = byProblem.get(it.problemId);
-    result[it.skillId] = !a ? "pending" : a.isCorrect ? "right" : a.selected.trim() === "" ? "blank" : "wrong";
+    const r: "right" | "wrong" | "blank" | "pending" = !a ? "pending" : a.isCorrect ? "right" : a.selected.trim() === "" ? "blank" : "wrong";
+    const prev = result[it.skillId];
+    // Two problems per skill: right beats wrong beats blank beats pending.
+    const rank = { right: 3, wrong: 2, blank: 1, pending: 0 } as const;
+    result[it.skillId] = !prev || rank[r] > rank[prev] ? r : prev;
   }
   const done = sheet?.status === "done";
   const rights = Object.values(result).filter((r) => r === "right").length;
@@ -67,7 +71,7 @@ export default async function DiagnosticPage() {
     <div className="mx-auto max-w-3xl">
       <h1 className="text-2xl font-black text-slate-900">Diagnostic</h1>
       <p className="mb-6 mt-1 text-sm text-slate-600">
-        Two parts on {diagDay ? fmtShort(diagDay.date) : "day 1"}. The paper sets the score target; the in-app set gives every one of the 28 skills a starting point. Fine to split over two sittings.
+        Two parts on {diagDay ? fmtShort(diagDay.date) : "day 1"}. The paper sets the score target; the in-app set gives every one of the 28 skills two data points. Fine to split over two sittings.
       </p>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -91,17 +95,17 @@ export default async function DiagnosticPage() {
 
         <section className={`rounded-2xl border bg-white p-5 ${done ? "border-green-200" : "border-blue-200"}`}>
           <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Part 2 · In-app</div>
-          <h2 className="mt-1 text-lg font-bold text-slate-900">28 problems, one per skill, untimed</h2>
+          <h2 className="mt-1 text-lg font-bold text-slate-900">56 problems, two per skill, untimed</h2>
           {done ? (
-            <p className="mt-2 text-sm text-slate-700"><b>{rights}/28</b> right. Every skill now has a starting band (below).</p>
+            <p className="mt-2 text-sm text-slate-700"><b>{rights}/{items.length}</b> right. Every skill now has a starting band (below).</p>
           ) : sheet ? (
             <p className="mt-2 text-sm text-slate-700">{attempts.length}/{items.length} answered. Resume when ready.</p>
           ) : (
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-              <li>Medium difficulty on purpose (band 3-5). Some will be new; that&apos;s the point.</li>
+              <li>Two per skill: one easy (band 2-3), one core (band 4-6). Some will be new; that&apos;s the point.</li>
               <li><b>Skip</b> anything unfamiliar instead of guessing. A blank places the skill correctly; a lucky guess hides a gap.</li>
               <li>Mark how sure she is. "Sure and wrong" is the most useful result there is.</li>
-              <li>About 45-60 minutes. A break halfway is fine; it saves progress.</li>
+              <li>About 75-90 minutes in total. Do it in two sittings; progress saves after every answer.</li>
             </ul>
           )}
           <div className="mt-3">

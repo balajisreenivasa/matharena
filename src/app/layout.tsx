@@ -3,25 +3,29 @@ import "katex/dist/katex.min.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ThemeToggle, THEME_INIT_SCRIPT } from "@/components/ThemeToggle";
+import { getLearnerOrNull } from "@/lib/learner";
 
 export const metadata: Metadata = {
   title: "MathArena — AMC 10 Prep",
   description: "Adaptive daily lessons, worksheets and mocks for the AMC 10.",
 };
 
+export const dynamic = "force-dynamic";
+
 const NAV = [
   ["/", "Home"],
   ["/today", "Today"],
   ["/plan", "Plan"],
-  ["/diagnostic", "Diagnostic"],
   ["/lessons", "Lessons"],
+  ["/skills", "Skills"],
   ["/progress", "Progress"],
   ["/mock", "Mocks"],
   ["/practice", "Practice"],
   ["/settings", "Settings"],
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const learner = await getLearnerOrNull();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -34,9 +38,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Math<span className="text-blue-600">Arena</span>
             </Link>
             <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
-              {NAV.map(([href, label]) => (
+              {learner && NAV.map(([href, label]) => (
                 <Link key={href} href={href} className="hover:text-slate-900">{label}</Link>
               ))}
+              {learner ? (
+                <Link href="/profile" className="rounded-full border border-slate-300 px-3 py-1 text-slate-800 hover:bg-slate-100" title="Profile">
+                  {learner.name.split(" ")[0]}
+                </Link>
+              ) : (
+                <Link href="/login" className="hover:text-slate-900">Sign in</Link>
+              )}
               <ThemeToggle />
             </nav>
           </div>
