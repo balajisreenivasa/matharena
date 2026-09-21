@@ -4,7 +4,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/session";
 
-const PUBLIC = ["/login", "/signup", "/api/auth"];
+const PUBLIC = ["/login", "/signup", "/api/auth", "/api/cron"]; // cron has its own bearer secret
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

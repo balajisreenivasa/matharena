@@ -5,6 +5,8 @@ import { lessonFor } from "@/curriculum/lessons";
 import { subSkillsOf, PREREQS } from "@/curriculum/subskills";
 import { resourcesFor, PAST_PAPERS } from "@/curriculum/resources";
 import { readingFor, videosFor, extraFor } from "@/curriculum/research";
+import { lessonPlanFor } from "@/curriculum/lessonPlans";
+import { RichText } from "@/components/Math";
 import { getLearner, getMasteryMap, getMasteryMapFor } from "@/lib/learner";
 import { LEVEL_COLOR, masteryLevel } from "@/lib/mastery";
 import { createSkillPractice } from "@/lib/worksheet";
@@ -31,6 +33,7 @@ export default async function LessonPage({ params }: { params: { skillId: string
   const videos = videosFor(skill.id);
   const extras = extraFor(skill.id);
   const prereqs = PREREQS[skill.id] ?? [];
+  const plan = lessonPlanFor(skill.id);
 
   const date = todayStr();
   await db.lessonView.upsert({
@@ -94,6 +97,37 @@ export default async function LessonPage({ params }: { params: { skillId: string
       </div>
 
       {lesson ? <LessonClient skillId={skill.id} skillName={skill.name} lesson={lesson} initial={initial} /> : <p className="text-slate-500">Lesson text not written yet.</p>}
+
+      {plan && (
+        <details className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-6">
+          <summary className="cursor-pointer text-lg font-bold text-amber-950">Teaching plan for the parent (20-minute lesson block)</summary>
+          <div className="mt-3 grid gap-4 text-sm text-amber-950 md:grid-cols-2">
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide">By the end she can</div>
+              <ul className="list-disc space-y-1 pl-5">{plan.objectives.map((o, i) => <li key={i}><RichText text={o} /></li>)}</ul>
+              {plan.prerequisites.length > 0 && <div className="mt-2 text-xs">Needs first: {plan.prerequisites.map((p) => SKILL_BY_ID[p]?.name).filter(Boolean).join(", ")}</div>}
+              <div className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide">Warm-up (2-3 min)</div>
+              <p><RichText text={plan.warmup} /></p>
+              <div className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide">Exit ticket (60 s)</div>
+              <p><RichText text={plan.exitTicket.question} /> <span className="text-xs">(answer: <RichText text={`$${plan.exitTicket.answer}$`} />)</span></p>
+            </div>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide">Sequence</div>
+              <ol className="space-y-1.5">
+                {plan.sequence.map((s, i) => (
+                  <li key={i} className="flex gap-2"><span className="w-12 flex-none font-mono text-xs">{s.minutes} min</span><span><b>{s.activity}.</b> <RichText text={s.detail} /></span></li>
+                ))}
+              </ol>
+              <div className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide">Homework</div>
+              <p><RichText text={plan.homework} /></p>
+              <div className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide">Watch for</div>
+              <ul className="list-disc space-y-1 pl-5">{plan.parentNotes.map((n, i) => <li key={i}><RichText text={n} /></li>)}</ul>
+              <div className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide">On past papers</div>
+              <p><RichText text={plan.amcConnection} /></p>
+            </div>
+          </div>
+        </details>
+      )}
 
       {(reading.length > 0 || videos.length > 0 || extras.length > 0) && (
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">

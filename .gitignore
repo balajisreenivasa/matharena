@@ -30,3 +30,6 @@ blob-report
 Thumbs.db
 data/outbox/
 prisma/schema.postgres.local.prisma
+
+.vercel
+.env*

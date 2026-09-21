@@ -7,7 +7,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "verify": "tsx scripts/verify.ts && tsx scripts/check-lessons.ts",
+    "verify": "tsx scripts/verify.ts && tsx scripts/check-lessons.ts && tsx scripts/check-lesson-plans.ts",
     "test": "playwright test",
     "dev": "next dev",
     "build": "next build",
@@ -24,7 +24,8 @@
     "vercel-build": "prisma generate --schema=prisma/schema.postgres.prisma && prisma db push --schema=prisma/schema.postgres.prisma --skip-generate --accept-data-loss && next build",
     "db:export": "tsx scripts/export-db.ts",
     "db:import": "tsx scripts/import-db.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:backup": "tsx scripts/backup-hosted.ts"
   },
   "prisma": {
     "seed": "tsx scripts/seed.ts"
