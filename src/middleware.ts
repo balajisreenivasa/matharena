@@ -2,7 +2,7 @@
 // only checks that a well-formed, unexpired session cookie exists; getLearner()
 // verifies the signature on the server and bounces to /login if it is forged.
 import { NextResponse, type NextRequest } from "next/server";
-import { SESSION_COOKIE } from "@/lib/auth";
+import { SESSION_COOKIE } from "@/lib/session";
 
 const PUBLIC = ["/login", "/signup", "/api/auth"];
 

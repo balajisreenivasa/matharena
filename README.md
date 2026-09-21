@@ -25,6 +25,13 @@ npm run build:data   # download + classify + seed the 12k-problem bank (cached u
 npm run dev
 ```
 
+## Accounts
+
+Each student creates a profile at `/signup` (name, email, password, grade); everything — plan, worksheets,
+mastery, review queue, lesson progress — belongs to that profile. Sessions are a signed cookie; passwords are
+scrypt-hashed locally. The parent can create a second profile (role: parent) or simply sign in as the student.
+The daily emails loop over every student profile.
+
 ## What's where
 
 | Page | What it does |
@@ -32,8 +39,10 @@ npm run dev
 | `/` | Countdown to both exams, today's card, streak, projected score, parent checklist |
 | `/today` | The daily routine as a checklist: warm-up, lesson, worksheet, corrections (or paper mock) |
 | `/plan` | The full calendar, week by week, with completion status and *Push* for missed days |
-| `/diagnostic` | Day-1 paper diagnostic (2015 10A) + in-app skill diagnostic; baseline and score target |
-| `/lessons` | 28 lessons: key ideas, formulas, worked examples, pitfalls, AMC strategy, "go deeper" links |
+| `/diagnostic` | Day-1 paper diagnostic (2015 10A) + in-app diagnostic (two problems per skill); baseline and score target |
+| `/lessons` | 28 interactive lessons: key ideas with 4 checkpoint questions, formulas, try-first worked examples, pitfalls, AMC strategy, a 5-problem quiz, and "go deeper" links |
+| `/skills` | Skill tree: 4 topics → 28 lesson skills (teaching order, prerequisite edges) → 57 sub-skills, each with mastery %, attempts, accuracy and status |
+| `/profile` | Questions solved, accuracy by topic, lessons read and quizzes passed, weekly activity, password change |
 | `/worksheet/[id]` | Answer entry with math keyboard and live preview, confidence marks, error tags, solutions |
 | `/progress` | Mastery by skill, 14-day activity, error-tag breakdown, review queue, mock history |
 | `/mock` | Log paper mocks (score + missed numbers); start an extra in-app timed mock |
@@ -60,7 +69,8 @@ and removed by `scripts\unregister-tasks.cmd`. The app must be running for links
 | [AIME 1983–2024](https://huggingface.co/datasets/gneubig/aime-1983-2024) | CC0 | 932 integer-answer problems; only #1–5 are served for AMC 10 prep |
 | [NuminaMath-1.5](https://huggingface.co/datasets/AI-MO/NuminaMath-1.5) `amc_aime` slice | Apache 2.0 (problems © MAA) | Real AMC 8/10/12 transcriptions; A–E choices are split out so in-app mocks can be multiple choice |
 
-Problems are tagged with the 28 skills by keyword (`src/curriculum/skills.ts`); re-tag with `npm run tag`.
+Problems are tagged with the 28 lesson skills and 57 sub-skills by keyword (`src/curriculum/skills.ts`,
+`src/curriculum/subskills.ts`); re-tag with `npm run tag`. Seeding is an upsert, so re-seeding never erases a student's history.
 The AoPS wiki is blocked to scrapers, so past AMC 10 papers are used as *paper* mocks via links, never fetched.
 
 ## Checks

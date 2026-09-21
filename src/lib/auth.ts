@@ -7,8 +7,8 @@ import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const SESSION_COOKIE = "ma_session";
-const SESSION_DAYS = 90;
+import { SESSION_COOKIE, SESSION_DAYS } from "./session";
+export { SESSION_COOKIE };
 
 let cachedSecret: string | null = null;
 export function authSecret(): string {

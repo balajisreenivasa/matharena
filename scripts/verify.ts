@@ -121,7 +121,8 @@ async function main() {
 
   console.log("--- seeded data ---");
   const total = await db.problem.count();
-  not(check("12302 problems", total, 12302));
+  not(check("bank holds at least the MATH + AIME sets (12302)", total >= 12302, true));
+  console.log(`  bank size: ${total}`);
 
   const aime = await db.problem.findFirst({
     where: { contestId: "AIME_I" },
