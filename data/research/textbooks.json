@@ -1,0 +1,628 @@
+{
+  "generatedOn": "2026-09-20",
+  "verificationNote": "Every URL below returned HTTP 200 with real content on 2026-09-20 unless its note says otherwise. AoPS wiki pages are behind Cloudflare bot protection: the AMC 10 index and the Geometry / Combinatorics / Number Theory category pages were verified through a reader proxy and the Wayback Machine (snapshot 2026-08-15); the Algebra and Probability category pages were blocked during this session and are marked unverified.",
+  "books": [
+    {
+      "title": "Prealgebra",
+      "author": "Richard Rusczyk, David Patrick, Ravi Boppana (Art of Problem Solving)",
+      "url": "https://artofproblemsolving.com/store/book/prealgebra",
+      "free": false,
+      "license": "Copyright AoPS Inc. Paid textbook. Official free material: chapter 1 excerpt PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/prealgebra/exc1.pdf), TOC PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/prealgebra/toc.pdf), index PDF (.../prealgebra/index.pdf), online-book preview page (https://artofproblemsolving.com/ebooks/prealgebra-ebook/preview), and the free chapter-aligned video series (https://artofproblemsolving.com/videos/prealgebra).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "freeExcerpt": { "chapter": "1", "title": "Properties of Arithmetic", "url": "https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/prealgebra/exc1.pdf" },
+      "chapters": [
+        { "chapter": "1", "title": "Properties of Arithmetic", "skillIds": [] },
+        { "chapter": "2", "title": "Exponents", "skillIds": ["alg-exponents"] },
+        { "chapter": "3", "title": "Number Theory", "skillIds": ["nt-divisibility", "nt-gcd-lcm"] },
+        { "chapter": "4", "title": "Fractions", "skillIds": ["alg-ratios"] },
+        { "chapter": "5", "title": "Equations and Inequalities", "skillIds": ["alg-linear", "alg-inequalities"] },
+        { "chapter": "6", "title": "Decimals", "skillIds": ["alg-ratios"] },
+        { "chapter": "7", "title": "Ratios, Conversions, and Rates", "skillIds": ["alg-ratios", "alg-linear"] },
+        { "chapter": "8", "title": "Percents", "skillIds": ["alg-ratios"] },
+        { "chapter": "9", "title": "Square Roots", "skillIds": ["alg-exponents"] },
+        { "chapter": "10", "title": "Angles", "skillIds": ["geo-angles"] },
+        { "chapter": "11", "title": "Perimeter and Area", "skillIds": ["geo-area"] },
+        { "chapter": "12", "title": "Right Triangles and Quadrilaterals", "skillIds": ["geo-similar", "geo-polygons"] },
+        { "chapter": "13", "title": "Data and Statistics", "skillIds": ["alg-ratios"] },
+        { "chapter": "14", "title": "Counting", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "15", "title": "Problem-Solving Strategies", "skillIds": [] }
+      ],
+      "note": "Solutions are in a separate paid solutions manual (text 608 pp + solutions). Chapter list taken from the official TOC PDF. Alcumus (free) has a Prealgebra track aligned to this book."
+    },
+    {
+      "title": "Introduction to Algebra",
+      "author": "Richard Rusczyk (Art of Problem Solving)",
+      "url": "https://artofproblemsolving.com/store/book/intro-algebra",
+      "free": false,
+      "license": "Copyright AoPS Inc. Paid textbook. Official free material: chapter 5 excerpt PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-algebra/exc1.pdf), TOC PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-algebra/toc.pdf), preview page (https://artofproblemsolving.com/ebooks/intro-algebra-ebook/preview), free chapter-aligned videos (https://artofproblemsolving.com/videos/algebra1).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "freeExcerpt": { "chapter": "5", "title": "Multi-Variable Linear Equations", "url": "https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-algebra/exc1.pdf" },
+      "chapters": [
+        { "chapter": "1", "title": "Follow the Rules", "skillIds": ["alg-exponents"] },
+        { "chapter": "2", "title": "x Marks the Spot", "skillIds": ["alg-linear"] },
+        { "chapter": "3", "title": "One-Variable Linear Equations", "skillIds": ["alg-linear"] },
+        { "chapter": "4", "title": "More Variables", "skillIds": ["alg-linear"] },
+        { "chapter": "5", "title": "Multi-Variable Linear Equations", "skillIds": ["alg-linear", "alg-polynomials"] },
+        { "chapter": "6", "title": "Ratios and Percents", "skillIds": ["alg-ratios"] },
+        { "chapter": "7", "title": "Proportion", "skillIds": ["alg-ratios", "alg-linear"] },
+        { "chapter": "8", "title": "Graphing Lines", "skillIds": ["geo-coordinate"] },
+        { "chapter": "9", "title": "Introduction to Inequalities", "skillIds": ["alg-inequalities"] },
+        { "chapter": "10", "title": "Quadratic Equations - Part 1", "skillIds": ["alg-quadratics"] },
+        { "chapter": "11", "title": "Special Factorizations", "skillIds": ["alg-polynomials", "nt-diophantine"] },
+        { "chapter": "12", "title": "Complex Numbers", "skillIds": [] },
+        { "chapter": "13", "title": "Quadratic Equations - Part 2", "skillIds": ["alg-quadratics"] },
+        { "chapter": "14", "title": "Graphing Quadratics", "skillIds": ["alg-quadratics", "geo-coordinate"] },
+        { "chapter": "15", "title": "More Inequalities", "skillIds": ["alg-inequalities"] },
+        { "chapter": "16", "title": "Functions", "skillIds": ["alg-functions"] },
+        { "chapter": "17", "title": "Graphing Functions", "skillIds": ["alg-functions", "geo-coordinate"] },
+        { "chapter": "18", "title": "Polynomials", "skillIds": ["alg-polynomials"] },
+        { "chapter": "19", "title": "Exponents and Logarithms", "skillIds": ["alg-exponents"] },
+        { "chapter": "20", "title": "Special Functions", "skillIds": ["alg-functions"] },
+        { "chapter": "21", "title": "Sequences & Series", "skillIds": ["alg-sequences"] },
+        { "chapter": "22", "title": "Special Manipulations", "skillIds": ["alg-polynomials", "alg-inequalities"] }
+      ],
+      "note": "656 pp text + 312 pp solutions manual (paid). Chapter list from official TOC PDF; the free video page lists the same 22 chapter titles."
+    },
+    {
+      "title": "Introduction to Counting & Probability",
+      "author": "David Patrick (Art of Problem Solving)",
+      "url": "https://artofproblemsolving.com/store/book/intro-counting",
+      "free": false,
+      "license": "Copyright AoPS Inc. Paid textbook. Official free material: chapter 3 excerpt PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-counting/exc1.pdf), TOC PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-counting/toc.pdf), preview page (https://artofproblemsolving.com/ebooks/intro-counting-ebook/preview), free chapter-aligned videos for chapters 1-14 (https://artofproblemsolving.com/videos/counting).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "freeExcerpt": { "chapter": "3", "title": "Correcting for Overcounting", "url": "https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-counting/exc1.pdf" },
+      "chapters": [
+        { "chapter": "1", "title": "Counting Is Arithmetic", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "2", "title": "Basic Counting Techniques", "skillIds": ["cp-counting-basics", "cp-casework"] },
+        { "chapter": "3", "title": "Correcting for Overcounting", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "4", "title": "Committees and Combinations", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "5", "title": "More With Combinations", "skillIds": ["cp-counting-basics", "cp-paths-recursion"] },
+        { "chapter": "6", "title": "Some Harder Counting Problems", "skillIds": ["cp-casework", "cp-stars-bars"] },
+        { "chapter": "7", "title": "Introduction to Probability", "skillIds": ["cp-probability"] },
+        { "chapter": "8", "title": "Basic Probability Techniques", "skillIds": ["cp-probability", "cp-casework"] },
+        { "chapter": "9", "title": "Think About It!", "skillIds": ["cp-probability"] },
+        { "chapter": "10", "title": "Geometric Probability", "skillIds": ["cp-expected"] },
+        { "chapter": "11", "title": "Expected Value", "skillIds": ["cp-expected"] },
+        { "chapter": "12", "title": "Pascal's Triangle", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "13", "title": "The Hockey Stick Identity", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "14", "title": "The Binomial Theorem", "skillIds": ["cp-counting-basics", "alg-polynomials"] },
+        { "chapter": "15", "title": "More Challenging Problems", "skillIds": ["cp-casework"] }
+      ],
+      "note": "256 pp text + 120 pp solutions (paid). Excerpt chapter 3 (permutations with repeated elements, circular arrangements) is fully readable free."
+    },
+    {
+      "title": "Introduction to Number Theory",
+      "author": "Mathew Crawford (Art of Problem Solving)",
+      "url": "https://artofproblemsolving.com/store/book/intro-number-theory",
+      "free": false,
+      "license": "Copyright AoPS Inc. Paid textbook. Official free material: chapter 8 excerpt PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-number-theory/exc1.pdf), TOC PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-number-theory/toc.pdf), preview page (https://artofproblemsolving.com/ebooks/intro-number-theory-ebook/preview).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "freeExcerpt": { "chapter": "8", "title": "Base Numbers", "url": "https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-number-theory/exc1.pdf" },
+      "chapters": [
+        { "chapter": "1", "title": "Integers: The Basics", "skillIds": ["nt-divisibility"] },
+        { "chapter": "2", "title": "Primes and Composites", "skillIds": ["nt-divisibility"] },
+        { "chapter": "3", "title": "Multiples and Divisors", "skillIds": ["nt-divisibility", "nt-gcd-lcm"] },
+        { "chapter": "4", "title": "Prime Factorization", "skillIds": ["nt-divisibility", "nt-gcd-lcm"] },
+        { "chapter": "5", "title": "Divisor Problems", "skillIds": ["nt-divisibility"] },
+        { "chapter": "6", "title": "Special Numbers", "skillIds": ["nt-divisibility", "nt-diophantine", "nt-factorials-powers"] },
+        { "chapter": "7", "title": "Algebra With Integers", "skillIds": ["nt-diophantine"] },
+        { "chapter": "8", "title": "Base Numbers", "skillIds": ["nt-bases"] },
+        { "chapter": "9", "title": "Base Number Arithmetic", "skillIds": ["nt-bases"] },
+        { "chapter": "10", "title": "Units Digits", "skillIds": ["nt-modular"] },
+        { "chapter": "11", "title": "Decimals and Fractions", "skillIds": ["nt-bases"] },
+        { "chapter": "12", "title": "Introduction to Modular Arithmetic", "skillIds": ["nt-modular"] },
+        { "chapter": "13", "title": "Divisibility Rules", "skillIds": ["nt-divisibility", "nt-modular"] },
+        { "chapter": "14", "title": "Linear Congruences", "skillIds": ["nt-modular", "nt-diophantine"] },
+        { "chapter": "15", "title": "Number Sense", "skillIds": ["nt-divisibility"] }
+      ],
+      "note": "336 pp text + 144 pp solutions (paid). No AoPS video series exists for this book; Alcumus has a Number Theory track aligned to it."
+    },
+    {
+      "title": "Introduction to Geometry",
+      "author": "Richard Rusczyk (Art of Problem Solving)",
+      "url": "https://artofproblemsolving.com/store/book/intro-geometry",
+      "free": false,
+      "license": "Copyright AoPS Inc. Paid textbook. Official free material: chapter 5 excerpt PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-geometry/exc1.pdf), TOC PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-geometry/toc.pdf), preview page (https://artofproblemsolving.com/ebooks/intro-geometry-ebook/preview).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "freeExcerpt": { "chapter": "5", "title": "Similar Triangles", "url": "https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/intro-geometry/exc1.pdf" },
+      "chapters": [
+        { "chapter": "1", "title": "What's in a Name?", "skillIds": ["geo-angles"] },
+        { "chapter": "2", "title": "Angles", "skillIds": ["geo-angles"] },
+        { "chapter": "3", "title": "Congruent Triangles", "skillIds": ["geo-angles"] },
+        { "chapter": "4", "title": "Perimeter and Area", "skillIds": ["geo-area"] },
+        { "chapter": "5", "title": "Similar Triangles", "skillIds": ["geo-similar"] },
+        { "chapter": "6", "title": "Right Triangles", "skillIds": ["geo-similar"] },
+        { "chapter": "7", "title": "Special Parts of a Triangle", "skillIds": ["geo-area", "geo-similar"] },
+        { "chapter": "8", "title": "Quadrilaterals", "skillIds": ["geo-polygons", "geo-area"] },
+        { "chapter": "9", "title": "Polygons", "skillIds": ["geo-polygons"] },
+        { "chapter": "10", "title": "Geometric Inequalities", "skillIds": ["geo-angles"] },
+        { "chapter": "11", "title": "Circles", "skillIds": ["geo-circles"] },
+        { "chapter": "12", "title": "Circles and Angles", "skillIds": ["geo-circles"] },
+        { "chapter": "13", "title": "Power of a Point", "skillIds": ["geo-circles"] },
+        { "chapter": "14", "title": "Three-Dimensional Geometry", "skillIds": ["geo-solid"] },
+        { "chapter": "15", "title": "Curved Surfaces", "skillIds": ["geo-solid"] },
+        { "chapter": "16", "title": "The More Things Change...", "skillIds": ["geo-coordinate"] },
+        { "chapter": "17", "title": "Analytic Geometry", "skillIds": ["geo-coordinate"] },
+        { "chapter": "18", "title": "Introduction to Trigonometry", "skillIds": ["geo-trig"] },
+        { "chapter": "19", "title": "Problem Solving Strategies in Geometry", "skillIds": ["geo-area"] }
+      ],
+      "note": "Over 900 problems, full solutions in separate paid manual. No AoPS video series for this book; Alcumus Geometry track is aligned to it."
+    },
+    {
+      "title": "Art of Problem Solving Volume 1: the Basics",
+      "author": "Sandor Lehoczky, Richard Rusczyk",
+      "url": "https://artofproblemsolving.com/store/book/aops-vol1",
+      "free": false,
+      "license": "Copyright AoPS Inc. Paid textbook. Official free material: chapter 5 excerpt PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/aops-vol1/exc1.pdf), TOC PDF (https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/aops-vol1/toc.pdf), preview page (https://artofproblemsolving.com/ebooks/aops-vol1-ebook/preview).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "freeExcerpt": { "chapter": "5", "title": "Using the Integers", "url": "https://s3.amazonaws.com/aops-cdn.artofproblemsolving.com/products/aops-vol1/exc1.pdf" },
+      "chapters": [
+        { "chapter": "1", "title": "Exponents and Logarithms", "skillIds": ["alg-exponents"] },
+        { "chapter": "2", "title": "Complex Numbers", "skillIds": [] },
+        { "chapter": "3", "title": "Linear Equations", "skillIds": ["alg-linear"] },
+        { "chapter": "4", "title": "Proportions", "skillIds": ["alg-ratios"] },
+        { "chapter": "5", "title": "Using the Integers", "skillIds": ["nt-divisibility", "nt-bases", "nt-modular", "nt-gcd-lcm"] },
+        { "chapter": "6", "title": "Quadratic Equations", "skillIds": ["alg-quadratics"] },
+        { "chapter": "7", "title": "Special Factorizations and Clever Manipulations", "skillIds": ["alg-polynomials", "nt-diophantine"] },
+        { "chapter": "8", "title": "What Numbers Really Are", "skillIds": [] },
+        { "chapter": "9", "title": "An Introduction to Circles", "skillIds": ["geo-circles"] },
+        { "chapter": "10", "title": "Angles", "skillIds": ["geo-angles"] },
+        { "chapter": "11", "title": "Triangles, a.k.a. Geometry", "skillIds": ["geo-similar", "geo-angles", "geo-area"] },
+        { "chapter": "12", "title": "Quadrilaterals", "skillIds": ["geo-polygons"] },
+        { "chapter": "13", "title": "Polygons", "skillIds": ["geo-polygons"] },
+        { "chapter": "14", "title": "Angle Chasing", "skillIds": ["geo-angles", "geo-circles"] },
+        { "chapter": "15", "title": "Area", "skillIds": ["geo-area"] },
+        { "chapter": "16", "title": "The Power of Coordinates", "skillIds": ["geo-coordinate"] },
+        { "chapter": "17", "title": "Power of a Point", "skillIds": ["geo-circles"] },
+        { "chapter": "18", "title": "Three Dimensional Geometry", "skillIds": ["geo-solid"] },
+        { "chapter": "19", "title": "Shifts, Turns, Flips, Stretches, and Squeezes", "skillIds": ["geo-coordinate"] },
+        { "chapter": "20", "title": "A Potpourri of Geometry", "skillIds": ["geo-area"] },
+        { "chapter": "21", "title": "Functions", "skillIds": ["alg-functions"] },
+        { "chapter": "22", "title": "Inequalities", "skillIds": ["alg-inequalities"] },
+        { "chapter": "23", "title": "Operations and Relations", "skillIds": ["alg-functions"] },
+        { "chapter": "24", "title": "Sequences and Series", "skillIds": ["alg-sequences"] },
+        { "chapter": "25", "title": "Learning to Count", "skillIds": ["cp-counting-basics", "cp-casework", "cp-stars-bars"] },
+        { "chapter": "26", "title": "Statistics and Probability", "skillIds": ["cp-probability", "alg-ratios"] },
+        { "chapter": "27", "title": "Sets", "skillIds": ["cp-stars-bars"] },
+        { "chapter": "28", "title": "Prove It", "skillIds": [] },
+        { "chapter": "29", "title": "Parting Shots", "skillIds": [] }
+      ],
+      "note": "7th edition, 288 pp text + 144 pp solutions (paid). Written specifically for MATHCOUNTS/AMC-level contest prep; 500+ problems culled from contests. The free chapter 5 excerpt covers divisibility, primes, bases, and the start of modular arithmetic."
+    },
+    {
+      "title": "Mastering AMC 10/12",
+      "author": "Omega Learn (501(c)(3) nonprofit; Sohil Rathi et al.)",
+      "url": "https://www.omegalearn.org/mastering-amc1012",
+      "free": true,
+      "license": "Free download from the author's site (https://www.omegalearn.org/books/Mastering_AMC_1012_Book.pdf, ~19 MB); no open license stated, all rights reserved by Omega Learn. Book is 'a work in progress'.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "1", "title": "Permutations and Combinations", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "2", "title": "Probability", "skillIds": ["cp-probability"] },
+        { "chapter": "3", "title": "Casework", "skillIds": ["cp-casework"] },
+        { "chapter": "4", "title": "Principle of Inclusion and Exclusion", "skillIds": ["cp-stars-bars"] },
+        { "chapter": "5", "title": "Stars & Bars", "skillIds": ["cp-stars-bars"] },
+        { "chapter": "6", "title": "Combinatorial Identities", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "7", "title": "Geometric Counting", "skillIds": ["cp-paths-recursion", "cp-counting-basics"] },
+        { "chapter": "8", "title": "Geometric Probability", "skillIds": ["cp-expected"] },
+        { "chapter": "9", "title": "Expected Value", "skillIds": ["cp-expected"] },
+        { "chapter": "10", "title": "Recursion", "skillIds": ["cp-paths-recursion"] },
+        { "chapter": "11", "title": "Probability States", "skillIds": ["cp-paths-recursion"] },
+        { "chapter": "12", "title": "Algebraic Manipulations", "skillIds": ["alg-polynomials"] },
+        { "chapter": "13", "title": "Vieta's Formulas for Polynomials", "skillIds": ["alg-quadratics"] },
+        { "chapter": "14", "title": "Polynomial Roots", "skillIds": ["alg-polynomials"] },
+        { "chapter": "15", "title": "Arithmetic Sequences", "skillIds": ["alg-sequences"] },
+        { "chapter": "16", "title": "Geometric Sequences", "skillIds": ["alg-sequences"] },
+        { "chapter": "17", "title": "Special Sequences", "skillIds": ["alg-sequences"] },
+        { "chapter": "18", "title": "Mean, Median, Mode", "skillIds": ["alg-ratios"] },
+        { "chapter": "19", "title": "System of Equations", "skillIds": ["alg-linear", "alg-polynomials"] },
+        { "chapter": "20", "title": "Speed, Distance, and Time", "skillIds": ["alg-linear"] },
+        { "chapter": "21", "title": "Primes and Factors", "skillIds": ["nt-divisibility"] },
+        { "chapter": "22", "title": "Divisibility & Legendre's Formula", "skillIds": ["nt-factorials-powers", "nt-divisibility"] },
+        { "chapter": "23", "title": "GCD & LCM", "skillIds": ["nt-gcd-lcm"] },
+        { "chapter": "24", "title": "Modular Arithmetic", "skillIds": ["nt-modular"] },
+        { "chapter": "25", "title": "Algebraic Number Theory", "skillIds": ["nt-diophantine"] },
+        { "chapter": "26", "title": "Diophantine Equations", "skillIds": ["nt-diophantine"] },
+        { "chapter": "27", "title": "Bases", "skillIds": ["nt-bases"] },
+        { "chapter": "28", "title": "Miscellaneous Number Theory", "skillIds": ["nt-divisibility"] },
+        { "chapter": "29", "title": "Angle Chasing", "skillIds": ["geo-angles"] },
+        { "chapter": "30", "title": "Triangle Area and Length", "skillIds": ["geo-area"] },
+        { "chapter": "31", "title": "Special Triangles", "skillIds": ["geo-similar"] },
+        { "chapter": "32", "title": "Similar Triangles", "skillIds": ["geo-similar"] },
+        { "chapter": "33", "title": "Quadrilaterals", "skillIds": ["geo-polygons"] },
+        { "chapter": "34", "title": "Circles", "skillIds": ["geo-circles"] },
+        { "chapter": "35", "title": "Polygons", "skillIds": ["geo-polygons"] },
+        { "chapter": "36", "title": "3-D Geometry", "skillIds": ["geo-solid"] },
+        { "chapter": "37", "title": "Area and Length of Complex Shapes", "skillIds": ["geo-area"] },
+        { "chapter": "38", "title": "Coordinate Geometry", "skillIds": ["geo-coordinate"] },
+        { "chapter": "39", "title": "Floor and Ceiling Functions", "skillIds": ["alg-functions"] },
+        { "chapter": "40", "title": "Inequalities", "skillIds": ["alg-inequalities"] },
+        { "chapter": "41", "title": "Logarithms", "skillIds": ["alg-exponents"] },
+        { "chapter": "42", "title": "Algebraic Trigonometry", "skillIds": ["geo-trig"] },
+        { "chapter": "43", "title": "Geometric Trigonometry", "skillIds": ["geo-trig"] },
+        { "chapter": "44", "title": "Complex Numbers", "skillIds": [] },
+        { "chapter": "45", "title": "Additional Techniques and Strategies", "skillIds": [] }
+      ],
+      "note": "The single best free full text for this app: ~690 pages, every chapter has formulas, worked examples, practice problems (mostly past AMC 10/12 problems) and a linked video lecture plus video solutions (YouTube playlist 'Mastering AMC 10/12 Course'). Chapter list extracted from the PDF's table of contents. Companion 'Mastering AMC 8' and 'The Book of Mathematical Formulas & Strategies' are listed at https://www.omegalearn.org/books."
+    },
+    {
+      "title": "CEMC Open Courseware, Grades 9/10/11 Mathematics (7 courses)",
+      "author": "Centre for Education in Mathematics and Computing, University of Waterloo",
+      "url": "https://cemc.uwaterloo.ca/resources/courseware/grade-9-10-11-mathematics",
+      "free": true,
+      "license": "Free, no registration required (CEMC states courseware is free to use without registration; optional account only for progress tracking). Copyright University of Waterloo, all rights reserved; no open license.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "41", "title": "Number Sense and Algebraic Expressions (units: classification/operations of numbers, exponents, manipulating algebraic expressions, radicals and rational functions, prime factorization)", "skillIds": ["alg-exponents", "alg-polynomials", "nt-divisibility"] },
+        { "chapter": "42", "title": "Linear Relations, Analytic Geometry, Data Management, and Statistics (units: linear equations incl. rate/ratio/percent and inequalities, linear relations, slope, equations of lines, linear systems, line segments and analytic geometry, data and statistics)", "skillIds": ["alg-linear", "alg-ratios", "alg-inequalities", "geo-coordinate"] },
+        { "chapter": "43", "title": "Quadratic Relations (units: properties of quadratics, algebraic representations, algebraic skills/factoring, graphing, solving problems)", "skillIds": ["alg-quadratics", "geo-coordinate"] },
+        { "chapter": "44", "title": "Introduction to Functions (function notation, domain and range, transformations, inverses)", "skillIds": ["alg-functions"] },
+        { "chapter": "45", "title": "Sequences, Series, and Financial Literacy (arithmetic and geometric sequences and series)", "skillIds": ["alg-sequences"] },
+        { "chapter": "46", "title": "Measurement, Geometry, and Trigonometry (units: Pythagorean theorem / composite areas / pyramids, cones, spheres / optimization; geometric relationships; trigonometry; angles in standard position and identities)", "skillIds": ["geo-similar", "geo-area", "geo-solid", "geo-angles", "geo-trig", "alg-inequalities"] },
+        { "chapter": "47", "title": "Exponential and Trigonometric Functions", "skillIds": ["alg-exponents", "geo-trig"] }
+      ],
+      "note": "Each course URL is https://courseware.cemc.uwaterloo.ca/<id>. Every unit ends with 'All Exercises, Answers, and Solutions' (full worked solutions) and an Enrichment set of harder problems. Curricular rather than contest-flavoured, so best used for tier-1 foundations and for alg-functions/geo-trig/geo-solid reading. A Grades 7/8 course (id 27) and 'Problem Solving and Mathematical Discovery' (id 40) also exist (not inspected)."
+    },
+    {
+      "title": "CEMC Past Contests: Pascal (Gr 9), Cayley (Gr 10), Fermat (Gr 11) with full solutions",
+      "author": "CEMC, University of Waterloo",
+      "url": "https://cemc.uwaterloo.ca/resources/past-contests",
+      "free": true,
+      "license": "Free download (last ~10 years posted on site: problems PDF + solutions PDF per contest). Copyright University of Waterloo; no open license stated.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "Pascal/Cayley/Fermat", "title": "25-question multiple-choice contests, difficulty comparable to AMC 8 (Pascal) through AMC 10 (Cayley/Fermat)", "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-sequences", "alg-functions", "alg-exponents", "alg-polynomials", "alg-inequalities", "geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-polygons", "geo-solid", "nt-divisibility", "nt-gcd-lcm", "nt-modular", "nt-bases", "nt-diophantine", "nt-factorials-powers", "cp-counting-basics", "cp-probability", "cp-casework", "cp-stars-bars", "cp-paths-recursion", "cp-expected"] },
+        { "chapter": "Problem Set Generator", "title": "Builds custom sets of past Gauss/Pascal/Cayley/Fermat problems filtered by topic (https://cemc.uwaterloo.ca/resources/problem-set-generator)", "skillIds": [] },
+        { "chapter": "Problem of the Week", "title": "Weekly problems for grades 9/10 and 11/12 with solutions, filterable by theme (Algebra, Geometry & Measurement, Number Sense, Data Management) (https://cemc.uwaterloo.ca/resources/potw.php)", "skillIds": [] }
+      ],
+      "note": "Best non-AMC source of AMC-10-style multiple-choice problems with official worked solutions. The Problem Set Generator's topic filter maps reasonably onto the skill ids above."
+    },
+    {
+      "title": "Prealgebra 2e",
+      "author": "Lynn Marecek, MaryAnne Anthony-Smith, Andrea Honeycutt Mathis (OpenStax, Rice University)",
+      "url": "https://openstax.org/details/books/prealgebra-2e",
+      "free": true,
+      "license": "Creative Commons Attribution 4.0 per the OpenStax book page (the preface fetch reported CC BY-NC-SA; confirm on the page before redistributing excerpts). Free web view and PDF.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "1", "title": "Whole Numbers", "skillIds": [] },
+        { "chapter": "2", "title": "The Language of Algebra", "skillIds": ["alg-linear"] },
+        { "chapter": "3", "title": "Integers", "skillIds": [] },
+        { "chapter": "4", "title": "Fractions", "skillIds": ["alg-ratios"] },
+        { "chapter": "5", "title": "Decimals", "skillIds": ["alg-ratios"] },
+        { "chapter": "6", "title": "Percents", "skillIds": ["alg-ratios"] },
+        { "chapter": "7", "title": "The Properties of Real Numbers", "skillIds": [] },
+        { "chapter": "8", "title": "Solving Linear Equations", "skillIds": ["alg-linear"] },
+        { "chapter": "9", "title": "Math Models and Geometry", "skillIds": ["alg-linear", "geo-angles", "geo-area", "geo-solid"] },
+        { "chapter": "10", "title": "Polynomials", "skillIds": ["alg-polynomials", "alg-exponents"] },
+        { "chapter": "11", "title": "Graphs", "skillIds": ["geo-coordinate"] }
+      ],
+      "note": "School-level, not contest-level. Answers to all 'Try It' and odd-numbered section exercises are free; full solutions only for instructors. Useful as remedial reading for alg-linear / alg-ratios."
+    },
+    {
+      "title": "Intermediate Algebra 2e",
+      "author": "Lynn Marecek, Andrea Honeycutt Mathis (OpenStax, Rice University)",
+      "url": "https://openstax.org/details/books/intermediate-algebra-2e",
+      "free": true,
+      "license": "Creative Commons Attribution 4.0 per the OpenStax book page (preface fetch reported CC BY-NC-SA; confirm before redistributing). Free web view and PDF.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "1", "title": "Foundations", "skillIds": [] },
+        { "chapter": "2", "title": "Solving Linear Equations and Inequalities", "skillIds": ["alg-linear", "alg-inequalities", "alg-functions"] },
+        { "chapter": "3", "title": "Graphs and Functions", "skillIds": ["alg-functions", "geo-coordinate"] },
+        { "chapter": "4", "title": "Systems of Linear Equations", "skillIds": ["alg-linear", "alg-polynomials"] },
+        { "chapter": "5", "title": "Polynomials and Polynomial Functions", "skillIds": ["alg-polynomials"] },
+        { "chapter": "6", "title": "Factoring", "skillIds": ["alg-quadratics", "alg-polynomials"] },
+        { "chapter": "7", "title": "Rational Expressions and Functions", "skillIds": ["alg-functions"] },
+        { "chapter": "8", "title": "Roots and Radicals", "skillIds": ["alg-exponents"] },
+        { "chapter": "9", "title": "Quadratic Equations", "skillIds": ["alg-quadratics"] },
+        { "chapter": "10", "title": "Exponential and Logarithmic Functions", "skillIds": ["alg-exponents"] },
+        { "chapter": "11", "title": "Conics", "skillIds": ["geo-coordinate"] },
+        { "chapter": "12", "title": "Sequences, Series and the Binomial Theorem", "skillIds": ["alg-sequences", "cp-counting-basics"] }
+      ],
+      "note": "Odd-numbered answers free. Standard-curriculum treatment; good for a student who has never seen logs, radicals or the quadratic formula before starting contest material."
+    },
+    {
+      "title": "Discrete Mathematics: An Open Introduction (3rd ed.), Chapter 1 'Counting'",
+      "author": "Oscar Levin (University of Northern Colorado)",
+      "url": "https://discrete.openmathbooks.org/dmoi3/ch_counting.html",
+      "free": true,
+      "license": "CC BY-SA 4.0 (free to download, print, remix, even sell). Full book at https://discrete.openmathbooks.org/dmoi3.html",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "1.1", "title": "Additive and Multiplicative Principles", "skillIds": ["cp-counting-basics", "cp-stars-bars"] },
+        { "chapter": "1.2", "title": "Binomial Coefficients", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "1.3", "title": "Combinations and Permutations", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "1.4", "title": "Combinatorial Proofs", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "1.5", "title": "Stars and Bars", "skillIds": ["cp-stars-bars"] },
+        { "chapter": "1.6", "title": "Advanced Counting Using PIE", "skillIds": ["cp-stars-bars", "cp-casework"] },
+        { "chapter": "2", "title": "Sequences (arithmetic/geometric, recurrence relations)", "skillIds": ["alg-sequences", "cp-paths-recursion"] }
+      ],
+      "note": "The only truly open-licensed text found that covers stars-and-bars and PIE at the right depth. 275 of 473 exercises have full solutions in the free online version, 109 more have hints. Written for undergrads but chapter 1 needs only algebra."
+    },
+    {
+      "title": "Number Theory (notes)",
+      "author": "Naoki Sato (hosted by Art of Problem Solving)",
+      "url": "https://artofproblemsolving.com/articles/files/SatoNT.pdf",
+      "free": true,
+      "license": "Free PDF posted by AoPS (rights-holder hosting). No open license stated.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": false,
+      "chapters": [
+        { "chapter": "1", "title": "Divisibility", "skillIds": ["nt-divisibility", "nt-gcd-lcm"] },
+        { "chapter": "2", "title": "Modular arithmetic / congruences", "skillIds": ["nt-modular"] },
+        { "chapter": "3+", "title": "Diophantine equations and further topics", "skillIds": ["nt-diophantine"] }
+      ],
+      "note": "Written for IMO-level students; the theorems in sections 1-2 are the right reference for nt-divisibility / nt-modular but the problems are far above AMC 10. Use as a reference sheet, not a problem source."
+    },
+    {
+      "title": "Geometry Unbound",
+      "author": "Kiran S. Kedlaya",
+      "url": "https://kskedlaya.org/geometryunbound/",
+      "free": true,
+      "license": "GNU Free Documentation License (PDF: https://kskedlaya.org/geometryunbound/gu-060118.pdf, version of 18 Jan 2006; no figures).",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": false,
+      "chapters": [
+        { "chapter": "1-2", "title": "Rudiments; Triangle centers, circles, power of a point", "skillIds": ["geo-angles", "geo-circles", "geo-similar"] },
+        { "chapter": "3-4", "title": "Transformations; tricks of the trade (trig, coordinates)", "skillIds": ["geo-coordinate", "geo-trig"] }
+      ],
+      "note": "Olympiad-level (grew out of MOP notes). Include only as an 'advanced reference' link for geo-circles / geo-trig; no solutions and no figures in the free PDF."
+    },
+    {
+      "title": "Mathematical Circles Topics (handouts)",
+      "author": "Tom Davis (Berkeley / San Jose / Palo Alto math circles)",
+      "url": "http://www.geometer.org/mathcircles/",
+      "free": true,
+      "license": "Free PDFs posted by the author; no license stated (author copyright). Site is HTTP-only.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "counting.pdf", "title": "How to Count Things (+ solnscount.pdf, full solutions)", "skillIds": ["cp-counting-basics", "cp-casework"] },
+        { "chapter": "comb.pdf / combprobs.pdf", "title": "Combinations and Permutations; Combinatorics Problems", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "pascal.pdf", "title": "Exploring Pascal's Triangle", "skillIds": ["cp-counting-basics"] },
+        { "chapter": "suckerbets.pdf", "title": "Practical Probability: Casino Odds and Sucker Bets", "skillIds": ["cp-probability", "cp-expected"] },
+        { "chapter": "diophantine.pdf", "title": "Introduction to Linear Diophantine Equations", "skillIds": ["nt-diophantine", "nt-gcd-lcm"] },
+        { "chapter": "polyarea.pdf", "title": "Practical Calculation of Areas of Polygons (shoelace formula)", "skillIds": ["geo-area", "geo-coordinate"] },
+        { "chapter": "pick.pdf", "title": "Pick's Theorem", "skillIds": ["geo-area", "geo-coordinate"] },
+        { "chapter": "circles.pdf / fourpoints.pdf", "title": "Geometry of the Circle; Four Points on a Circle (cyclic quadrilaterals)", "skillIds": ["geo-circles", "geo-polygons"] },
+        { "chapter": "geometry.pdf", "title": "Geometry for Contests", "skillIds": ["geo-angles", "geo-similar", "geo-area"] },
+        { "chapter": "Polygons.pdf", "title": "Polygons", "skillIds": ["geo-polygons"] }
+      ],
+      "note": "Handout PDFs live at http://www.geometer.org/mathcircles/<file>. Only 'How to Count Things' ships a separate solutions file; most others have worked examples inline but unsolved problem lists."
+    },
+    {
+      "title": "Berkeley Math Circle handout archive",
+      "author": "Berkeley Math Circle (UC Berkeley), various instructors",
+      "url": "https://mathcircle.berkeley.edu/circle-archives",
+      "free": true,
+      "license": "Free PDFs posted by the Circle; no license stated.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": false,
+      "chapters": [
+        { "chapter": "2008-2009", "title": "e.g. Classical Geometry I & II (Stankova), All About N-gons, Multiplicative Functions, Pell's Equation, Induction (https://mathcircle.berkeley.edu/circle-archives/handouts/2008-2009)", "skillIds": ["geo-angles", "geo-circles", "geo-polygons", "nt-divisibility", "nt-diophantine"] }
+      ],
+      "note": "Session handouts since 1998, mostly olympiad-flavoured and without solutions. Useful as enrichment links, not as the primary problem source."
+    },
+    {
+      "title": "NYC Math Team handouts and practice archive",
+      "author": "New York City Math Team (student-written, Stuyvesant HS)",
+      "url": "https://www.nycmathteam.org/archive/",
+      "free": true,
+      "license": "Free PDFs posted by the team; no license stated.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "Purple", "title": "Angle Chasing (https://www.nycmathteam.org/wp-content/uploads/2020/10/NYC_Purple_AngleChasing_Handout.pdf)", "skillIds": ["geo-angles", "geo-circles"] },
+        { "chapter": "Orange", "title": "Power of a Point and Radical Axis (https://www.nycmathteam.org/wp-content/uploads/2020/10/NYC_Orange_RadicalAxis_Handout.pdf)", "skillIds": ["geo-circles"] },
+        { "chapter": "Blue", "title": "Trigonometry (AMC 12 trig problems) (https://www.nycmathteam.org/wp-content/uploads/2020/10/NYC_Blue_Trig_Handout-1.pdf)", "skillIds": ["geo-trig"] }
+      ],
+      "note": "Archive pages per school year (2014-15 to 2026-27) hold 'problems and solutions from past practices'. Purple = introductory (AMC 10), Orange/Blue = harder. Only the Angle Chasing PDF was fetched directly; the others are linked from the site's own search listing."
+    },
+    {
+      "title": "UKMT Intermediate and Junior Mathematical Challenge past papers",
+      "author": "United Kingdom Mathematics Trust",
+      "url": "https://ukmt.org.uk/competition-papers",
+      "free": true,
+      "license": "Free downloads from UKMT (paper PDF, solutions PDF, and 'Solutions and Investigations' extended solutions per year). UKMT copyright, no open license.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "IMC 2024", "title": "Intermediate Mathematical Challenge 2024: paper https://ukmt.org.uk/wp-content/uploads/2024/02/IMC_2024-Paper.pdf ; solutions https://ukmt.org.uk/wp-content/uploads/2024/02/IMC-2024-Solutions.pdf ; extended https://ukmt.org.uk/wp-content/uploads/2024/02/IMC-2024-Extended-Solutions.pdf", "skillIds": ["alg-linear", "alg-ratios", "alg-sequences", "geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-polygons", "nt-divisibility", "nt-modular", "nt-bases", "cp-counting-basics", "cp-probability", "cp-casework"] },
+        { "chapter": "IMC/JMC by year", "title": "https://ukmt.org.uk/free-past-papers/intermediate-mathematical-challenge-<year> and .../junior-mathematical-challenge-<year> (2022-2026 verified to exist)", "skillIds": [] }
+      ],
+      "note": "IMC (ages 14-16) sits at roughly AMC 10 #1-15 difficulty; 25 multiple-choice questions. The 'Extended Solutions' PDFs are unusually thorough and include follow-up investigations, making them good lesson material."
+    },
+    {
+      "title": "Australian Maths Trust free practice problems",
+      "author": "Australian Maths Trust",
+      "url": "https://amt.edu.au/department/past-papers",
+      "free": true,
+      "license": "Free: 2019 AMC (Australian Mathematics Competition) practice sets with solutions for Junior (yrs 7-8), Intermediate (yrs 9-10) and Senior divisions, plus AMO/AIMO papers. All other past papers are paid PDFs in the AMT shop. AMT copyright.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "2019 Intermediate", "title": "AMC 2019 Intermediate practice problems with solutions", "skillIds": ["alg-linear", "alg-ratios", "geo-angles", "geo-area", "nt-divisibility", "cp-counting-basics", "cp-probability"] }
+      ],
+      "note": "The 'Free Problems' archive page (https://amt.edu.au/department/free-problems) is currently empty. Only the single 2019 practice set per division is free, so this is a thin source."
+    },
+    {
+      "title": "LIVE by Po-Shen Loh: past AMC 8 / AMC 10 / AMC 12 / AIME archive",
+      "author": "Po-Shen Loh (hosted with MAA permission)",
+      "url": "https://live.poshenloh.com/past-contests",
+      "free": true,
+      "license": "Hosted 'with official legal permission of the Mathematical Association of America'. Free, no login. Clean printable PDFs of every AMC 10 from 2000-2025.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": false,
+      "chapters": [
+        { "chapter": "AMC 10 2000-2025", "title": "Every AMC 10 A/B paper as a printable PDF plus an in-browser problem interface", "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-sequences", "alg-functions", "alg-exponents", "alg-polynomials", "alg-inequalities", "geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-polygons", "geo-solid", "geo-trig", "nt-divisibility", "nt-gcd-lcm", "nt-modular", "nt-bases", "nt-diophantine", "nt-factorials-powers", "cp-counting-basics", "cp-probability", "cp-casework", "cp-stars-bars", "cp-paths-recursion", "cp-expected"] }
+      ],
+      "note": "Answer keys yes; full worked solutions are not guaranteed for every paper (pair with the AoPS wiki for solutions). This is the legally clean way to link full past papers."
+    },
+    {
+      "title": "AoPS Wiki: AMC 10 Problems and Solutions + Introductory problem categories",
+      "author": "Art of Problem Solving community wiki",
+      "url": "https://artofproblemsolving.com/wiki/index.php/AMC_10_Problems_and_Solutions",
+      "free": true,
+      "license": "Free, no login to read. Wiki text is community-contributed; problems are MAA copyright reproduced on AoPS. Cloudflare bot protection blocks automated fetches (returns 403 'Just a moment'), so do not scrape at runtime; link out instead.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "AMC 10 index", "title": "Every AMC 10 A/B 2000-2025 with community solutions (index verified via Wayback snapshot 2026-08-15 and reader proxy)", "skillIds": [] },
+        { "chapter": "Category", "title": "Introductory Geometry Problems (690 pages) https://artofproblemsolving.com/wiki/index.php/Category:Introductory_Geometry_Problems", "skillIds": ["geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-polygons", "geo-solid", "geo-trig"] },
+        { "chapter": "Category", "title": "Introductory Number Theory Problems (279 pages) https://artofproblemsolving.com/wiki/index.php/Category:Introductory_Number_Theory_Problems", "skillIds": ["nt-divisibility", "nt-gcd-lcm", "nt-modular", "nt-bases", "nt-diophantine", "nt-factorials-powers"] },
+        { "chapter": "Category", "title": "Introductory Combinatorics Problems (235 pages) https://artofproblemsolving.com/wiki/index.php/Category:Introductory_Combinatorics_Problems", "skillIds": ["cp-counting-basics", "cp-casework", "cp-stars-bars", "cp-paths-recursion"] },
+        { "chapter": "Category", "title": "Introductory Algebra Problems https://artofproblemsolving.com/wiki/index.php/Category:Introductory_Algebra_Problems (NOT verified this session: bot-blocked)", "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-sequences", "alg-functions", "alg-exponents", "alg-polynomials", "alg-inequalities"] },
+        { "chapter": "Category", "title": "Introductory Probability Problems https://artofproblemsolving.com/wiki/index.php/Category:Introductory_Probability_Problems (NOT verified this session: bot-blocked)", "skillIds": ["cp-probability", "cp-expected"] }
+      ],
+      "note": "The canonical free source of worked AMC 10 solutions (usually several per problem). Each problem page is at .../wiki/index.php/<year>_AMC_10<A|B>_Problems/Problem_<n>."
+    },
+    {
+      "title": "Alcumus",
+      "author": "Art of Problem Solving",
+      "url": "https://artofproblemsolving.com/alcumus",
+      "free": true,
+      "license": "100% free; requires a free AoPS account. Subjects: Prealgebra, Algebra, Counting & Probability, Number Theory, Geometry, Precalculus. Adaptive; a full solution is shown after every problem.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "Prealgebra", "title": "topics aligned to the AoPS Prealgebra book", "skillIds": ["alg-linear", "alg-ratios", "alg-exponents", "geo-angles", "geo-area", "nt-divisibility", "cp-counting-basics"] },
+        { "chapter": "Algebra", "title": "topics aligned to Introduction to Algebra (and Intermediate Algebra)", "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-sequences", "alg-functions", "alg-exponents", "alg-polynomials", "alg-inequalities", "geo-coordinate"] },
+        { "chapter": "Counting & Probability", "title": "topics aligned to Introduction to Counting & Probability", "skillIds": ["cp-counting-basics", "cp-probability", "cp-casework", "cp-stars-bars", "cp-paths-recursion", "cp-expected"] },
+        { "chapter": "Number Theory", "title": "topics aligned to Introduction to Number Theory", "skillIds": ["nt-divisibility", "nt-gcd-lcm", "nt-modular", "nt-bases", "nt-diophantine", "nt-factorials-powers"] },
+        { "chapter": "Geometry", "title": "topics aligned to Introduction to Geometry", "skillIds": ["geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-polygons", "geo-solid", "geo-trig"] }
+      ],
+      "note": "Best free practice engine for every skill; cannot be embedded or scraped, so link to it and name the Alcumus topic. Related free AoPS tools (account needed): MATHCOUNTS Trainer https://artofproblemsolving.com/mathcounts_trainer and For the Win! https://artofproblemsolving.com/ftw. Index of all AoPS free resources: https://artofproblemsolving.com/resources"
+    },
+    {
+      "title": "Brilliant Wiki (archived)",
+      "author": "Brilliant.org community",
+      "url": "https://brilliant.org/wiki/",
+      "free": true,
+      "license": "Free to read without login; Brilliant states the wiki 'is no longer maintained'. Brilliant copyright / community contributions; no open license.",
+      "hasEndOfChapterProblems": false,
+      "hasSolutions": false,
+      "chapters": [
+        { "chapter": "Number Theory", "title": "Modular Arithmetic https://brilliant.org/wiki/modular-arithmetic/", "skillIds": ["nt-modular"] },
+        { "chapter": "Algebra", "title": "Vieta's Formula https://brilliant.org/wiki/vietas-formula/", "skillIds": ["alg-quadratics", "alg-polynomials"] },
+        { "chapter": "Discrete", "title": "Stars and Bars https://brilliant.org/wiki/integer-equations-star-and-bars/ ; PIE https://brilliant.org/wiki/principle-of-inclusion-and-exclusion-pie/", "skillIds": ["cp-stars-bars"] }
+      ],
+      "note": "Short encyclopedia-style explanations with a few worked examples; no exercise sets with solutions. Individual page URLs were taken from the wiki index page and not each fetched."
+    },
+    {
+      "title": "MIT OCW 'Combinatorics: The Fine Art of Counting' (Highlights for High School, Summer 2007/2008) - Internet Archive mirror",
+      "author": "Andrew Sutherland (MIT), via MIT OpenCourseWare",
+      "url": "https://archive.org/details/MITHS.Combinatorics",
+      "free": true,
+      "license": "CC BY-NC-SA (MIT OCW standard license). MIT has taken the Highlights for High School site down (ocw.mit.edu/high-school/... now redirects to a help article), so the Internet Archive item is the surviving copy.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "Weeks 1-8", "title": "Sets and subsets, counting, binomial coefficients, discrete probability, sequences/recursion, graph theory; problem sets with solutions", "skillIds": ["cp-counting-basics", "cp-casework", "cp-stars-bars", "cp-probability", "cp-paths-recursion"] }
+      ],
+      "note": "Explicitly written for AMC/AIME preparation (course description). Verify the archive item's file list before linking a specific PDF; only the item page was checked."
+    },
+    {
+      "title": "Khan Academy: Algebra 1/2, Geometry, Precalculus, Statistics & Probability",
+      "author": "Khan Academy",
+      "url": "https://www.khanacademy.org/math/algebra",
+      "free": true,
+      "license": "Free; CC BY-NC-SA for most content per Khan Academy terms. Optional account for progress.",
+      "hasEndOfChapterProblems": true,
+      "hasSolutions": true,
+      "chapters": [
+        { "chapter": "algebra", "title": "https://www.khanacademy.org/math/algebra", "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-functions", "alg-exponents", "alg-sequences", "alg-inequalities"] },
+        { "chapter": "geometry", "title": "https://www.khanacademy.org/math/geometry", "skillIds": ["geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-polygons", "geo-solid", "geo-trig"] },
+        { "chapter": "precalculus", "title": "https://www.khanacademy.org/math/precalculus (trig, probability & combinatorics units)", "skillIds": ["geo-trig", "cp-counting-basics", "cp-probability", "alg-polynomials"] }
+      ],
+      "note": "Not contest material, but every exercise has a hint/solution walkthrough. Good remedial fallback for tier-1 skills."
+    }
+  ],
+  "paid": [
+    { "title": "AoPS textbooks (Prealgebra; Introduction to Algebra / Counting & Probability / Number Theory / Geometry; AoPS Volume 1)", "url": "https://artofproblemsolving.com/store/list/aops-curriculum", "note": "Paid; the six chapter maps above use the official free TOC PDFs. Only the exc1.pdf excerpts and preview pages are free." },
+    { "title": "Competition Math for Middle School (J. Batterson)", "url": "https://artofproblemsolving.com/store/book/competition-math", "note": "Paid; covers tier-1 skills at MATHCOUNTS/AMC 8-10 level with solutions. URL not fetched this session." },
+    { "title": "Australian Mathematics Competition past papers (PDF)", "url": "https://shop.amt.edu.au/products/amc-past-papers-pdf", "note": "Paid downloads from the AMT shop; only the 2019 practice sets are free." },
+    { "title": "A Decade of the Berkeley Math Circle (MSRI/AMS)", "url": "https://mathcircle.berkeley.edu/", "note": "Paid book; the Circle's own handout archive is free." }
+  ],
+  "videoSeries": [
+    {
+      "title": "AoPS Videos: Prealgebra (chapter-by-chapter, Richard Rusczyk)",
+      "url": "https://artofproblemsolving.com/videos/prealgebra",
+      "skillIds": ["alg-linear", "alg-ratios", "alg-exponents", "nt-divisibility", "nt-gcd-lcm", "geo-angles", "geo-area", "geo-similar", "cp-counting-basics"],
+      "note": "Free, no login needed to watch (YouTube embeds; the 'Sign In' in the nav is not a wall). Videos are indexed by book chapter and section (e.g. https://artofproblemsolving.com/videos/prealgebra/chapter1/17 = 1.2 Commutative Property). Chapters 1-15 match the Prealgebra TOC above."
+    },
+    {
+      "title": "AoPS Videos: Introduction to Algebra (chapters 1-22)",
+      "url": "https://artofproblemsolving.com/videos/algebra1",
+      "skillIds": ["alg-linear", "alg-ratios", "geo-coordinate", "alg-inequalities", "alg-quadratics", "alg-polynomials", "alg-functions", "alg-exponents", "alg-sequences"],
+      "note": "220 videos, one section at a time, same 22 chapter titles as the book TOC. Lesson can cite 'AoPS Intro Algebra ch. 19 videos' for logarithms, ch. 21 for sequences, ch. 16-17/20 for functions, floor and absolute value."
+    },
+    {
+      "title": "AoPS Videos: Introduction to Counting & Probability (chapters 1-14)",
+      "url": "https://artofproblemsolving.com/videos/counting",
+      "skillIds": ["cp-counting-basics", "cp-casework", "cp-stars-bars", "cp-probability", "cp-expected", "cp-paths-recursion", "alg-polynomials"],
+      "note": "101 videos; chapters 10 (Geometric Probability) and 11 (Expected Value) are the best free video coverage of cp-expected found anywhere."
+    },
+    {
+      "title": "AoPS Videos: AMC 10/12 problem solutions (2012-2020 AMC 10A/12A, 2012 10B/12B)",
+      "url": "https://artofproblemsolving.com/videos/amc",
+      "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-sequences", "alg-functions", "alg-exponents", "alg-polynomials", "alg-inequalities", "geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-polygons", "geo-solid", "geo-trig", "nt-divisibility", "nt-gcd-lcm", "nt-modular", "nt-bases", "nt-diophantine", "nt-factorials-powers", "cp-counting-basics", "cp-probability", "cp-casework", "cp-stars-bars", "cp-paths-recursion", "cp-expected"],
+      "note": "162 Rusczyk walkthroughs of individual AMC problems, organised by year/test. MATHCOUNTS State 2009-2020 walkthroughs at https://artofproblemsolving.com/videos/mathcounts (117 videos)."
+    },
+    {
+      "title": "Omega Learn: Mastering AMC 10/12 Course (chapter-by-chapter companion to the free book)",
+      "url": "https://www.youtube.com/playlist?list=PLT9bNzqjDoMlmyxKw2bp5nHsEu-Zn9dac",
+      "skillIds": ["cp-counting-basics", "cp-probability", "cp-casework", "cp-stars-bars", "cp-expected", "cp-paths-recursion", "alg-polynomials", "alg-quadratics", "alg-sequences", "alg-ratios", "alg-linear", "nt-divisibility", "nt-factorials-powers", "nt-gcd-lcm", "nt-modular", "nt-diophantine", "nt-bases", "geo-angles", "geo-area", "geo-similar", "geo-polygons", "geo-circles", "geo-solid", "geo-coordinate", "alg-functions", "alg-inequalities", "alg-exponents", "geo-trig"],
+      "note": "One lecture per chapter of Mastering AMC 10/12 (chapter numbers match the book map above), plus video solutions to the practice problems. Nonprofit, free."
+    },
+    {
+      "title": "Omega Learn: AMC 10/12 Fundamentals Course (6 lessons + homework solution videos)",
+      "url": "https://www.youtube.com/playlist?list=PLT9bNzqjDoMkoIg9K_bs4EjdpHYlS0L51",
+      "skillIds": ["alg-quadratics", "alg-polynomials", "nt-diophantine", "cp-counting-basics", "cp-casework", "cp-probability", "cp-expected", "cp-paths-recursion", "nt-divisibility", "nt-bases", "nt-gcd-lcm", "nt-modular"],
+      "note": "Lesson 1 Quadratics/Vieta; 2 Algebraic manipulations, factorizations, SFFT; 3 Permutations/combinations/casework/complementary; 4 Probability, expected value, geometric probability, states; 5 Factors, multiples, bases; 6 GCD/LCM, modular arithmetic, Diophantine. Each lesson has a homework set with a solutions video."
+    },
+    {
+      "title": "MATHCOUNTS Minis (Richard Rusczyk, 100+ lessons with activity sheets)",
+      "url": "https://www.youtube.com/playlist?list=PLF579ECF317F5DC48",
+      "skillIds": ["cp-probability", "cp-counting-basics", "alg-sequences", "alg-linear", "nt-diophantine", "cp-paths-recursion", "geo-similar", "alg-quadratics", "alg-exponents", "geo-circles", "cp-casework", "nt-modular"],
+      "note": "Official page with activity sheets: https://www.mathcounts.org/resources/mathcounts-minis. Examples: #1 Probability/Rolling Dice, #2 Counting arrangements, #3 Arithmetic sequences, #7 Paths along a grid, #8 Auxiliary lines & special right triangles, #10 Squares of binomials & radicals, #11 Tangent segments & similar triangles, #12 Arithmetic and geometric sequences, #13 Counting subsets, #14 Riddles with remainders, #74/#98 Sequences and patterns. Pitched at MATHCOUNTS = AMC 10 #1-15."
+    },
+    {
+      "title": "MATHCOUNTS Competition Series Videos",
+      "url": "https://www.youtube.com/playlist?list=PLF8B642FBA56B768B",
+      "skillIds": ["alg-linear", "alg-ratios", "geo-area", "cp-counting-basics", "cp-probability", "nt-divisibility"],
+      "note": "Official MATHCOUNTS channel playlist of competition problem walkthroughs; less structured than the Minis."
+    },
+    {
+      "title": "MAA Curriculum Inspirations (James Tanton walks through MAA AMC problems)",
+      "url": "https://maa.org/resource/curriculum-inspirations-walking-the-track/",
+      "skillIds": ["geo-circles", "alg-linear", "alg-ratios", "geo-area", "cp-counting-basics", "nt-divisibility"],
+      "note": "Free MAA-hosted videos + essays, each built around one AMC 8/10/12 problem and a named problem-solving strategy (e.g. 'Walking the Track' = 2011 AMC 10B circle-circumference problem). Browse from the MAA Students (K-12) page https://maa.org/audience/students-k-12/ (that page returned 403 to automated fetch but the resource pages load). A YouTube playlist exists (PLevtNOOa6SZXVJvtROAFCC0oYt0ySTSo4) but returned an 'undefined' title this session, so link the MAA pages instead."
+    },
+    {
+      "title": "Khan Academy video lessons (Algebra 1/2, Geometry, Precalculus)",
+      "url": "https://www.khanacademy.org/math/geometry",
+      "skillIds": ["alg-linear", "alg-ratios", "alg-quadratics", "alg-functions", "alg-exponents", "geo-angles", "geo-similar", "geo-area", "geo-circles", "geo-coordinate", "geo-solid", "geo-trig", "cp-probability"],
+      "note": "Not contest-oriented; fallback for a student missing a prerequisite (e.g. never seen the law of cosines or logarithm rules)."
+    }
+  ],
+  "consideredButExcluded": [
+    { "title": "Evan Chen handouts / OTIS Excerpts (https://web.evanchen.cc/excerpts.html), Yufei Zhao olympiad handouts (https://yufeizhao.com/olympiad/)", "reason": "Verified free and author-posted, but olympiad level (USAMO/IMO); above AMC 10." },
+    { "title": "Melbourne Math Circle resources page (https://melbournemathcircle.org/resources)", "reason": "Only links to third-party olympiad materials, including an academia.edu upload of a commercial book; nothing original at AMC 10 level." },
+    { "title": "Mathematical Reasoning: Writing and Proof (Sundstrom)", "reason": "Open-licensed but a proof-writing text; not relevant to AMC 10 skills." },
+    { "title": "MIT PRIMES / CrowdMath", "reason": "Research-project program, not courseware." },
+    { "title": "Scribd / Course Hero / dokumen.pub / Z-Library copies of AoPS books that surfaced in search", "reason": "Pirated; excluded per rules." }
+  ]
+}

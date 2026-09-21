@@ -4,6 +4,7 @@ import { SKILL_BY_ID, TOPIC_META } from "@/curriculum/skills";
 import { lessonFor } from "@/curriculum/lessons";
 import { subSkillsOf, PREREQS } from "@/curriculum/subskills";
 import { resourcesFor, PAST_PAPERS } from "@/curriculum/resources";
+import { readingFor, videosFor, extraFor } from "@/curriculum/research";
 import { getLearner, getMasteryMap, getMasteryMapFor } from "@/lib/learner";
 import { LEVEL_COLOR, masteryLevel } from "@/lib/mastery";
 import { createSkillPractice } from "@/lib/worksheet";
@@ -26,6 +27,9 @@ export default async function LessonPage({ params }: { params: { skillId: string
   const subMastery = await getMasteryMapFor(learner.id, subs.map((s) => s.id));
   const bank = await db.problemSkill.count({ where: { skillId: skill.id } });
   const resources = resourcesFor(skill.id);
+  const reading = readingFor(skill.id);
+  const videos = videosFor(skill.id);
+  const extras = extraFor(skill.id);
   const prereqs = PREREQS[skill.id] ?? [];
 
   const date = todayStr();
@@ -90,6 +94,41 @@ export default async function LessonPage({ params }: { params: { skillId: string
       </div>
 
       {lesson ? <LessonClient skillId={skill.id} skillName={skill.name} lesson={lesson} initial={initial} /> : <p className="text-slate-500">Lesson text not written yet.</p>}
+
+      {(reading.length > 0 || videos.length > 0 || extras.length > 0) && (
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 className="mb-1 text-lg font-bold text-slate-800">Reading, problem sets & videos</h2>
+          <p className="mb-3 text-xs text-slate-500">Free sources verified for this skill (<Link href="/resources" className="text-blue-700 underline">whole library</Link>). ✓✓ = end-of-chapter problems with solutions.</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Textbook chapters</div>
+              <ul className="space-y-1.5 text-sm">
+                {reading.map(({ book, chapters }) => (
+                  <li key={book.url}>
+                    <a href={book.url} target="_blank" rel="noreferrer" className="font-semibold text-blue-700 hover:underline">{book.title}</a>
+                    <span className="text-xs text-slate-500"> {book.free ? "free" : "paid"}{book.hasEndOfChapterProblems && book.hasSolutions ? " ✓✓" : book.hasEndOfChapterProblems ? " ✓" : ""}</span>
+                    <div className="text-xs text-slate-700">{chapters.map((c) => `ch. ${c.chapter} ${c.title}`).join(" · ")}</div>
+                    {book.freeExcerpt?.url && chapters.some((c) => c.chapter === book.freeExcerpt?.chapter) && <a href={book.freeExcerpt.url} target="_blank" rel="noreferrer" className="text-xs text-blue-700 underline">This chapter is the free excerpt ↗</a>}
+                  </li>
+                ))}
+                {!reading.length && <li className="text-xs text-slate-500">No chapter mapping yet.</li>}
+              </ul>
+            </div>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Videos & handouts</div>
+              <ul className="space-y-1.5 text-sm">
+                {videos.map((v) => (
+                  <li key={v.url}><a href={v.url} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline">▶ {v.title}</a></li>
+                ))}
+                {extras.map((r) => (
+                  <li key={r.url}><a href={r.url} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline">{KIND_ICON[r.kind] ?? "•"} {r.label}</a>{r.note && <span className="text-xs text-slate-500"> — {r.note}</span>}</li>
+                ))}
+                {!videos.length && !extras.length && <li className="text-xs text-slate-500">None verified yet.</li>}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
 
       {resources.length > 0 && (
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">

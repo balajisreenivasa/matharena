@@ -18,6 +18,7 @@ const NAV = [
   ["/plan", "Plan"],
   ["/lessons", "Lessons"],
   ["/skills", "Skills"],
+  ["/resources", "Library"],
   ["/progress", "Progress"],
   ["/mock", "Mocks"],
   ["/practice", "Practice"],
