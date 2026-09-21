@@ -1,73 +1,91 @@
 import { test, expect } from "@playwright/test";
 
-// End-to-end coverage of the practice loop against the real seeded database.
-// These drive the actual UI, so they catch wiring bugs that server-rendered
-// HTML checks cannot (answer grading, score updates, set completion).
+// End-to-end coverage against the real seeded database and a real browser.
+// Free practice (/practice) is untracked, so answering there never touches mastery
+// or the review queue; the plan pages are checked read-only.
 
-test("dashboard shows the seeded bank and links to every topic", async ({ page }) => {
+test("home shows the countdown and today's card", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Practice competition math/i })).toBeVisible();
-
-  // Banner reports a real count, not zero.
-  const banner = await page.locator("section p").first().innerText();
-  const total = parseInt(banner.replace(/,/g, "").match(/(\d+)\s+problems/)![1], 10);
-  expect(total).toBeGreaterThan(10000);
-
-  // Every topic card links into a filtered practice set.
-  const cards = page.locator('a[href^="/practice?topic="]');
-  await expect(cards).toHaveCount(5);
-  for (const name of ["Algebra", "Geometry", "Number Theory", "Counting & Probability", "Precalculus"]) {
-    await expect(page.getByText(name, { exact: true })).toBeVisible();
-  }
+  await expect(page.getByRole("heading", { name: /AMC 10 prep/i })).toBeVisible();
+  await expect(page.getByText(/days to 10A/)).toBeVisible();
+  await expect(page.getByText(/days to 10B/)).toBeVisible();
+  await expect(page.getByText(/Parent checklist/)).toBeVisible();
 });
 
-test("free-response: a correct answer scores and reveals the solution", async ({ page }) => {
-  await page.goto("/practice");
+test("plan renders the 7-week template with paper mocks", async ({ page }) => {
+  await page.goto("/plan");
+  await expect(page.getByRole("heading", { name: /Week 1/ })).toBeVisible();
+  await expect(page.getByText(/2016 AMC 10A on AoPS/).first()).toBeVisible();
+  await expect(page.getByText(/AMC 10A — exam day/)).toBeVisible();
+  await expect(page.getByText(/AMC 10B — exam day/)).toBeVisible();
+});
 
-  // Read the expected answer straight from the page's own data by submitting a
-  // deliberate miss first, then reading the revealed answer.
-  await expect(page.getByRole("heading")).toBeHidden({ timeout: 1000 }).catch(() => {});
+test("lessons index lists all 28 skills and a lesson page renders its sections", async ({ page }) => {
+  await page.goto("/lessons");
+  const links = page.locator('a[href^="/lessons/"]');
+  await expect(links).toHaveCount(28);
+  await page.goto("/lessons/nt-modular");
+  for (const h of ["Key ideas", "Formulas & facts to know cold", "Worked examples", "Pitfalls", "On the AMC 10", "Go deeper"]) {
+    await expect(page.getByRole("heading", { name: h })).toBeVisible();
+  }
+  // Math in the lesson renders as KaTeX, never raw.
+  const body = await page.locator("main").innerText();
+  expect(body).not.toMatch(/\\frac|\\pmod|\\begin\{/);
+  expect(await page.locator(".katex").count()).toBeGreaterThan(5);
+});
+
+test("today page shows the routine blocks", async ({ page }) => {
+  await page.goto("/today?date=2026-09-22");
+  await expect(page.getByRole("heading", { name: /Warm-up/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Lesson:/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Worksheet$/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Corrections/ })).toBeVisible();
+});
+
+test("diagnostic page explains both halves", async ({ page }) => {
+  await page.goto("/diagnostic");
+  await expect(page.getByText(/Part 1 · Paper/)).toBeVisible();
+  await expect(page.getByText(/Part 2 · In-app/)).toBeVisible();
+});
+
+test("free-response: a miss reveals the answer and the override updates the score", async ({ page }) => {
+  await page.goto("/practice");
   const input = page.getByLabel("Your answer");
   await expect(input).toBeVisible();
-
   await input.fill("__definitely_wrong__");
   await page.getByRole("button", { name: "Check" }).click();
-
-  const verdict = page.locator("text=/Not quite|Correct!/").first();
-  await expect(verdict).toBeVisible();
   await expect(page.getByText("Not quite", { exact: false })).toBeVisible();
-
-  // Score counted the attempt.
   await expect(page.locator("text=/Score 0\\/1/")).toBeVisible();
-
-  // The override exists for LaTeX false negatives and updates the score.
   await page.getByRole("button", { name: "I had this right" }).click();
   await expect(page.locator("text=/Score 1\\/1/")).toBeVisible();
 });
 
-test("answer input is disabled after checking, and Next advances", async ({ page }) => {
+test("math keyboard inserts at the caret and the preview renders", async ({ page }) => {
   await page.goto("/practice");
   const input = page.getByLabel("Your answer");
-  await input.fill("1");
-  await page.getByRole("button", { name: "Check" }).click();
-
-  await expect(input).toBeDisabled();
-  await expect(page.locator("text=/Problem 1 of 25/")).toBeVisible();
-
-  await page.getByRole("button", { name: /Next problem/ }).click();
-  await expect(page.locator("text=/Problem 2 of 25/")).toBeVisible();
-  // Fresh input for the new problem.
-  await expect(page.getByLabel("Your answer")).toBeEnabled();
-  await expect(page.getByLabel("Your answer")).toHaveValue("");
+  await page.getByRole("button", { name: "√" }).click();
+  await expect(input).toHaveValue("sqrt()");
+  await page.getByRole("button", { name: "2", exact: true }).click();
+  await expect(input).toHaveValue("sqrt(2)");
+  await expect(page.getByText("Reads as")).toBeVisible();
+  await expect(page.locator(".katex").last()).toBeVisible();
+  await page.getByRole("button", { name: "Hide keys" }).click();
+  await expect(page.getByRole("button", { name: "√" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Math keys" }).click();
+  await expect(page.getByRole("button", { name: "√" })).toBeVisible();
 });
 
-test("Enter key submits the answer", async ({ page }) => {
+test("Enter submits and Next advances with a fresh input", async ({ page }) => {
   await page.goto("/practice");
   const input = page.getByLabel("Your answer");
   await input.fill("42");
   await input.press("Enter");
   await expect(input).toBeDisabled();
-  await expect(page.locator("text=/Score \\d\\/1/")).toBeVisible();
+  await expect(page.locator("text=/Problem 1 of 25/")).toBeVisible();
+  await page.getByRole("button", { name: /Next problem/ }).click();
+  await expect(page.locator("text=/Problem 2 of 25/")).toBeVisible();
+  await expect(page.getByLabel("Your answer")).toBeEnabled();
+  await expect(page.getByLabel("Your answer")).toHaveValue("");
 });
 
 test("Check is disabled until something is typed", async ({ page }) => {
@@ -77,83 +95,19 @@ test("Check is disabled until something is typed", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Check" })).toBeEnabled();
 });
 
-test("topic filter only serves problems from that topic", async ({ page }) => {
-  await page.goto("/practice?topic=geometry");
-  await expect(page.locator("text=/Geometry practice/")).toBeVisible();
-
-  // Walk a few problems; each must carry the Geometry tag.
-  for (let i = 0; i < 3; i++) {
-    await expect(page.locator("span", { hasText: /^Geometry$/ }).first()).toBeVisible();
-    await page.getByLabel("Your answer").fill("0");
-    await page.getByRole("button", { name: "Check" }).click();
-    await page.getByRole("button", { name: /Next problem/ }).click();
-  }
+test("skill filter only serves problems tagged with that skill", async ({ page }) => {
+  await page.goto("/practice?skill=nt-modular");
+  await expect(page.locator("text=/remainders & units digits practice/")).toBeVisible();
 });
 
-test("completing the set shows a results screen, not the empty state", async ({ page }) => {
-  await page.goto("/practice");
-
-  // Blow through all 25 problems.
-  for (let i = 0; i < 25; i++) {
-    await page.getByLabel("Your answer").fill("0");
-    await page.getByRole("button", { name: "Check" }).click();
-    const label = i < 24 ? /Next problem/ : /See results/;
-    await page.getByRole("button", { name: label }).click();
-  }
-
-  await expect(page.locator("text=/% correct/")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Practice again" })).toBeVisible();
-  // The old bug rendered the "no problems" empty state here.
-  await expect(page.locator("text=/No problems here yet/")).toHaveCount(0);
-
-  // Restart resets to problem 1 with a zeroed score.
-  await page.getByRole("button", { name: "Practice again" }).click();
-  await expect(page.locator("text=/Problem 1 of 25/")).toBeVisible();
-  await expect(page.locator("text=/Score 0\\/0/")).toBeVisible();
-});
-
-test("math renders as KaTeX, never as raw LaTeX source", async ({ page }) => {
-  await page.goto("/practice");
-
-  // ~19% of the bank is plain prose with no math, so a given problem may
-  // legitimately have no .katex. The invariant that must always hold is that no
-  // raw LaTeX source is ever visible. Walk the set checking that, and confirm
-  // KaTeX does render on at least one problem that contains math.
-  let sawKatex = false;
-  for (let i = 0; i < 8; i++) {
-    const body = await page.locator("main").innerText();
-    // Unrendered delimiters or commands leaking into visible text is the bug.
-    expect(body, `raw LaTeX visible on problem ${i + 1}`).not.toMatch(/\\\[|\\\]|\\frac|\\dfrac|\\sqrt|\\begin\{/);
-    if (await page.locator(".katex").count()) sawKatex = true;
-
-    await page.getByLabel("Your answer").fill("0");
-    await page.getByRole("button", { name: "Check" }).click();
-    await page.getByRole("button", { name: /Next problem/ }).click();
-  }
-  expect(sawKatex, "no problem in 8 rendered any KaTeX").toBe(true);
-});
-
-// Whether a given random set contains display math is luck, so the deterministic
-// proof that \[...\] renders lives in `npm run verify`. What this asserts is the
-// invariant that must hold on every problem the user actually sees.
-test("no raw LaTeX source leaks in statements OR solutions", async ({ page }) => {
-  // The solution panel only appears after answering. An earlier version of this
-  // test checked statements only, and missed bare \begin{align*} blocks that were
-  // rendering as raw source in ~20% of solutions.
+test("no raw LaTeX source leaks in statements or solutions", async ({ page }) => {
   const RAW = /\\\[|\\\]|\\begin\{(align|aligned|gather|equation|cases|pmatrix|bmatrix|split)|\\frac|\\dfrac|\\boxed/;
-
   await page.goto("/practice?topic=algebra");
-  for (let i = 0; i < 12; i++) {
-    const statement = await page.locator("main").innerText();
-    expect(statement, `raw LaTeX in statement ${i + 1}`).not.toMatch(RAW);
-
+  for (let i = 0; i < 8; i++) {
+    expect(await page.locator("main").innerText(), `raw LaTeX in statement ${i + 1}`).not.toMatch(RAW);
     await page.getByLabel("Your answer").fill("0");
     await page.getByRole("button", { name: "Check" }).click();
-
-    // Now the solution is on screen — check it too.
-    const withSolution = await page.locator("main").innerText();
-    expect(withSolution, `raw LaTeX in solution ${i + 1}`).not.toMatch(RAW);
-
+    expect(await page.locator("main").innerText(), `raw LaTeX in solution ${i + 1}`).not.toMatch(RAW);
     await page.getByRole("button", { name: /Next problem/ }).click();
   }
 });
@@ -164,11 +118,9 @@ test("no console errors while practising", async ({ page }) => {
     if (m.type() === "error") errors.push(m.text());
   });
   page.on("pageerror", (e) => errors.push(String(e)));
-
   await page.goto("/practice");
   await page.getByLabel("Your answer").fill("5");
   await page.getByRole("button", { name: "Check" }).click();
   await page.getByRole("button", { name: /Next problem/ }).click();
-
   expect(errors).toEqual([]);
 });

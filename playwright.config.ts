@@ -7,14 +7,15 @@ export default defineConfig({
   reporter: [["list"]],
   timeout: 60_000,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.BASE_URL ?? "http://localhost:3000",
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  // Reuse a dev server if one is already up, otherwise start one.
+  // Reuse a dev server if one is already up (BASE_URL=http://localhost:3001 to point at
+  // another port), otherwise start one. Never run two dev servers against one .next dir.
   webServer: {
     command: "npm run dev",
-    url: "http://localhost:3000",
+    url: process.env.BASE_URL ?? "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 120_000,
   },
