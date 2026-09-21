@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { SKILLS, TOPIC_META, tagSkills, type TopicSlug } from "../src/curriculum/skills";
 
 const db = new PrismaClient();
 
@@ -87,6 +88,8 @@ async function main() {
     console.log(`  seeded ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
   }
 
+  await tagSkillsForAllProblems();
+
   // Drop contests left with no problems (e.g. from a previous dataset) so the
   // dashboard's contest count reflects what's actually loaded.
   const empty = await db.contest.findMany({ where: { problems: { none: {} } }, select: { id: true } });
@@ -101,4 +104,45 @@ async function main() {
   if (withoutAnswer) console.warn(`!! ${withoutAnswer} have an empty answer and cannot be graded.`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); }).finally(() => db.$disconnect());
+// Attach fine-grained AMC 10 skills (src/curriculum/skills.ts) to every problem via
+// keyword matching, restricted to the problem's topic(s). Idempotent: rebuilds the
+// whole ProblemSkill table. Also exported for `npm run tag` to re-run on its own.
+export async function tagSkillsForAllProblems() {
+  for (const s of SKILLS) {
+    await db.skill.upsert({
+      where: { id: s.id },
+      update: { name: s.name, topicSlug: s.topicSlug, order: s.order },
+      create: { id: s.id, name: s.name, topicSlug: s.topicSlug, order: s.order },
+    });
+  }
+  await db.problemSkill.deleteMany({});
+
+  const problems = await db.problem.findMany({
+    select: { id: true, statement: true, round: true, topics: { select: { topic: { select: { slug: true } } } } },
+  });
+  const links: { problemId: string; skillId: string }[] = [];
+  const perSkill: Record<string, number> = {};
+  let untagged = 0;
+  for (const p of problems) {
+    const slugs = new Set<TopicSlug>();
+    for (const t of p.topics) if (t.topic.slug in TOPIC_META) slugs.add(t.topic.slug as TopicSlug);
+    // MATH's prealgebra subject is a grab bag, so let its rows match NT/counting skills too.
+    for (const [slug, meta] of Object.entries(TOPIC_META)) if (p.round && meta.mathRounds.includes(p.round)) slugs.add(slug as TopicSlug);
+    const ids = tagSkills(p.statement, [...slugs]);
+    if (!ids.length) untagged++;
+    for (const skillId of ids) {
+      links.push({ problemId: p.id, skillId });
+      perSkill[skillId] = (perSkill[skillId] ?? 0) + 1;
+    }
+  }
+  for (let i = 0; i < links.length; i += 1000) {
+    await db.problemSkill.createMany({ data: links.slice(i, i + 1000) });
+  }
+  console.log(`Skills: ${links.length} tags on ${problems.length - untagged} problems (${untagged} matched no skill; they still serve via topic).`);
+  const thin = SKILLS.filter((s) => (perSkill[s.id] ?? 0) < 40).map((s) => `${s.id}=${perSkill[s.id] ?? 0}`);
+  if (thin.length) console.warn(`  thin skills (<40 problems): ${thin.join(", ")}`);
+}
+
+if (process.argv[1] && /seed\.ts$/.test(process.argv[1])) {
+  main().catch((e) => { console.error(e); process.exit(1); }).finally(() => db.$disconnect());
+}

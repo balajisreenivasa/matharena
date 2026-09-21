@@ -1,4 +1,5 @@
-// MathArena data model — generic across every competition.
+// MathArena data model — generic across every competition, plus the adaptive
+// daily-plan layer (skills, mastery, worksheets, study plan, mock exams).
 generator client {
   provider = "prisma-client-js"
 }
@@ -37,10 +38,12 @@ model Problem {
   createdAt        DateTime       @default(now())
   contest          Contest        @relation(fields: [contestId], references: [id])
   topics           ProblemTopic[]
+  skills           ProblemSkill[]
   solutions        Solution[]
   attempts         Attempt[]
 
   @@unique([contestId, year, round, number])
+  @@index([globalDifficulty])
 }
 
 model Topic {
@@ -63,6 +66,28 @@ model ProblemTopic {
   @@id([problemId, topicId])
 }
 
+// A fine-grained AMC 10 skill (e.g. "Modular arithmetic"), defined in
+// src/curriculum/skills.ts and mirrored here so problems and mastery can join on it.
+model Skill {
+  id         String         @id // slug, e.g. "nt-modular"
+  name       String
+  topicSlug  String // parent topic slug: algebra | geometry | number-theory | counting-probability
+  order      Int
+  problems   ProblemSkill[]
+  masteries  SkillMastery[]
+  worksheets Worksheet[]
+}
+
+model ProblemSkill {
+  problemId String
+  skillId   String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, skillId])
+  @@index([skillId])
+}
+
 model Solution {
   id        String  @id @default(cuid())
   problemId String
@@ -76,10 +101,74 @@ model User {
   id           String         @id @default(cuid())
   name         String
   email        String         @unique
-  passwordHash String
+  passwordHash String?
+  grade        Int?
   createdAt    DateTime       @default(now())
   attempts     Attempt[]
   sessions     StudySession[]
+  masteries    SkillMastery[]
+  worksheets   Worksheet[]
+  plan         StudyPlan?
+  mockExams    MockExam[]
+}
+
+// Running estimate of how well the learner knows one skill. `score` is 0..1 and
+// moves with an exponential moving average weighted by problem difficulty.
+model SkillMastery {
+  id            String    @id @default(cuid())
+  userId        String
+  skillId       String
+  score         Float     @default(0.35)
+  attempts      Int       @default(0)
+  correct       Int       @default(0)
+  streak        Int       @default(0)
+  lastPracticed DateTime?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill         Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+}
+
+model StudyPlan {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  startDate      String // YYYY-MM-DD
+  examADate      String // YYYY-MM-DD
+  examBDate      String // YYYY-MM-DD
+  minutesPerDay  Int      @default(70)
+  problemsPerDay Int      @default(8)
+  restDays       String   @default("[]") // JSON array of weekday numbers (0=Sun)
+  pauseDates     String   @default("[]") // JSON array of YYYY-MM-DD with no assignment; the schedule pushes past them
+  deliverTo      String? // student email for the 6:00 AM worksheet
+  parentEmail    String? // parent: cc on the morning mail, 8:00 PM summary, Sunday digest
+  deliverAt      String   @default("06:00") // HH:MM local
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// One assigned set of problems: a daily worksheet, the diagnostic, a mock exam, or a review.
+model Worksheet {
+  id           String    @id @default(cuid())
+  userId       String
+  date         String // YYYY-MM-DD it was assigned for
+  kind         String // "daily" | "diagnostic" | "mock" | "review"
+  skillId      String? // the lesson skill for a daily worksheet
+  title        String
+  items        String // JSON [{problemId, role}] — role: warmup|lesson|mixed|challenge|diagnostic|mock
+  status       String    @default("pending") // pending | in_progress | done
+  score        Int?
+  total        Int?
+  timeLimitSec Int?
+  sentAt       DateTime?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill        Skill?    @relation(fields: [skillId], references: [id])
+  attempts     Attempt[]
+
+  @@index([userId, date])
 }
 
 model StudySession {
@@ -98,11 +187,49 @@ model Attempt {
   userId       String
   problemId    String
   sessionId    String?
-  selected     String
+  worksheetId  String?
+  selected     String // "" = left blank
   isCorrect    Boolean
+  confidence   String? // "sure" | "unsure" | "guessed"
+  errorTag     String? // "C" concept | "S" setup | "E" execution | "R" misread | "T" time
   timeSpentSec Int?
   createdAt    DateTime      @default(now())
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem      Problem       @relation(fields: [problemId], references: [id], onDelete: Cascade)
   session      StudySession? @relation(fields: [sessionId], references: [id])
+  worksheet    Worksheet?    @relation(fields: [worksheetId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([worksheetId])
+}
+
+// Spaced-repetition queue: a missed problem comes back after 1, 3, 7, then 14 days;
+// a correct redo advances the interval, a wrong redo resets it, retiring after 14.
+model ReviewItem {
+  id            String @id @default(cuid())
+  userId        String
+  problemId     String
+  dueDate       String // YYYY-MM-DD
+  intervalIndex Int    @default(0) // index into [1, 3, 7, 14]
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, problemId])
+  @@index([userId, dueDate])
+}
+
+// A full past AMC paper done on paper (from the AoPS wiki) and logged by hand.
+model MockExam {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String // YYYY-MM-DD
+  contest   String // "AMC10A" | "AMC10B" | "AMC8" | ...
+  year      Int
+  correct   Int
+  blank     Int
+  wrong     Int
+  score     Float // AMC scoring: 6*correct + 1.5*blank
+  missed    String   @default("[]") // JSON array of problem numbers missed/blank
+  notes     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

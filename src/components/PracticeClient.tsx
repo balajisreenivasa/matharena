@@ -20,31 +20,8 @@ export type ClientProblem = {
   solutions: string[];
 };
 
-// Free-response answers are LaTeX, so one value has many spellings ("\dfrac12" vs
-// "\frac{1}{2}" vs "0.5"). Normalize the obvious variations, compare numerically when
-// both sides are numbers, and let the user override a false negative.
-function normalize(s: string): string {
-  return s
-    .trim()
-    .replace(/^\$+|\$+$/g, "")
-    .replace(/\\left|\\right/g, "")
-    .replace(/\\[dt]frac/g, "\\frac")
-    .replace(/\\!|\\,|\\;|\\:|\\ /g, "")
-    .replace(/\s+/g, "")
-    .replace(/\.$/, "")
-    .toLowerCase();
-}
-
-export function answersMatch(given: string, expected: string): boolean {
-  const a = normalize(given);
-  const b = normalize(expected);
-  if (!a) return false;
-  if (a === b) return true;
-  const na = Number(a.replace(/[,$]/g, ""));
-  const nb = Number(b.replace(/[,$]/g, ""));
-  if (Number.isFinite(na) && Number.isFinite(nb)) return na === nb;
-  return false;
-}
+import { answersMatch } from "@/lib/answers";
+export { answersMatch };
 
 export function PracticeClient({ problems, heading }: { problems: ClientProblem[]; heading: string }) {
   const [i, setI] = useState(0);

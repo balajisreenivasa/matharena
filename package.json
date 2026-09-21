@@ -7,7 +7,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "verify": "tsx scripts/verify.ts",
+    "verify": "tsx scripts/verify.ts && tsx scripts/check-lessons.ts",
     "test": "playwright test",
     "dev": "next dev",
     "build": "next build",
@@ -17,7 +17,9 @@
     "import": "tsx scripts/import.ts",
     "classify": "tsx scripts/classify.ts",
     "build:data": "tsx scripts/import.ts && tsx scripts/classify.ts && tsx scripts/seed.ts",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "tag": "tsx scripts/tag.ts",
+    "daily": "tsx scripts/daily.ts"
   },
   "prisma": {
     "seed": "tsx scripts/seed.ts"
@@ -27,6 +29,7 @@
     "dotenv": "^16.4.5",
     "katex": "^0.16.11",
     "next": "^14.2.35",
+    "nodemailer": "^10.0.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -34,6 +37,7 @@
     "@playwright/test": "^1.62.0",
     "@types/katex": "^0.16.7",
     "@types/node": "^20.14.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",

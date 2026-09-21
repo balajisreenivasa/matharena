@@ -6,10 +6,11 @@ export const dynamic = "force-dynamic";
 
 const SET_SIZE = 25;
 
-export default async function Practice({ searchParams }: { searchParams: { topic?: string } }) {
+export default async function Practice({ searchParams }: { searchParams: { topic?: string; skill?: string } }) {
   const topicSlug = searchParams.topic;
   const topic = topicSlug ? await db.topic.findUnique({ where: { slug: topicSlug } }) : null;
-  const where = topic ? { topics: { some: { topicId: topic.id } } } : {};
+  const skill = searchParams.skill ? await db.skill.findUnique({ where: { id: searchParams.skill } }) : null;
+  const where = skill ? { skills: { some: { skillId: skill.id } } } : topic ? { topics: { some: { topicId: topic.id } } } : {};
 
   // The bank holds >12k problems, so never load them all. Take a random window
   // of SET_SIZE so repeat visits get a different set.
@@ -44,7 +45,7 @@ export default async function Practice({ searchParams }: { searchParams: { topic
     // Ramp difficulty within the set rather than jumping around.
     .sort((a, b) => a.localDifficulty - b.localDifficulty || a.number - b.number);
 
-  const heading = topic ? `${topic.name} practice` : "Mixed practice";
+  const heading = skill ? `${skill.name} practice` : topic ? `${topic.name} practice` : "Mixed practice";
 
   return (
     <div>
