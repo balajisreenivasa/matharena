@@ -32,9 +32,12 @@ export function todayStr(): string {
   return toISODate(new Date());
 }
 
+// Noon, not midnight: when the server runs in UTC and APP_TZ is New York, a midnight
+// date shifted by a few hours would format as the previous day and addDays() would
+// never advance (infinite calendar loop). Noon is safe for any zone within ±11 h.
 export function parseISODate(iso: string): Date {
   const [y, m, d] = iso.split("-").map((n) => parseInt(n, 10));
-  return new Date(y, m - 1, d);
+  return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
 export function addDays(iso: string, n: number): string {
