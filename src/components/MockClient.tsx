@@ -7,6 +7,7 @@ import Link from "next/link";
 import { MathTex, RichText } from "./Math";
 import type { WorksheetItemView, PriorAttempt } from "./WorksheetClient";
 import { amcScore } from "@/lib/mastery";
+import { AnswerInput } from "./AnswerInput";
 
 type Props = {
   worksheetId: string;
@@ -166,13 +167,15 @@ export function MockClient({ worksheetId, title, items, timeLimitSec, prior, alr
                   })}
                 </div>
               ) : (
-                <input
+                <AnswerInput
                   value={done ? r?.selected ?? "" : typed[p.id] ?? ""}
-                  onChange={(e) => setTyped((m) => ({ ...m, [p.id]: e.target.value }))}
+                  onChange={(v) => setTyped((m) => ({ ...m, [p.id]: v }))}
+                  onSubmit={() => {}}
                   disabled={done}
+                  compact
+                  autoFocus={false}
                   placeholder="Answer (leave blank to skip)"
-                  className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 font-mono text-sm outline-none focus:border-slate-500 disabled:bg-slate-50"
-                  aria-label={`Answer ${idx + 1}`}
+                  ariaLabel={`Answer ${idx + 1}`}
                 />
               )}
               {done && (

@@ -10,6 +10,7 @@ import { LOCAL_DIFFICULTY, globalBand } from "@/lib/difficulty";
 import type { ClientProblem } from "./PracticeClient";
 import { answersMatch } from "@/lib/answers";
 import { ERROR_TAGS, type Confidence, type ErrorTag } from "@/lib/mastery";
+import { AnswerInput } from "./AnswerInput";
 
 export type WorksheetItemView = {
   role: string;
@@ -252,28 +253,15 @@ export function WorksheetClient({ worksheetId, title, kind, items, prior, lesson
             })}
           </div>
         ) : (
-          <div className="flex flex-wrap items-center gap-2">
-            <input
-              value={answered ? a.selected : typed}
-              onChange={(e) => setTyped(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && typed.trim()) submit(typed);
-              }}
-              disabled={answered || busy}
-              placeholder={p.answerFormat === "integer" ? "Integer answer (0-999)" : "Your answer, e.g. 42 or \\frac{1}{2}"}
-              className="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 font-mono text-slate-900 outline-none focus:border-slate-500 disabled:bg-slate-50"
-              inputMode={p.answerFormat === "integer" ? "numeric" : "text"}
-              aria-label="Your answer"
-            />
-            <button onClick={() => submit(typed)} disabled={answered || busy || !typed.trim()} className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-700 disabled:opacity-40">
-              {busy ? "Saving…" : "Check"}
-            </button>
-            {!answered && (
-              <button onClick={() => submit("")} disabled={busy} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50" title="Leave blank, like on the real exam">
-                Skip
-              </button>
-            )}
-          </div>
+          <AnswerInput
+            value={answered ? a.selected : typed}
+            onChange={setTyped}
+            onSubmit={(v) => submit(v)}
+            onSkip={() => submit("")}
+            disabled={answered || busy}
+            busy={busy}
+            integerOnly={p.answerFormat === "integer"}
+          />
         )}
 
         {error && <div className="mt-3 rounded-lg bg-amber-100 px-4 py-2 text-sm text-amber-900">{error} — try again.</div>}

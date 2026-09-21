@@ -30,6 +30,34 @@ async function main() {
   not(check("wrong answer", answersMatch("41", "42"), false));
   not(check("empty input", answersMatch("", "42"), false));
   not(check("case insensitive", answersMatch("X", "x"), true));
+  // Real formats from the bank vs what a student types.
+  not(check("text word", answersMatch("even", "\\text{even}"), true));
+  not(check("mbox word", answersMatch("Saturday", "\\mbox{Saturday}"), true));
+  not(check("number word", answersMatch("4", "\\mbox{four}"), true));
+  not(check("unit optional", answersMatch("2", "2 \\text{ euros}"), true));
+  not(check("unit with power", answersMatch("864", "864 \\mbox{ inches}^2"), true));
+  not(check("wrong unit", answersMatch("3 minutes", "3 \\text{ hours}"), false));
+  not(check("slash fraction", answersMatch("1/2", "\\frac{1}{2}"), true));
+  not(check("pi fraction", answersMatch("25pi/2", "\\frac{25\\pi}{2}"), true));
+  not(check("pi spaced", answersMatch("35/2 pi", "\\frac{35}{2} \\pi"), true));
+  not(check("frac94", answersMatch("2.25pi", "\\frac94\\pi"), true));
+  not(check("sqrt plain", answersMatch("sqrt2+1", "\\sqrt{2}+1"), true));
+  not(check("sqrt paren", answersMatch("1+sqrt(2)", "\\sqrt{2}+1"), true));
+  not(check("mixed number", answersMatch("10 1/12", "10\\frac{1}{12}"), true));
+  not(check("mixed as improper", answersMatch("121/12", "10\\frac{1}{12}"), true));
+  not(check("pair", answersMatch("(3,-1)", "(3, -1)"), true));
+  not(check("pair order matters", answersMatch("(-1,3)", "(3, -1)"), false));
+  not(check("list any order", answersMatch("2, -2", "-2, 2"), true));
+  not(check("assignment prefix", answersMatch("-16.5", "k = \\frac{-33}{2}"), true));
+  not(check("dollar sign", answersMatch("42409", "\\$42409"), true));
+  not(check("thousands comma", answersMatch("42,409", "\\$42409"), true));
+  not(check("degrees", answersMatch("45", "45^\\circ"), true));
+  not(check("percent", answersMatch("20%", "20\\%"), true));
+  not(check("power", answersMatch("2^10", "1024"), true));
+  not(check("cube root", answersMatch("8^(1/3)", "2"), true));
+  not(check("7-2pi", answersMatch("7 - 2pi", "7-2\\pi"), true));
+  not(check("near miss numeric", answersMatch("0.33", "\\frac{1}{3}"), false));
+  not(check("interval string", answersMatch("[0,3)", "[0,3)"), true));
 
   console.log("--- extractBoxed ---");
   not(check("simple", extractBoxed("so \\boxed{42}."), "42"));

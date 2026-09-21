@@ -21,6 +21,7 @@ export type ClientProblem = {
 };
 
 import { answersMatch } from "@/lib/answers";
+import { AnswerInput } from "./AnswerInput";
 export { answersMatch };
 
 export function PracticeClient({ problems, heading }: { problems: ClientProblem[]; heading: string }) {
@@ -173,27 +174,7 @@ export function PracticeClient({ problems, heading }: { problems: ClientProblem[
             })}
           </div>
         ) : (
-          <div className="flex flex-wrap items-center gap-2">
-            <input
-              value={typed}
-              onChange={(e) => setTyped(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") submitTyped();
-              }}
-              disabled={answered}
-              placeholder={p.answerFormat === "integer" ? "Integer answer (0-999)" : "Your answer, e.g. 42 or \\frac{1}{2}"}
-              className="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 font-mono text-slate-900 outline-none focus:border-slate-500 disabled:bg-slate-50"
-              inputMode={p.answerFormat === "integer" ? "numeric" : "text"}
-              aria-label="Your answer"
-            />
-            <button
-              onClick={submitTyped}
-              disabled={answered || !typed.trim()}
-              className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-700 disabled:opacity-40"
-            >
-              Check
-            </button>
-          </div>
+          <AnswerInput value={typed} onChange={setTyped} onSubmit={() => submitTyped()} disabled={answered} integerOnly={p.answerFormat === "integer"} />
         )}
 
         {answered && (
