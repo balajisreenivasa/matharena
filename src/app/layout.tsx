@@ -9,8 +9,10 @@ export const metadata: Metadata = {
 };
 
 const NAV = [
-  ["/", "Today"],
+  ["/", "Home"],
+  ["/today", "Today"],
   ["/plan", "Plan"],
+  ["/diagnostic", "Diagnostic"],
   ["/lessons", "Lessons"],
   ["/progress", "Progress"],
   ["/mock", "Mocks"],

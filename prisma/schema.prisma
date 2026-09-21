@@ -203,6 +203,17 @@ model Attempt {
   @@index([worksheetId])
 }
 
+// A lesson page opened on a given day (so Today and the evening mail can show it was read).
+model LessonView {
+  id       String   @id @default(cuid())
+  userId   String
+  skillId  String
+  date     String // YYYY-MM-DD
+  viewedAt DateTime @default(now())
+
+  @@unique([userId, skillId, date])
+}
+
 // Spaced-repetition queue: a missed problem comes back after 1, 3, 7, then 14 days;
 // a correct redo advances the interval, a wrong redo resets it, retiring after 14.
 model ReviewItem {

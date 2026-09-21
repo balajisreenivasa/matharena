@@ -10,6 +10,7 @@ import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { importMath, MATH_CONTEST } from "./adapters/math-dataset";
 import { importAime, AIME_CONTESTS } from "./adapters/aime-dataset";
+import { importNuminaAmc, NUMINA_CONTESTS } from "./adapters/numina-amc";
 
 const TOPICS = [
   { name: "Algebra", slug: "algebra", color: "#2563eb" },
@@ -45,8 +46,21 @@ async function main() {
     console.log(`  ${stats.imported} imported, ${stats.skipped} skipped (malformed or duplicate rows)`);
   }
 
+  const wantNumina = !which.length || which.includes("numina");
+  if (wantNumina) {
+    console.log("Importing NuminaMath-1.5 amc_aime slice (Apache 2.0)...");
+    try {
+      const { problems: p, stats } = await importNuminaAmc();
+      contests.push(...NUMINA_CONTESTS);
+      problems.push(...p);
+      console.log(`  ${stats.imported} imported (${stats.mc} multiple-choice), ${stats.skippedAsy} skipped for [asy] figures, ${stats.skippedNoAnswer} no usable answer, ${stats.skippedDup} duplicates`);
+    } catch (e: any) {
+      console.warn(`  Numina import failed (${e?.message ?? e}). Continuing with the other sources; re-run \`npm run import -- numina\` later.`);
+    }
+  }
+
   if (!problems.length) {
-    console.error("Nothing imported. Known sources: math, aime");
+    console.error("Nothing imported. Known sources: math, aime, numina");
     process.exit(1);
   }
 

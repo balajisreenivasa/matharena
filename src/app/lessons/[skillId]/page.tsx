@@ -8,6 +8,9 @@ import { LEVEL_COLOR, masteryLevel } from "@/lib/mastery";
 import { createSkillPractice } from "@/lib/worksheet";
 import { todayStr } from "@/lib/dates";
 import { db } from "@/lib/db";
+import { resourcesFor, PAST_PAPERS } from "@/curriculum/resources";
+
+const KIND_ICON: Record<string, string> = { wiki: "📖", book: "📚", problems: "🧩", video: "▶", drill: "🎯" };
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +22,14 @@ export default async function LessonPage({ params }: { params: { skillId: string
   const mastery = (await getMasteryMap(learner.id))[skill.id];
   const lvl = masteryLevel(mastery.effective, mastery.attempts);
   const bank = await db.problemSkill.count({ where: { skillId: skill.id } });
+  const resources = resourcesFor(skill.id);
+  // Opening the lesson counts as reading it for Today's checklist and the evening mail.
+  const date = todayStr();
+  await db.lessonView.upsert({
+    where: { userId_skillId_date: { userId: learner.id, skillId: skill.id, date } },
+    update: {},
+    create: { userId: learner.id, skillId: skill.id, date },
+  });
 
   async function startPractice() {
     "use server";
@@ -79,6 +90,28 @@ export default async function LessonPage({ params }: { params: { skillId: string
             <p className="mt-2 text-xs text-slate-500">About {lesson.estimatedMinutes} minutes to read.</p>
           </Section>
         </div>
+      )}
+
+      {resources.length > 0 && (
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 className="mb-1 text-lg font-bold text-slate-800">Go deeper</h2>
+          <p className="mb-3 text-xs text-slate-500">Free references for this skill. The AoPS wiki articles are the canonical definitions; the category pages hold hundreds of past problems sorted by difficulty; Alcumus adapts to her like this app does.</p>
+          <ul className="grid gap-1.5 sm:grid-cols-2">
+            {resources.map((r) => (
+              <li key={r.url + r.label} className="text-sm">
+                <a href={r.url} target="_blank" rel="noreferrer" className="flex items-start gap-2 rounded-lg px-2 py-1.5 text-blue-700 hover:bg-slate-50 hover:underline">
+                  <span className="w-5 flex-none text-center">{KIND_ICON[r.kind]}</span>
+                  <span>{r.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
+            Past papers: {PAST_PAPERS.map((p, i) => (
+              <span key={p.url}>{i > 0 && " · "}<a href={p.url} target="_blank" rel="noreferrer" className="text-blue-700 hover:underline">{p.label}</a></span>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );
