@@ -111,8 +111,11 @@ export async function getMasteryMap(userId: string): Promise<Record<string, Mast
 export async function getMasteryMapFor(userId: string, ids: string[]): Promise<Record<string, MasteryRow>> {
   const rows = await db.skillMastery.findMany({ where: { userId, skillId: { in: ids } } });
   const byId: Record<string, MasteryRow> = {};
+  // `score` keeps the 0.35 prior the EMA starts from; `effective` (what pages show and
+  // rank by) is 0 until there is at least one attempt, so nothing reads as 35% mastery
+  // before she has done anything.
   for (const id of ids) {
-    byId[id] = { skillId: id, ...INITIAL_MASTERY, lastPracticed: null, effective: INITIAL_MASTERY.score };
+    byId[id] = { skillId: id, ...INITIAL_MASTERY, lastPracticed: null, effective: 0 };
   }
   for (const r of rows) {
     byId[r.skillId] = {
@@ -122,7 +125,7 @@ export async function getMasteryMapFor(userId: string, ids: string[]): Promise<R
       correct: r.correct,
       streak: r.streak,
       lastPracticed: r.lastPracticed,
-      effective: effectiveScore(r.score, r.lastPracticed),
+      effective: r.attempts ? effectiveScore(r.score, r.lastPracticed) : 0,
     };
   }
   return byId;
