@@ -31,8 +31,12 @@ async function main() {
     topicByName[t.name] = rec.id;
   }
 
-  // Idempotent reload of problems (cascades clear ProblemTopic/Solution/Attempt).
-  await db.problem.deleteMany({});
+  // Non-destructive reload: problems are upserted on their (contest, year, round, number)
+  // key so a re-seed never cascades away a student's attempts and review queue.
+  // Topics/solutions are rebuilt per problem.
+  const existing = await db.problem.findMany({ select: { id: true, contestId: true, year: true, round: true, number: true } });
+  const idByKey = new Map(existing.map((p) => [`${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`, p.id]));
+  console.log(`${existing.length} problems already in the database; upserting.`);
 
   const known = new Set(data.contests.map((c) => c.id));
   const rows = data.problems.filter((p) => {
@@ -48,42 +52,38 @@ async function main() {
   for (let i = 0; i < rows.length; i += CHUNK) {
     const chunk = rows.slice(i, i + CHUNK);
     await db.$transaction(
-      chunk.map((p) =>
-        db.problem.create({
-          data: {
-            contestId: p.contestId,
-            year: p.year,
-            round: p.round ?? null,
-            number: p.number,
-            statement: p.statement,
-            choices: p.choices ? JSON.stringify(p.choices) : null,
-            answer: String(p.answer),
-            hasDiagram: !!p.hasDiagram,
-            diagramUrl: p.diagramUrl ?? null,
-            diagramPath: p.diagramPath ?? null,
-            localDifficulty: p.localDifficulty,
-            globalDifficulty: p.globalDifficulty,
-            source: p.source ?? "AoPS Wiki",
-            sourceUrl: p.sourceUrl ?? "",
-            topics: {
-              create: (p.topics ?? [])
-                .filter((t: any) => topicByName[t.name])
-                .map((t: any) => ({
-                  topicId: topicByName[t.name],
-                  isPrimary: !!t.isPrimary,
-                  taggedBy: t.taggedBy ?? "ai",
-                  confidence: t.confidence ?? null,
-                })),
-            },
-            solutions: {
-              create: (p.solutions ?? []).map((content: string, idx: number) => ({
-                order: idx + 1,
-                content,
-              })),
-            },
-          },
-        })
-      )
+      chunk.flatMap((p) => {
+        const key = `${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`;
+        const id = idByKey.get(key);
+        const scalars = {
+          statement: p.statement,
+          choices: p.choices ? JSON.stringify(p.choices) : null,
+          answer: String(p.answer),
+          hasDiagram: !!p.hasDiagram,
+          diagramUrl: p.diagramUrl ?? null,
+          diagramPath: p.diagramPath ?? null,
+          localDifficulty: p.localDifficulty,
+          globalDifficulty: p.globalDifficulty,
+          source: p.source ?? "AoPS Wiki",
+          sourceUrl: p.sourceUrl ?? "",
+        };
+        const topics = (p.topics ?? [])
+          .filter((t: any) => topicByName[t.name])
+          .map((t: any) => ({ topicId: topicByName[t.name], isPrimary: !!t.isPrimary, taggedBy: t.taggedBy ?? "ai", confidence: t.confidence ?? null }));
+        const solutions = (p.solutions ?? []).map((content: string, idx: number) => ({ order: idx + 1, content }));
+        if (id) {
+          return [
+            db.problemTopic.deleteMany({ where: { problemId: id } }),
+            db.solution.deleteMany({ where: { problemId: id } }),
+            db.problem.update({ where: { id }, data: { ...scalars, topics: { create: topics }, solutions: { create: solutions } } }),
+          ];
+        }
+        return [
+          db.problem.create({
+            data: { contestId: p.contestId, year: p.year, round: p.round ?? null, number: p.number, ...scalars, topics: { create: topics }, solutions: { create: solutions } },
+          }),
+        ];
+      })
     );
     console.log(`  seeded ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
   }

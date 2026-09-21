@@ -14,7 +14,7 @@ import { join } from "node:path";
 import katex from "katex";
 import nodemailer from "nodemailer";
 import { db } from "../src/lib/db";
-import { getLearner, getMasteryMap, planConfig } from "../src/lib/learner";
+import { listLearners, getMasteryMap, planConfig, type Learner } from "../src/lib/learner";
 import { getOrCreateWorksheet } from "../src/lib/worksheet";
 import { loadWorksheetView } from "../src/lib/views";
 import { buildCalendar, planDayFor, KIND_LABEL, IS_STUDY_DAY } from "../src/lib/plan";
@@ -96,8 +96,7 @@ async function send(mail: Mail, slug: string): Promise<"sent" | "outbox"> {
 // Modes
 // ---------------------------------------------------------------------------
 
-async function morning(date: string, force: boolean) {
-  const learner = await getLearner();
+async function morning(learner: Learner, date: string, force: boolean) {
   const cfg = planConfig(learner.plan);
   const day = planDayFor(cfg, date);
   if (!day) return console.log(`${date} is outside the plan window.`);
@@ -109,11 +108,11 @@ async function morning(date: string, force: boolean) {
 
   if (!IS_STUDY_DAY[day.kind]) {
     const html = page(`Day ${dayNo}`, `<h1>Day ${dayNo}: ${esc(day.label)}</h1><p class="muted">${fmtLong(date)} · ${toA} days to 10A · ${toB} days to 10B</p><p>${esc(day.note ?? "Nothing assigned today.")}</p>`);
-    await send({ to, cc, subject: `AMC 10 – Day ${dayNo}: ${day.label}`, html }, `${date}-morning`);
+    await send({ to, cc, subject: `AMC 10 – Day ${dayNo}: ${day.label}`, html }, `${date}-${learner.id.slice(-6)}-morning`);
     return;
   }
 
-  const { worksheet } = await getOrCreateWorksheet(date);
+  const { worksheet } = await getOrCreateWorksheet(learner, date);
   if (!worksheet) return console.log("No worksheet could be built.");
   if (worksheet.sentAt && !force) return console.log(`Already sent at ${worksheet.sentAt.toISOString()} (use --force to resend).`);
   const { items } = await loadWorksheetView(worksheet);
@@ -144,12 +143,11 @@ async function morning(date: string, force: boolean) {
     `<h1>Day ${dayNo}: ${esc(day.label)}</h1><p class="muted">${fmtLong(date)} · ${toA} days to 10A · ${toB} days to 10B</p><ol>${planLines.map((l) => `<li>${l}</li>`).join("")}</ol>
      ${day.note ? `<p class="muted">${esc(day.note)}</p>` : ""}<p><a href="${APP_URL}/today"><b>Open today's page →</b></a></p>`
   );
-  const status = await send({ to, cc, subject: `AMC 10 – Day ${dayNo}: ${day.label}`, html, attachments: [{ filename: `worksheet-${date}.html`, content: sheetHtml }] }, `${date}-morning`);
+  const status = await send({ to, cc, subject: `AMC 10 – Day ${dayNo}: ${day.label}`, html, attachments: [{ filename: `worksheet-${date}.html`, content: sheetHtml }] }, `${date}-${learner.id.slice(-6)}-morning`);
   if (status === "sent") await db.worksheet.update({ where: { id: worksheet.id }, data: { sentAt: new Date() } });
 }
 
-async function evening(date: string) {
-  const learner = await getLearner();
+async function evening(learner: Learner, date: string) {
   const cfg = planConfig(learner.plan);
   const day = planDayFor(cfg, date);
   const dayNo = daysBetween(cfg.startDate, date) + 1;
@@ -187,11 +185,10 @@ async function evening(date: string) {
     <h2>Tomorrow</h2><p>${tomorrow ? `${esc(KIND_LABEL[tomorrow.kind])}: ${esc(tomorrow.label)}` : "Outside the plan."}</p>
     ${changes.length ? `<ul>${changes.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : "<p class=\"muted\">No adaptation triggered today.</p>"}
     <p><a href="${APP_URL}/progress">Progress dashboard →</a></p>`;
-  await send({ to, subject: `AMC 10 – Day ${dayNo} ${sheet?.status === "done" ? `done (${sheet.score}/${sheet.total})` : "summary"}`, html: page("Summary", body) }, `${date}-evening`);
+  await send({ to, subject: `AMC 10 – Day ${dayNo} ${sheet?.status === "done" ? `done (${sheet.score}/${sheet.total})` : "summary"}`, html: page("Summary", body) }, `${date}-${learner.id.slice(-6)}-evening`);
 }
 
-async function digest(date: string) {
-  const learner = await getLearner();
+async function digest(learner: Learner, date: string) {
   const cfg = planConfig(learner.plan);
   const mastery = await getMasteryMap(learner.id);
   const to = [learner.plan.parentEmail ?? learner.plan.deliverTo ?? ""].filter(Boolean);
@@ -215,7 +212,7 @@ async function digest(date: string) {
     <h2>Next week</h2><table>${week.map((d) => `<tr><td>${fmtShort(d.date)}</td><td>${KIND_LABEL[d.kind]}</td><td>${esc(d.label)}${d.paperMock ? ` · <a href="${aopsUrl(d.paperMock)}">${esc(d.paperMock.label)}</a>` : ""}</td></tr>`).join("")}</table>
     <h2>Mastery</h2><table><tr><th>Skill</th><th>Right</th><th>Mastery</th><th>Level</th></tr>${rows}</table>
     <p><a href="${APP_URL}/progress">Progress dashboard →</a></p>`;
-  await send({ to, subject: `AMC 10 – weekly digest (${fmtShort(date)})`, html: page("Weekly digest", body) }, `${date}-digest`);
+  await send({ to, subject: `AMC 10 – weekly digest (${fmtShort(date)})`, html: page("Weekly digest", body) }, `${date}-${learner.id.slice(-6)}-digest`);
 }
 
 async function main() {
@@ -225,11 +222,16 @@ async function main() {
   const date = di !== -1 && /^\d{4}-\d{2}-\d{2}$/.test(args[di + 1] ?? "") ? args[di + 1] : todayStr();
   const force = args.includes("--force");
   console.log(`daily ${mode} for ${date}`);
-  if (mode === "morning") await morning(date, force);
-  else if (mode === "evening") await evening(date);
-  else {
-    if (weekday(date) !== 0 && !force) console.log("  (digest normally runs on Sundays; sending anyway)");
-    await digest(date);
+  const learners = await listLearners();
+  if (!learners.length) console.log("  no student profiles yet (create one at /signup)");
+  for (const learner of learners) {
+    console.log(`  ${learner.name} <${learner.email}>`);
+    if (mode === "morning") await morning(learner, date, force);
+    else if (mode === "evening") await evening(learner, date);
+    else {
+      if (weekday(date) !== 0 && !force) console.log("  (digest normally runs on Sundays; sending anyway)");
+      await digest(learner, date);
+    }
   }
 }
 

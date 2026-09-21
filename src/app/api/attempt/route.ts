@@ -5,7 +5,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { gradeAnswer } from "@/lib/answers";
-import { getLearner, recomputeMastery, updateReviewQueue } from "@/lib/learner";
+import { getLearnerOrNull, recomputeMastery, updateReviewQueue } from "@/lib/learner";
 import { parseItems } from "@/lib/worksheet";
 import { todayStr } from "@/lib/dates";
 
@@ -24,7 +24,8 @@ export async function POST(req: Request) {
       : [];
   if (!answers.length) return NextResponse.json({ error: "no answers" }, { status: 400 });
 
-  const learner = await getLearner();
+  const learner = await getLearnerOrNull();
+  if (!learner) return NextResponse.json({ error: "not signed in" }, { status: 401 });
   const worksheet = await db.worksheet.findFirst({ where: { id: body.worksheetId, userId: learner.id } });
   if (!worksheet) return NextResponse.json({ error: "worksheet not found" }, { status: 404 });
 

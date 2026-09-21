@@ -47,9 +47,13 @@ means weight 16–22.
 - *Competition Math for Middle School* (Batterson): gentler on-ramp if the diagnostic is under 60
 
 **In the app:** 28 lessons (one per skill), each with key ideas, formulas to know cold, 3 worked
-AMC-style examples with solutions, pitfalls, and a "how this shows up on the AMC 10" note. 10–15
-minutes each. The problem bank is 12,302 problems (MATH dataset + AIME 1983–2024), skill-tagged;
-these are free-response, so answer-choice tactics are practised on the paper mocks.
+AMC-style examples with solutions, pitfalls, a "how this shows up on the AMC 10" note, and a
+"go deeper" list: the AoPS wiki article for each idea, the matching AoPS book chapter, the wiki's
+problem category (hundreds of past problems by difficulty), AoPS solution videos, Alcumus, Khan.
+10–15 minutes each. The problem bank is the MATH dataset + AIME 1983–2024 (free-response) plus the
+AMC/AIME slice of NuminaMath-1.5, which carries real AMC 8/10/12 problems with A–E choices, so
+in-app mocks include genuine multiple-choice items. Answer-choice tactics are still practised
+mainly on the paper mocks.
 
 **Test allocation (nothing gets spoiled)**
 | Papers | Use |

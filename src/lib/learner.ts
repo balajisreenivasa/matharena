@@ -1,38 +1,68 @@
-// Local-first: one learner, no login. The first request creates the student and a
-// default study plan; everything else keys off that user id.
+// Who is the student? Pages and API routes read the signed session cookie
+// (getLearner); scripts address students directly (getLearnerById / listLearners).
+// Every table keys on userId, so profiles are fully separate.
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { db } from "./db";
 import { SKILLS } from "@/curriculum/skills";
 import { todayStr, addDays } from "./dates";
 import { DEFAULT_EXAM_A, DEFAULT_EXAM_B, type PlanConfig } from "./plan";
 import { foldAll, effectiveScore, INITIAL_MASTERY, REVIEW_INTERVALS, type MasteryState, type Confidence } from "./mastery";
+import { authSecret, verifySessionToken, SESSION_COOKIE } from "./auth";
 import type { StudyPlan, User } from "@prisma/client";
 
-export const LEARNER_EMAIL = "student@matharena.local";
+// The pre-login single learner from the first version. Retired when the first real
+// profile is created (see /signup).
+export const LEGACY_LEARNER_EMAIL = "student@matharena.local";
 
 export type Learner = User & { plan: StudyPlan };
 
-export async function getLearner(): Promise<Learner> {
-  let user = await db.user.findUnique({ where: { email: LEARNER_EMAIL }, include: { plan: true } });
-  if (!user) {
-    user = await db.user.create({
-      data: { name: "Student", email: LEARNER_EMAIL, grade: 8 },
-      include: { plan: true },
-    });
-  }
+async function withPlan(user: User & { plan: StudyPlan | null }): Promise<Learner> {
   let plan = user.plan;
   if (!plan) {
     plan = await db.studyPlan.create({
       data: {
         userId: user.id,
-        // The written plan starts Mon Sep 21, 2026; if created later, start today.
         startDate: todayStr() < "2026-09-21" ? "2026-09-21" : todayStr(),
         examADate: DEFAULT_EXAM_A,
         examBDate: DEFAULT_EXAM_B,
+        deliverTo: user.email.endsWith("@matharena.local") ? null : user.email,
       },
     });
   }
   await ensureSkillRows();
   return { ...user, plan };
+}
+
+// The signed-in student, or a redirect to /login. Server components, server actions
+// and route handlers all go through here.
+export async function getLearner(): Promise<Learner> {
+  const token = cookies().get(SESSION_COOKIE)?.value;
+  const userId = await verifySessionToken(token, authSecret());
+  const user = userId ? await db.user.findUnique({ where: { id: userId }, include: { plan: true } }) : null;
+  if (!user) redirect("/login");
+  return withPlan(user!);
+}
+
+// Same as getLearner but returns null instead of redirecting (for API routes).
+export async function getLearnerOrNull(): Promise<Learner | null> {
+  const token = cookies().get(SESSION_COOKIE)?.value;
+  const userId = await verifySessionToken(token, authSecret());
+  const user = userId ? await db.user.findUnique({ where: { id: userId }, include: { plan: true } }) : null;
+  return user ? withPlan(user) : null;
+}
+
+export async function getLearnerById(id: string): Promise<Learner | null> {
+  const user = await db.user.findUnique({ where: { id }, include: { plan: true } });
+  return user ? withPlan(user) : null;
+}
+
+// Students with a password (real profiles). Scripts loop over these.
+export async function listLearners(): Promise<Learner[]> {
+  const users = await db.user.findMany({ where: { passwordHash: { not: null }, role: "student" }, include: { plan: true }, orderBy: { createdAt: "asc" } });
+  const out: Learner[] = [];
+  for (const u of users) out.push(await withPlan(u));
+  return out;
 }
 
 let skillsEnsured = false;
@@ -94,8 +124,6 @@ export async function getMasteryMap(userId: string): Promise<Record<string, Mast
 }
 
 // Replay the attempt history for the given skills and store the folded result.
-// Called after every attempt (cheap: a student makes a few hundred attempts in a
-// season) and after an override, so mastery never drifts from the record.
 export async function recomputeMastery(userId: string, skillIds: string[]) {
   if (!skillIds.length) return;
   const attempts = await db.attempt.findMany({

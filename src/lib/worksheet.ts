@@ -20,7 +20,7 @@ import { db } from "./db";
 import { SKILLS, SKILL_BY_ID, TOPIC_META, type TopicSlug } from "@/curriculum/skills";
 import { bandFor, type ErrorTag } from "./mastery";
 import { planDayFor, taughtSkillIds, type PlanDay } from "./plan";
-import { getLearner, getMasteryMap, planConfig, type Learner, type MasteryRow } from "./learner";
+import { getMasteryMap, planConfig, type Learner, type MasteryRow } from "./learner";
 import { addDays, daysBetween } from "./dates";
 import type { Worksheet } from "@prisma/client";
 
@@ -240,8 +240,13 @@ async function compose(learner: Learner, day: PlanDay): Promise<Built | null> {
   switch (day.kind) {
     case "diagnostic": {
       const items: Item[] = [];
-      for (const s of SKILLS) items.push(...tag(await pickProblems({ userId, skillId: s.id, band: [3, 5], n: 1, exclude }), "diagnostic", `Baseline for ${s.name}.`));
-      return { items, title: "In-app diagnostic (28 skills)", timeLimitSec: null, skillId: null };
+      // Two per skill: an easy one (band 2-3) and a core one (band 4-6), so a single
+      // miss cannot be a fluke and the starting band has two data points.
+      for (const s of SKILLS) {
+        items.push(...tag(await pickProblems({ userId, skillId: s.id, band: [2, 3], n: 1, exclude }), "diagnostic", `Baseline for ${s.name} (easy).`));
+        items.push(...tag(await pickProblems({ userId, skillId: s.id, band: [4, 6], n: 1, exclude }), "diagnostic", `Baseline for ${s.name} (core).`));
+      }
+      return { items, title: `In-app diagnostic (${SKILLS.length} skills × 2)`, timeLimitSec: null, skillId: null };
     }
 
     case "lesson":
@@ -332,8 +337,7 @@ export async function composeMock(userId: string, exclude = new Set<string>()): 
 
 const CALENDAR_KINDS = ["daily", "diagnostic", "mock", "review", "quiz", "light"];
 
-export async function getOrCreateWorksheet(date: string): Promise<{ worksheet: Worksheet | null; day: PlanDay | null }> {
-  const learner = await getLearner();
+export async function getOrCreateWorksheet(learner: Learner, date: string): Promise<{ worksheet: Worksheet | null; day: PlanDay | null }> {
   const cfg = planConfig(learner.plan);
   const day = planDayFor(cfg, date);
   if (!day) return { worksheet: null, day: null };
@@ -361,8 +365,7 @@ export async function getOrCreateWorksheet(date: string): Promise<{ worksheet: W
 }
 
 // An extra timed mock on demand (from /mock), independent of the calendar.
-export async function createExtraMock(date: string): Promise<Worksheet> {
-  const learner = await getLearner();
+export async function createExtraMock(learner: Learner, date: string): Promise<Worksheet> {
   const built = await composeMock(learner.id);
   return db.worksheet.create({
     data: { userId: learner.id, date, kind: "extra-mock", title: `Extra mock · ${date}`, items: JSON.stringify(built.items), total: built.items.length, timeLimitSec: built.timeLimitSec },
@@ -370,8 +373,7 @@ export async function createExtraMock(date: string): Promise<Worksheet> {
 }
 
 // A focused 8-problem set for one skill (from a lesson page).
-export async function createSkillPractice(skillId: string, date: string): Promise<Worksheet> {
-  const learner = await getLearner();
+export async function createSkillPractice(learner: Learner, skillId: string, date: string): Promise<Worksheet> {
   const mastery = await getMasteryMap(learner.id);
   const m = mastery[skillId];
   const exclude = new Set<string>();
@@ -383,6 +385,23 @@ export async function createSkillPractice(skillId: string, date: string): Promis
   ];
   return db.worksheet.create({
     data: { userId: learner.id, date, kind: "practice", skillId, title: `Practice: ${SKILL_BY_ID[skillId]?.name ?? skillId}`, items: JSON.stringify(items), total: items.length },
+  });
+}
+
+// End-of-lesson quiz: 5 problems on one skill at her band (the interactive lesson
+// launches this; 4/5 marks the lesson quiz_passed in LessonProgress).
+export async function createLessonQuiz(learner: Learner, skillId: string, date: string): Promise<Worksheet> {
+  const mastery = await getMasteryMap(learner.id);
+  const m = mastery[skillId];
+  const exclude = new Set<string>();
+  const band = bandFor(m.effective, m.attempts);
+  const items: Item[] = [
+    ...(await pickProblems({ userId: learner.id, skillId, band: shift(band, -1), n: 1, exclude })).map((i) => ({ ...i, role: "lesson" as ItemRole, reason: "Quiz, one band down." })),
+    ...(await pickProblems({ userId: learner.id, skillId, band, n: 3, exclude })).map((i) => ({ ...i, role: "lesson" as ItemRole, reason: `Quiz at band ${band[0]}-${band[1]}.` })),
+    ...(await pickProblems({ userId: learner.id, skillId, band: shift(band, 1), n: 1, exclude })).map((i) => ({ ...i, role: "challenge" as ItemRole, reason: "Quiz, one band up." })),
+  ];
+  return db.worksheet.create({
+    data: { userId: learner.id, date, kind: "lesson-quiz", skillId, title: `Lesson quiz: ${SKILL_BY_ID[skillId]?.name ?? skillId}`, items: JSON.stringify(items), total: items.length, timeLimitSec: 15 * 60 },
   });
 }
 

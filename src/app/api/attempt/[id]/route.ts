@@ -3,7 +3,7 @@
 // what steers tomorrow's worksheet).
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getLearner, recomputeMastery, updateReviewQueue } from "@/lib/learner";
+import { getLearnerOrNull, recomputeMastery, updateReviewQueue } from "@/lib/learner";
 import { todayStr } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,8 @@ const TAGS = new Set(["C", "S", "E", "R", "T"]);
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const body = await req.json().catch(() => ({}));
-  const learner = await getLearner();
+  const learner = await getLearnerOrNull();
+  if (!learner) return NextResponse.json({ error: "not signed in" }, { status: 401 });
   const attempt = await db.attempt.findFirst({ where: { id: params.id, userId: learner.id }, include: { problem: { select: { skills: { select: { skillId: true } } } } } });
   if (!attempt) return NextResponse.json({ error: "not found" }, { status: 404 });
 

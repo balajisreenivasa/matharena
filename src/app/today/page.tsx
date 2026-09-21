@@ -42,7 +42,7 @@ export default async function Today({ searchParams }: { searchParams: { date?: s
     );
   }
 
-  const { worksheet } = await getOrCreateWorksheet(date);
+  const { worksheet } = await getOrCreateWorksheet(learner, date);
   if (searchParams.start && worksheet) redirect(`/worksheet/${worksheet.id}`);
 
   const dayNo = daysBetween(cfg.startDate, date) + 1;

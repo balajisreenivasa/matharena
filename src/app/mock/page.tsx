@@ -39,7 +39,8 @@ export default async function MockPage() {
 
   async function startInApp() {
     "use server";
-    const w = await createExtraMock(todayStr());
+    const l = await getLearner();
+    const w = await createExtraMock(l, todayStr());
     redirect(`/worksheet/${w.id}`);
   }
 

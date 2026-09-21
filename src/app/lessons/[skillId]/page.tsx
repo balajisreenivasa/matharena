@@ -33,7 +33,8 @@ export default async function LessonPage({ params }: { params: { skillId: string
 
   async function startPractice() {
     "use server";
-    const w = await createSkillPractice(skill.id, todayStr());
+    const l = await getLearner();
+    const w = await createSkillPractice(l, skill.id, todayStr());
     redirect(`/worksheet/${w.id}`);
   }
 

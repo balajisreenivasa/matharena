@@ -103,7 +103,10 @@ model User {
   email        String         @unique
   passwordHash String?
   grade        Int?
+  role         String         @default("student") // "student" | "parent"
+  lastLoginAt  DateTime?
   createdAt    DateTime       @default(now())
+  lessonProgress LessonProgress[]
   attempts     Attempt[]
   sessions     StudySession[]
   masteries    SkillMastery[]
@@ -201,6 +204,29 @@ model Attempt {
 
   @@index([userId, createdAt])
   @@index([worksheetId])
+}
+
+// Interactive lesson progress: checkpoint questions, "try it first" worked examples,
+// and the end-of-lesson quiz (a 5-problem worksheet from the bank).
+model LessonProgress {
+  id                 String    @id @default(cuid())
+  userId             String
+  skillId            String
+  status             String    @default("started") // started | read | quiz_passed
+  checkpointsCorrect Int       @default(0)
+  checkpointsTotal   Int       @default(0)
+  examplesCorrect    Int       @default(0)
+  examplesTotal      Int       @default(0)
+  quizWorksheetId    String?
+  quizScore          Int?
+  quizTotal          Int?
+  data               String    @default("{}") // JSON: per-checkpoint/example answers
+  startedAt          DateTime  @default(now())
+  completedAt        DateTime?
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
 }
 
 // A lesson page opened on a given day (so Today and the evening mail can show it was read).

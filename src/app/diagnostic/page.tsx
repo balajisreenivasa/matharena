@@ -32,7 +32,7 @@ export default async function DiagnosticPage() {
     const c = planConfig(l.plan);
     const day = buildCalendar(c).find((d) => d.kind === "diagnostic");
     const date = day?.date ?? todayStr();
-    const { worksheet } = await getOrCreateWorksheet(date);
+    const { worksheet } = await getOrCreateWorksheet(l, date);
     if (worksheet) redirect(`/worksheet/${worksheet.id}`);
     redirect("/diagnostic");
   }
