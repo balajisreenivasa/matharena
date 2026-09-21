@@ -25,9 +25,16 @@ test("lessons index lists all 28 skills and a lesson page renders its sections",
   const links = page.locator('a[href^="/lessons/"]');
   await expect(links).toHaveCount(28);
   await page.goto("/lessons/nt-modular");
-  for (const h of ["Key ideas", "Formulas & facts to know cold", "Worked examples", "Pitfalls", "On the AMC 10", "Go deeper"]) {
-    await expect(page.getByRole("heading", { name: h })).toBeVisible();
-  }
+  // Stepped walkthrough: overview first, then key ideas + checkpoints, etc.
+  await expect(page.getByRole("heading", { name: /What this is:/ })).toBeVisible();
+  await page.getByRole("button", { name: /2\. Key ideas/ }).click();
+  await expect(page.getByRole("heading", { name: "Key ideas" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Checkpoints/ })).toBeVisible();
+  await expect(page.getByText("Checkpoint 1")).toBeVisible();
+  await page.getByRole("button", { name: /4\. Worked examples/ }).click();
+  await expect(page.getByRole("heading", { name: /Worked examples/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Go deeper" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Reading, problem sets & videos/ })).toBeVisible();
   // Math in the lesson renders as KaTeX, never raw.
   const body = await page.locator("main").innerText();
   expect(body).not.toMatch(/\\frac|\\pmod|\\begin\{/);
