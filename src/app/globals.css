@@ -7,12 +7,19 @@ html.dark { color-scheme: dark; }
 body { @apply bg-slate-50 text-slate-900; }
 .katex { font-size: 1.05em; }
 
-/* Text boxes stay light in both themes so what she types is always easy to read. */
-input, textarea, select {
-  background-color: #ffffff;
-  color: #0f172a;
+/* Text boxes stay light in both themes so what she types is always easy to read.
+   The dark-theme utility remaps below use !important, so these must too, or a
+   `text-slate-900` class on an input would flip its text to near-white on white. */
+input, textarea, select,
+html.dark input, html.dark textarea, html.dark select,
+html.dark input.text-slate-900, html.dark textarea.text-slate-900 {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a;
+  caret-color: #0f172a;
 }
-input::placeholder, textarea::placeholder { color: #94a3b8; }
+input::placeholder, textarea::placeholder, html.dark input::placeholder, html.dark textarea::placeholder { color: #94a3b8 !important; -webkit-text-fill-color: #94a3b8; }
+input:disabled, textarea:disabled, html.dark input:disabled, html.dark textarea:disabled { background-color: #f1f5f9 !important; color: #334155 !important; -webkit-text-fill-color: #334155; }
 
 /* ---------------------------------------------------------------------------
    Dark theme. The pages use a small set of Tailwind slate/white utilities, so the
