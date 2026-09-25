@@ -33,3 +33,6 @@ prisma/schema.postgres.local.prisma
 
 .vercel
 .env*
+
+# Hosted backups (contain her progress)
+data/backups/
