@@ -4,7 +4,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/session";
 
-const PUBLIC = ["/login", "/signup", "/api/auth", "/api/cron"]; // cron has its own bearer secret
+// cron has its own bearer secret; /diagrams are static figure SVGs that the mailed
+// worksheets embed, so mail clients must fetch them without a session.
+const PUBLIC = ["/login", "/signup", "/api/auth", "/api/cron", "/diagrams/"];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
