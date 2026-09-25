@@ -150,10 +150,12 @@ If `prisma/schema.prisma` changed: also `npm run schema:pg` and commit the gener
 ```powershell
 npm.cmd run build:data                # render diagrams → import → classify → seed (local SQLite)
 npm.cmd run db:backup                 # safety copy of her hosted progress first
-$env:DATABASE_URL=(Get-Content .env | Select-String '^DATABASE_URL_NEON=').ToString().Split('"')[1]
-$env:PRISMA_CLIENT_PATH="$PWD\node_modules\.prisma\client-pg"
-npx tsx scripts/seed.ts               # upserts problems/choices/solutions/skills by key; profiles untouched
-Remove-Item Env:DATABASE_URL; Remove-Item Env:PRISMA_CLIENT_PATH
+$env:DATABASE_URL=((Get-Content .env | Select-String '^DIRECT_URL_NEON=').ToString() -replace '^DIRECT_URL_NEON=','' -replace '"','')
+$env:PRISMA_CLIENT_PATH="$PWD\node_modules\.prisma\client-pg"   # regenerate first if the schema changed:
+#   copy prisma/schema.postgres.prisma to prisma/schema.postgres.local.prisma with output = "../node_modules/.prisma/client-pg", then npx prisma generate --schema=prisma/schema.postgres.local.prisma
+$env:SEED_CHUNK="25"; $env:SEED_PARALLEL="4"   # the pooled URL drops long transactions (P1017): direct URL, small chunks, a few in flight
+npx tsx scripts/seed.ts               # writes only changed rows (content fingerprint); profiles untouched
+Remove-Item Env:DATABASE_URL; Remove-Item Env:PRISMA_CLIENT_PATH; Remove-Item Env:SEED_CHUNK; Remove-Item Env:SEED_PARALLEL
 git add public/diagrams data/diagrams.json; git commit -m "Diagrams"; vercel --prod --yes   # the SVGs ship with the site
 ```
 The seed is an upsert on (contest, year, round, number), so every problem she has attempted keeps its id and

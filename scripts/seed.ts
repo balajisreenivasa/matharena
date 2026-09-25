@@ -59,43 +59,69 @@ async function main() {
   // Non-destructive reload: problems are upserted on their (contest, year, round, number)
   // key so a re-seed never cascades away a student's attempts and review queue.
   // Topics/solutions are rebuilt per problem.
-  const existing = await db.problem.findMany({ select: { id: true, contestId: true, year: true, round: true, number: true } });
-  const idByKey = new Map(existing.map((p) => [`${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`, p.id]));
+  const existing = await db.problem.findMany({
+    select: {
+      id: true, contestId: true, year: true, round: true, number: true,
+      statement: true, choices: true, answer: true, hasDiagram: true, diagramUrl: true, diagramPath: true,
+      localDifficulty: true, globalDifficulty: true, source: true, sourceUrl: true,
+      topics: { select: { topicId: true, isPrimary: true, taggedBy: true, confidence: true } },
+      solutions: { select: { order: true, content: true }, orderBy: { order: "asc" } },
+    },
+  });
+  const keyOf = (p: { contestId: string; year: number; round: string | null; number: number }) => `${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`;
+  const idByKey = new Map(existing.map((p) => [keyOf(p), p.id]));
+  // Content fingerprint so an unchanged row costs no write (a hosted re-seed over the
+  // network is ~3 rows/s otherwise).
+  const fingerprint = (s: Record<string, any>, topics: any[], solutions: any[]) =>
+    JSON.stringify([s, [...topics].sort((a, b) => a.topicId.localeCompare(b.topicId)), solutions]);
+  const fpById = new Map(existing.map((p) => [p.id, fingerprint(
+    { statement: p.statement, choices: p.choices, answer: p.answer, hasDiagram: p.hasDiagram, diagramUrl: p.diagramUrl, diagramPath: p.diagramPath, localDifficulty: p.localDifficulty, globalDifficulty: p.globalDifficulty, source: p.source, sourceUrl: p.sourceUrl },
+    p.topics.map((t) => ({ topicId: t.topicId, isPrimary: t.isPrimary, taggedBy: t.taggedBy, confidence: t.confidence })),
+    p.solutions.map((s) => ({ order: s.order, content: s.content }))
+  )]));
   console.log(`${existing.length} problems already in the database; upserting.`);
 
   const known = new Set(data.contests.map((c) => c.id));
-  const rows = data.problems.filter((p) => {
+  const allRows = data.problems.filter((p) => {
     if (!known.has(p.contestId)) {
       console.warn(`skip ${p.contestId} ${p.year} #${p.number}: contest not in this dataset`);
       return false;
     }
     return true;
   });
+  const rowScalars = (p: any) => ({
+    statement: p.statement,
+    choices: p.choices ? JSON.stringify(p.choices) : null,
+    answer: String(p.answer),
+    hasDiagram: !!p.hasDiagram,
+    diagramUrl: p.diagramUrl ?? null,
+    diagramPath: p.diagramPath ?? null,
+    localDifficulty: p.localDifficulty,
+    globalDifficulty: p.globalDifficulty,
+    source: p.source ?? "AoPS Wiki",
+    sourceUrl: p.sourceUrl ?? "",
+  });
+  const rowTopics = (p: any) => (p.topics ?? [])
+    .filter((t: any) => topicByName[t.name])
+    .map((t: any) => ({ topicId: topicByName[t.name], isPrimary: !!t.isPrimary, taggedBy: t.taggedBy ?? "ai", confidence: t.confidence ?? null }));
+  const rowSolutions = (p: any) => (p.solutions ?? []).map((content: string, idx: number) => ({ order: idx + 1, content }));
+  const rows = allRows.filter((p) => {
+    const id = idByKey.get(keyOf(p));
+    return !id || fpById.get(id) !== fingerprint(rowScalars(p), rowTopics(p), rowSolutions(p));
+  });
+  console.log(`${rows.length} rows to write (${allRows.length - rows.length} unchanged).`);
+  const PARALLEL = Math.max(1, parseInt(process.env.SEED_PARALLEL ?? "1", 10) || 1);
 
   // One nested create per problem, batched into transactions — far fewer round trips
   // than creating topics and solutions individually.
-  for (let i = 0; i < rows.length; i += CHUNK) {
+  const writeChunk = (i: number) => {
     const chunk = rows.slice(i, i + CHUNK);
-    await withRetry(`chunk at ${i}`, () => db.$transaction(
+    return withRetry(`chunk at ${i}`, () => db.$transaction(
       chunk.flatMap((p) => {
-        const key = `${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`;
-        const id = idByKey.get(key);
-        const scalars = {
-          statement: p.statement,
-          choices: p.choices ? JSON.stringify(p.choices) : null,
-          answer: String(p.answer),
-          hasDiagram: !!p.hasDiagram,
-          diagramUrl: p.diagramUrl ?? null,
-          diagramPath: p.diagramPath ?? null,
-          localDifficulty: p.localDifficulty,
-          globalDifficulty: p.globalDifficulty,
-          source: p.source ?? "AoPS Wiki",
-          sourceUrl: p.sourceUrl ?? "",
-        };
-        const topics = (p.topics ?? [])
-          .filter((t: any) => topicByName[t.name])
-          .map((t: any) => ({ topicId: topicByName[t.name], isPrimary: !!t.isPrimary, taggedBy: t.taggedBy ?? "ai", confidence: t.confidence ?? null }));
-        const solutions = (p.solutions ?? []).map((content: string, idx: number) => ({ order: idx + 1, content }));
+        const id = idByKey.get(keyOf(p));
+        const scalars = rowScalars(p);
+        const topics = rowTopics(p);
+        const solutions = rowSolutions(p);
         if (id) {
           return [
             db.problemTopic.deleteMany({ where: { problemId: id } }),
@@ -110,14 +136,26 @@ async function main() {
         ];
       })
     ));
-    console.log(`  seeded ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
-  }
+  };
+  // SEED_PARALLEL chunks in flight at once (keep 1 on SQLite; 4-6 is fine on Postgres).
+  let next = 0;
+  let done = 0;
+  const worker = async () => {
+    while (next < rows.length) {
+      const i = next;
+      next += CHUNK;
+      await writeChunk(i);
+      done = Math.min(done + CHUNK, rows.length);
+      if (done % (CHUNK * 8) === 0 || done === rows.length) console.log(`  seeded ${done}/${rows.length}`);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(PARALLEL, Math.ceil(rows.length / CHUNK) || 1) }, worker));
 
   // A row that changed key since the last import (e.g. a Numina problem that moved
   // from free-response to multiple choice once its choices could be split) leaves its
   // old copy behind. Drop such orphans unless a student has attempted them.
-  const wanted = new Set(rows.map((p) => `${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`));
-  const orphans = existing.filter((p) => known.has(p.contestId) && !wanted.has(`${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`)).map((p) => p.id);
+  const wanted = new Set(allRows.map(keyOf));
+  const orphans = existing.filter((p) => known.has(p.contestId) && !wanted.has(keyOf(p))).map((p) => p.id);
   if (orphans.length) {
     const attempted = new Set((await db.attempt.findMany({ where: { problemId: { in: orphans } }, select: { problemId: true }, distinct: ["problemId"] })).map((a) => a.problemId));
     const drop = orphans.filter((id) => !attempted.has(id));
