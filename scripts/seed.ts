@@ -18,7 +18,26 @@ type Raw = {
   problems: any[];
 };
 
-const CHUNK = 200;
+// Rows per transaction. 200 is fine on local SQLite; a hosted Postgres behind a
+// pooler drops long transactions (P1017), so use SEED_CHUNK=25 there.
+const CHUNK = Math.max(1, parseInt(process.env.SEED_CHUNK ?? "200", 10) || 200);
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// A chunk that fails on a dropped connection is retried whole (every op is an upsert
+// or a delete-then-create, so a partial replay is harmless).
+async function withRetry<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  let last: any;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      return await fn();
+    } catch (e: any) {
+      last = e;
+      console.warn(`  ${label}: attempt ${attempt} failed (${e?.code ?? e?.message ?? e}); retrying`);
+      await sleep(2000 * attempt);
+    }
+  }
+  throw last;
+}
 
 async function main() {
   // Prefer the fully-built dataset if present, else fall back to the sample.
@@ -57,7 +76,7 @@ async function main() {
   // than creating topics and solutions individually.
   for (let i = 0; i < rows.length; i += CHUNK) {
     const chunk = rows.slice(i, i + CHUNK);
-    await db.$transaction(
+    await withRetry(`chunk at ${i}`, () => db.$transaction(
       chunk.flatMap((p) => {
         const key = `${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`;
         const id = idByKey.get(key);
@@ -90,7 +109,7 @@ async function main() {
           }),
         ];
       })
-    );
+    ));
     console.log(`  seeded ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
   }
 
@@ -169,7 +188,7 @@ export async function tagSkillsForAllProblems() {
     }
   }
   for (let i = 0; i < links.length; i += 1000) {
-    await db.problemSkill.createMany({ data: links.slice(i, i + 1000) });
+    await withRetry(`skill links at ${i}`, () => db.problemSkill.createMany({ data: links.slice(i, i + 1000) }));
   }
   console.log(`Skills: ${links.length} tags on ${problems.length - untagged} problems (${untagged} matched no skill; they still serve via topic).`);
   const thin = SKILLS.filter((s) => (perSkill[s.id] ?? 0) < 40).map((s) => `${s.id}=${perSkill[s.id] ?? 0}`);
