@@ -56,7 +56,7 @@ test("diagnostic page explains both halves", async ({ page }) => {
 });
 
 test("free-response: a miss reveals the answer and the override updates the score", async ({ page }) => {
-  await page.goto("/practice");
+  await page.goto("/practice?kind=free");
   const input = page.getByLabel("Your answer");
   await expect(input).toBeVisible();
   await input.fill("__definitely_wrong__");
@@ -68,7 +68,7 @@ test("free-response: a miss reveals the answer and the override updates the scor
 });
 
 test("math keyboard inserts at the caret and the preview renders", async ({ page }) => {
-  await page.goto("/practice");
+  await page.goto("/practice?kind=free");
   const input = page.getByLabel("Your answer");
   await page.getByRole("button", { name: "√" }).click();
   await expect(input).toHaveValue("sqrt()");
@@ -83,7 +83,7 @@ test("math keyboard inserts at the caret and the preview renders", async ({ page
 });
 
 test("Enter submits and Next advances with a fresh input", async ({ page }) => {
-  await page.goto("/practice");
+  await page.goto("/practice?kind=free");
   const input = page.getByLabel("Your answer");
   await input.fill("42");
   await input.press("Enter");
@@ -96,7 +96,7 @@ test("Enter submits and Next advances with a fresh input", async ({ page }) => {
 });
 
 test("Check is disabled until something is typed", async ({ page }) => {
-  await page.goto("/practice");
+  await page.goto("/practice?kind=free");
   await expect(page.getByRole("button", { name: "Check" })).toBeDisabled();
   await page.getByLabel("Your answer").fill("7");
   await expect(page.getByRole("button", { name: "Check" })).toBeEnabled();
@@ -109,7 +109,7 @@ test("skill filter only serves problems tagged with that skill", async ({ page }
 
 test("no raw LaTeX source leaks in statements or solutions", async ({ page }) => {
   const RAW = /\\\[|\\\]|\\begin\{(align|aligned|gather|equation|cases|pmatrix|bmatrix|split)|\\frac|\\dfrac|\\boxed/;
-  await page.goto("/practice?topic=algebra");
+  await page.goto("/practice?topic=algebra&kind=free");
   for (let i = 0; i < 8; i++) {
     expect(await page.locator("main").innerText(), `raw LaTeX in statement ${i + 1}`).not.toMatch(RAW);
     await page.getByLabel("Your answer").fill("0");
@@ -119,13 +119,33 @@ test("no raw LaTeX source leaks in statements or solutions", async ({ page }) =>
   }
 });
 
+test("geometry problems with a figure show the rendered diagram inline", async ({ page }) => {
+  await page.goto("/practice?topic=geometry&kind=diagram");
+  const img = page.locator('img[src^="/diagrams/"]').first();
+  await expect(img).toBeVisible();
+  // The SVG must actually load (a broken path would still be "visible").
+  await expect.poll(async () => img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  // No Asymptote source leaks into the statement.
+  expect(await page.locator("main").innerText()).not.toMatch(/\[asy\]|\bdraw\(|\blabel\(/);
+});
+
+test("multiple-choice problems render five KaTeX choices and grade by letter", async ({ page }) => {
+  await page.goto("/practice?kind=mc");
+  const choices = page.locator("main button").filter({ has: page.locator("span", { hasText: /^[A-E]$/ }) });
+  await expect(choices).toHaveCount(5);
+  // Choice values render as math, never as raw TeX such as "text{...}" or "\frac".
+  expect(await page.locator("main").innerText()).not.toMatch(/\\frac|\\text|(^|\s)text\{|\\qquad|\\textbf/);
+  await choices.first().click();
+  await expect(page.locator("text=/Correct!|Not quite/")).toBeVisible();
+});
+
 test("no console errors while practising", async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (m) => {
     if (m.type() === "error") errors.push(m.text());
   });
   page.on("pageerror", (e) => errors.push(String(e)));
-  await page.goto("/practice");
+  await page.goto("/practice?kind=free");
   await page.getByLabel("Your answer").fill("5");
   await page.getByRole("button", { name: "Check" }).click();
   await page.getByRole("button", { name: /Next problem/ }).click();

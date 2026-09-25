@@ -1,9 +1,14 @@
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { SKILLS, TOPIC_META, tagSkills, type TopicSlug } from "../src/curriculum/skills";
 import { SUBSKILLS, tagSubSkills } from "../src/curriculum/subskills";
+
+// PRISMA_CLIENT_PATH points at a Postgres client generated to a side directory so the
+// same seed can refresh the hosted bank in place (docs/DEPLOY.md, "When the problem
+// bank changes") without overwriting the local SQLite client.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { PrismaClient } = require(process.env.PRISMA_CLIENT_PATH ?? "@prisma/client") as typeof import("@prisma/client");
 
 const db = new PrismaClient();
 
@@ -87,6 +92,19 @@ async function main() {
       })
     );
     console.log(`  seeded ${Math.min(i + CHUNK, rows.length)}/${rows.length}`);
+  }
+
+  // A row that changed key since the last import (e.g. a Numina problem that moved
+  // from free-response to multiple choice once its choices could be split) leaves its
+  // old copy behind. Drop such orphans unless a student has attempted them.
+  const wanted = new Set(rows.map((p) => `${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`));
+  const orphans = existing.filter((p) => known.has(p.contestId) && !wanted.has(`${p.contestId}|${p.year}|${p.round ?? ""}|${p.number}`)).map((p) => p.id);
+  if (orphans.length) {
+    const attempted = new Set((await db.attempt.findMany({ where: { problemId: { in: orphans } }, select: { problemId: true }, distinct: ["problemId"] })).map((a) => a.problemId));
+    const drop = orphans.filter((id) => !attempted.has(id));
+    await db.reviewItem.deleteMany({ where: { problemId: { in: drop } } });
+    await db.problem.deleteMany({ where: { id: { in: drop } } });
+    console.log(`Pruned ${drop.length} problem(s) no longer in the dataset (${attempted.size} kept because they were attempted).`);
   }
 
   await tagSkillsForAllProblems();

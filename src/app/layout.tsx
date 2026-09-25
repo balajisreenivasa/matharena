@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ThemeToggle, THEME_INIT_SCRIPT } from "@/components/ThemeToggle";
 import { getLearnerOrNull } from "@/lib/learner";
+import { isEducator } from "@/lib/classroom";
 
 export const metadata: Metadata = {
   title: "MathArena — AMC 10 Prep",
@@ -25,8 +26,18 @@ const NAV = [
   ["/settings", "Settings"],
 ];
 
+// Parents and teachers have no plan of their own: they see their classrooms plus
+// the reference material.
+const EDUCATOR_NAV = [
+  ["/classroom", "Classrooms"],
+  ["/lessons", "Lessons"],
+  ["/resources", "Library"],
+  ["/practice", "Practice"],
+];
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const learner = await getLearnerOrNull();
+  const nav = learner && isEducator(learner) ? EDUCATOR_NAV : NAV;
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -39,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               Math<span className="text-blue-600">Arena</span>
             </Link>
             <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
-              {learner && NAV.map(([href, label]) => (
+              {learner && nav.map(([href, label]) => (
                 <Link key={href} href={href} className="hover:text-slate-900">{label}</Link>
               ))}
               {learner ? (

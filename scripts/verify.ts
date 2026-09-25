@@ -4,7 +4,10 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { answersMatch } from "../src/components/PracticeClient";
-import { RichText, splitMath } from "../src/components/Math";
+import { RichText, MathTex, splitMath } from "../src/components/Math";
+import { normalizeTex, segmentsToPlain } from "../src/lib/tex";
+import { splitChoices, answerLetter } from "./adapters/choices";
+import { generateCode, normalizeCode } from "../src/lib/classroom";
 import { extractBoxed } from "./adapters/math-dataset";
 import { parseCsv } from "./adapters/aime-dataset";
 
@@ -122,12 +125,70 @@ async function main() {
 
   not(check("tokenizer: nested env consumed whole",
     splitMath("a \\begin{array}{c}\\begin{array}{c}1\\end{array}\\end{array} b").length, 3));
-  not(check("tokenizer: unsupported env left as text",
-    splitMath("x \\begin{tabular}{c}1\\end{tabular} y").every((s) => "text" in s), true));
+  not(check("tokenizer: tabular becomes a display array",
+    splitMath("x \\begin{tabular}{c|c}$x$ & Row 1 \\\\ \\hline 1 & 7\\end{tabular} y").some((s) => "tex" in s && s.display && s.tex.replace(/\s+/g, " ") === "\\begin{array}{c|c}x & \\text{Row 1} \\\\ \\hline 1 & 7\\end{array}"), true));
   not(check("tokenizer: unterminated $ is literal text",
     splitMath("costs $5 to enter").every((s) => "text" in s), true));
   not(check("tokenizer: $$ beats $",
     (splitMath("$$a$$") as any)[0].display, true));
+
+  // The bugs behind "questions are not parsed correctly": prices written as \$ or $$,
+  // text-mode markup, paragraph breaks and TeX-only commands (see src/lib/tex.ts).
+  const plainOf = (s: string) => segmentsToPlain(splitMath(s));
+  not(check("tokenizer: \\$ inside math does not end the formula",
+    splitMath("earns $\\$$60 a day").filter((s) => "tex" in s).map((s: any) => s.tex), ["\\$"]));
+  not(check("tokenizer: \\$ in prose is a dollar sign", plainOf("costs \\$5 and \\$7"), "costs $5 and $7"));
+  not(check("tokenizer: $$51.00$ is a price, not display math",
+    splitMath("more than $$51.00$. Three").filter((s) => "tex" in s).map((s: any) => [s.tex, s.display]), [["51.00", false]]));
+  not(check("tokenizer: $ $9000$ keeps the currency sign", plainOf("worth $ $9000$ is"), "worth $ 9000 is"));
+  not(check("tokenizer: paragraph break", splitMath("one\n\ntwo").some((s) => "para" in s), true));
+  not(check("tokenizer: \\textbf in prose becomes a styled run",
+    splitMath("the \\textbf{same} value").some((s) => "style" in s && s.style === "b"), true));
+  not(check("tokenizer: \\% and \\_ in prose", plainOf("a 5\\% rate\\_x"), "a 5% rate_x"));
+  not(check("tokenizer: diagram marker",
+    splitMath("See [[diagram:/diagrams/abc.svg]] here").some((s) => "img" in s && s.img === "/diagrams/abc.svg"), true));
+  not(check("tokenizer: unrendered [asy] block is dropped", plainOf("Look:\n[asy]draw((0,0)--(1,1));[/asy]\nWhat?"), "Look: What?"));
+  not(check("normalizeTex: \\mbox -> \\text via macro", renderToStaticMarkup(MathTex({ tex: "\\mbox{Saturday}" }) as any).includes("Saturday"), true));
+  not(check("normalizeTex: \\root n \\of", normalizeTex("\\root 3 \\of {x \\root 3 \\of {x}}"), "\\sqrt[3]{x \\sqrt[3]{x}}"));
+  not(check("normalizeTex: array @{} column spec", normalizeTex("\\begin{array}{c@{\\qquad}c}a&b\\end{array}"), "\\begin{array}{cc}a&b\\end{array}"));
+  not(check("normalizeTex: \\multicolumn padded", normalizeTex("\\multicolumn{2}{r}{} & 3"), "&  & 3".replace(/\s+/g, " ")));
+  not(check("normalizeTex: align inside display becomes aligned", normalizeTex("\\begin{align*}a&=b\\end{align*}"), "\\begin{aligned}a&=b\\end{aligned}"));
+  not(check("normalizeTex: bare $ becomes \\$", normalizeTex("\\text{lost }$900"), "\\text{lost }\\$900"));
+  not(check("normalizeTex: row spacing stripped", normalizeTex("a \\\\[-9pt] b"), "a \\\\ b"));
+  {
+    const html = renderToStaticMarkup(RichText({ text: "Table: \\begin{tabular}{|c|c|} \\hline $x$ & 1 \\\\ \\hline $f(x)$ & 3 \\\\ \\hline \\end{tabular} done" }) as any);
+    not(check("RichText: tabular renders as KaTeX array", html.includes("katex-display") && !html.includes("\\begin{tabular}"), true));
+  }
+
+  console.log("--- splitChoices / answerLetter ---");
+  {
+    const a = splitChoices("How many?\n$\\textbf{(A)}\\ 2128 \\qquad\\textbf{(B)}\\ 2148 \\qquad\\textbf{(C)}\\ 2160 \\qquad\\textbf{(D)}\\ 2200 \\qquad\\textbf{(E)}\\ 2300$");
+    not(check("textbf choices split", a?.choices, { A: "2128", B: "2148", C: "2160", D: "2200", E: "2300" }));
+    not(check("stem drops the dangling $", a?.stem, "How many?"));
+    not(check("value answer maps to letter", answerLetter("2148", a!.choices), "B"));
+    not(check("boxed letter maps to letter", answerLetter("\\textbf{(D)}\\ 2200", a!.choices), "D"));
+    const b = splitChoices("Which?\n$\\text{(A) } 180 \\quad \\text{(B) } 360 \\quad \\text{(C) } 180(n+2) \\quad \\text{(D) } 180(n-2) \\quad \\text{(E) } 180(n-4)$");
+    not(check("text (A) choices split", b?.choices.E, "180(n-4)"));
+    const c = splitChoices("x?\n$(\\mathrm {A}) \\ 1 \\qquad (\\mathrm {B}) \\ 2 \\qquad (\\mathrm {C})\\ 5 \\qquad (\\mathrm {D}) \\ 10 \\qquad (\\mathrm {E})\\ 20$");
+    not(check("(\\mathrm{A}) choices split", c?.choices, { A: "1", B: "2", C: "5", D: "10", E: "20" }));
+    const d = splitChoices("Pick: $\\textbf{(A)}\\ \\text{Increases}\\qquad\\textbf{(B)}\\ \\text{Decreases}\\qquad\\textbf{(C)}\\ \\text{Remains constant}\\qquad\\textbf{(D)}\\ \\text{Increases and then decreases}\\qquad\\textbf{(E)}\\ \\text{Decreases and then increases}$");
+    not(check("choice keeps its leading backslash", d?.choices.A, "\\text{Increases}"));
+    not(check("no trailing backslash on a choice", d?.choices.D, "\\text{Increases and then decreases}"));
+    not(check("fewer than five markers -> null", splitChoices("only $\\textbf{(A)}\\ 1$ here"), null));
+    const e = splitChoices("Then:\n$\\textbf{(A)}\\ s^2\\le8r^2\\qquad\\textbf{(B)}\\ s^2=8r^2\\qquad\\textbf{(C)}\\ s^2 \\ge 8r^2 \\\\ \\textbf{(D)}\\ s^2\\le4r^2\\qquad\\textbf{(E)}\\ s^2=4r^2$");
+    not(check("a line break before a marker leaves no stray backslash", e?.choices.C, "s^2 \\ge 8r^2"));
+    const f = splitChoices("x?\n$\\mathrm{\\textbf{(A)} \\ }226\\qquad \\mathrm{\\textbf{(B)} \\ } 243 \\qquad \\mathrm{\\textbf{(C)} \\ } 270 \\qquad \\mathrm{\\textbf{(D)} \\ }469\\qquad \\mathrm{\\textbf{(E)} \\ } 486$");
+    not(check("\\mathrm{\\textbf{(A)} \\ } wrapper leaves clean values", f?.choices, { A: "226", B: "243", C: "270", D: "469", E: "486" }));
+    const g = splitChoices("y?\n$\\textbf{(A)} \\text{ 510} \\qquad \\textbf{(B)} \\text{ 1022} \\qquad \\textbf{(C)} \\text{ 8190} \\qquad \\textbf{(D)} \\text{ 8192} \\qquad \\textbf{(E)} \\text{ 65,534}$");
+    not(check("\\text-wrapped value maps to its letter", answerLetter("1022", g!.choices), "B"));
+    const h = splitChoices("z?\n$\\textbf{(A)} \\indent 25 \\qquad \\textbf{(B)} \\indent 32  \\qquad \\textbf{(C)} \\indent 50  \\qquad \\textbf{(D)} \\indent 63 \\qquad \\textbf{(E)} \\indent 75$");
+    not(check("\\indent is stripped from values", h?.choices.C, "50"));
+  }
+
+  console.log("--- classroom codes ---");
+  not(check("code is 6 chars", generateCode().length, 6));
+  not(check("code avoids 0/O 1/I ambiguity", /[01IO]/.test(Array.from({ length: 50 }, generateCode).join("")), false));
+  not(check("normalizeCode", normalizeCode(" k7q2-mn "), "K7Q2MN"));
 
   console.log("--- parseCsv ---");
   not(check("quoted comma", parseCsv('a,b\n"x,y",z')[1], ["x,y", "z"]));
@@ -162,6 +223,21 @@ async function main() {
 
   const withChoices = await db.problem.count({ where: { NOT: { choices: null } } });
   console.log(`(multiple-choice problems in bank: ${withChoices})`);
+  not(check("AMC rows with embedded choices were split into real choices (>= 2500 MC)", withChoices >= 2500, true));
+
+  // Figures: the geometry bank depends on rendered Asymptote diagrams.
+  const withDiagram = await db.problem.count({ where: { hasDiagram: true } });
+  console.log(`(problems with a rendered diagram: ${withDiagram})`);
+  not(check("diagram problems are in the bank (>= 1000)", withDiagram >= 1000, true));
+  const sampleDiagram = await db.problem.findFirst({ where: { hasDiagram: true }, select: { statement: true, diagramPath: true } });
+  not(check("diagram statement carries an inline marker", /\[\[diagram:\/diagrams\/[0-9a-f]{40}\.svg\]\]/.test(sampleDiagram?.statement ?? ""), true));
+  {
+    const { existsSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    not(check("diagram SVG exists under public/", !!sampleDiagram?.diagramPath && existsSync(join(process.cwd(), "public", sampleDiagram.diagramPath)), true));
+  }
+  const geoDiagrams = await db.problem.count({ where: { hasDiagram: true, topics: { some: { topic: { slug: "geometry" } } } } });
+  console.log(`(geometry problems with a diagram: ${geoDiagrams})`);
 
   const byContest = await db.problem.groupBy({ by: ["contestId"], _count: true });
   byContest.forEach((c) => console.log(`  ${c.contestId}: ${c._count}`));

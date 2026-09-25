@@ -7,7 +7,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "verify": "tsx scripts/verify.ts && tsx scripts/check-lessons.ts && tsx scripts/check-lesson-plans.ts",
+    "verify": "tsx scripts/verify.ts && tsx scripts/check-lessons.ts && tsx scripts/check-lesson-plans.ts && tsx scripts/check-latex.ts --strict",
     "test": "playwright test",
     "dev": "next dev",
     "build": "next build",
@@ -16,7 +16,7 @@
     "scrape": "tsx scripts/scrape.ts",
     "import": "tsx scripts/import.ts",
     "classify": "tsx scripts/classify.ts",
-    "build:data": "tsx scripts/import.ts && tsx scripts/classify.ts && tsx scripts/seed.ts",
+    "build:data": "tsx scripts/render-diagrams.ts && tsx scripts/import.ts && tsx scripts/classify.ts && tsx scripts/seed.ts",
     "db:push": "prisma db push",
     "tag": "tsx scripts/tag.ts",
     "daily": "tsx scripts/daily.ts",
@@ -25,7 +25,8 @@
     "db:export": "tsx scripts/export-db.ts",
     "db:import": "tsx scripts/import-db.ts",
     "postinstall": "prisma generate",
-    "db:backup": "tsx scripts/backup-hosted.ts"
+    "db:backup": "tsx scripts/backup-hosted.ts",
+    "diagrams": "tsx scripts/render-diagrams.ts"
   },
   "prisma": {
     "seed": "tsx scripts/seed.ts"

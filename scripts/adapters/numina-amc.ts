@@ -12,6 +12,8 @@
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { localDifficulty, globalDifficulty } from "../contests";
+import { substituteFigures } from "./figures";
+import { splitChoices, answerLetter } from "./choices";
 
 const REPO = "AI-MO/NuminaMath-1.5";
 const VENDOR = join(process.cwd(), "data", "vendor");
@@ -66,39 +68,8 @@ async function fetchRows(): Promise<any[]> {
   return rows;
 }
 
-// "$\textbf{(A)}\ 4 \qquad\textbf{(B)}\ 5 ..." -> { stem, choices }. Handles \textbf,
-// \mathrm, \text wrappers and both "(A)" and "A)" spellings. Returns null if fewer than
-// 5 choices are found (the problem is then kept as free-response if it has an answer).
-export function splitChoices(problem: string): { stem: string; choices: Record<string, string> } | null {
-  const re = /\\(?:textbf|mathrm|text|mathbf)\s*\{\s*\(?([A-E])\)?\s*\}\)?/g;
-  const marks: { letter: string; start: number; end: number }[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(problem))) marks.push({ letter: m[1], start: m.index, end: m.index + m[0].length });
-  if (marks.length < 5) return null;
-  // Use the last five in order A..E (some statements mention "(A)" earlier in prose).
-  const last = marks.slice(-5);
-  if (last.map((x) => x.letter).join("") !== "ABCDE") return null;
-  const stem = problem.slice(0, last[0].start).replace(/\$\s*$/, "").trim();
-  const choices: Record<string, string> = {};
-  for (let i = 0; i < 5; i++) {
-    const raw = problem.slice(last[i].end, i < 4 ? last[i + 1].start : undefined);
-    choices[last[i].letter] = raw
-      .replace(/\\qquad|\\quad|\\hspace\{[^}]*\}|\\ |\\,|~/g, " ")
-      .replace(/^\s*[\\]?\s*/, "")
-      .replace(/\$+\s*$/, "")
-      .replace(/^\$+/, "")
-      .replace(/\\textbf\{\s*\}/g, "")
-      .trim();
-  }
-  if (Object.values(choices).some((c) => !c)) return null;
-  return { stem, choices };
-}
-
-// Numina's `answer` is "\textbf{(B)}", "B", "(B)", "\text{(B)}\ 5" or a plain value.
-function parseLetter(answer: string): string | null {
-  const m = /\(?\b([A-E])\b\)?/.exec(answer.replace(/\\(?:textbf|mathrm|text|mathbf)\s*\{/g, "").replace(/[{}]/g, ""));
-  return m ? m[1] : null;
-}
+// Choice splitting and answer-letter mapping live in ./choices.ts, shared with the
+// MATH adapter (its AMC rows embed the five choices the same way).
 
 // Guess the year/contest/number from the solution or problem text when present, e.g.
 // "2019 AMC 10B #7". Optional; used only for attribution.
@@ -115,19 +86,29 @@ export async function importNuminaAmc(): Promise<{ problems: any[]; stats: Numin
   const problems: any[] = [];
   const stats: NuminaStats = { imported: 0, mc: 0, skippedAsy: 0, skippedNoAnswer: 0, skippedDup: 0 };
   const seen = new Set<string>();
-  let n = 0;
+  // Numbering must be stable across re-imports (`number` is part of the seed key that
+  // a student's attempts hang off). Rows the first release imported keep their
+  // sequential numbers; rows that became importable later (rendered figures, better
+  // choice splitting) are numbered after them. See legacyEligible().
+  const legacy: any[] = [];
+  const added: any[] = [];
   for (const row of rows) {
-    const problem: string = (row.problem ?? "").trim();
-    const solution: string = (row.solution ?? "").trim();
     const answer: string = String(row.answer ?? "").trim();
-    if (!problem) continue;
-    if (/\[asy\]/i.test(problem)) { stats.skippedAsy++; continue; }
-    const key = problem.replace(/\s+/g, " ").slice(0, 160).toLowerCase();
+    const original = String(row.problem ?? "").trim();
+    if (!original) continue;
+    const isLegacy = legacyEligible(original, answer, seen);
+    // Figures are rendered by scripts/render-diagrams.ts; a statement whose figure is
+    // missing is unsolvable and skipped, a missing solution figure is just dropped.
+    const fig = substituteFigures(original, { required: true });
+    if (fig.missing) { stats.skippedAsy++; continue; }
+    const problem: string = fig.text;
+    const solution: string = substituteFigures(String(row.solution ?? "").trim(), { required: false }).text;
+    const key = original.replace(/\s+/g, " ").slice(0, 160).toLowerCase();
     if (seen.has(key)) { stats.skippedDup++; continue; }
     seen.add(key);
 
     const split = splitChoices(problem);
-    const letter = split ? parseLetter(answer) : null;
+    const letter = split ? answerLetter(answer, split.choices) : null;
     const isMC = !!split && !!letter;
     if (!isMC && (!answer || answer.length > 60 || /^(proof|none)$/i.test(answer))) { stats.skippedNoAnswer++; continue; }
 
@@ -136,17 +117,17 @@ export async function importNuminaAmc(): Promise<{ problems: any[]; stats: Numin
     const attr = attribution(solution) ?? attribution(problem);
     const number = attr?.number ?? 13;
     const base = attr?.contest?.startsWith("AMC8") ? 2 : attr?.contest?.startsWith("AMC12") ? 4 : 3;
-    n++;
-    problems.push({
+    (isLegacy ? legacy : added).push({
       contestId: isMC ? "AMC_MC" : "AMC_FR",
       year: attr?.year ?? 0,
       round: attr?.contest ?? null,
-      number: n,
+      number: 0, // assigned below
       statement: isMC ? split!.stem : problem,
       choices: isMC ? split!.choices : null,
       answer: isMC ? letter : answer,
-      hasDiagram: false,
+      hasDiagram: fig.paths.length > 0,
       diagramUrl: null,
+      diagramPath: fig.paths[0] ?? null,
       localDifficulty: localDifficulty(number, 25),
       globalDifficulty: globalDifficulty(number, 25, base),
       source: "NuminaMath-1.5 amc_aime (AI-MO, Apache 2.0; problems © MAA)",
@@ -157,5 +138,25 @@ export async function importNuminaAmc(): Promise<{ problems: any[]; stats: Numin
     stats.imported++;
     if (isMC) stats.mc++;
   }
+  let n = 0;
+  for (const p of [...legacy, ...added]) { p.number = ++n; problems.push(p); }
   return { problems, stats };
+}
+
+// The first release's eligibility rules, kept verbatim so those rows keep their numbers.
+// (Must be called before the row is added to `seen`; it does not mutate it.)
+function legacyEligible(problem: string, answer: string, seen: Set<string>): boolean {
+  if (/\[asy\]/i.test(problem)) return false;
+  const key = problem.replace(/\s+/g, " ").slice(0, 160).toLowerCase();
+  if (seen.has(key)) return false;
+  const re = /\\(?:textbf|mathrm|text|mathbf)\s*\{\s*\(?([A-E])\)?\s*\}\)?/g;
+  const letters: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(problem))) letters.push(m[1]);
+  let oldMC = false;
+  if (letters.length >= 5 && letters.slice(-5).join("") === "ABCDE") {
+    const lm = /\(?\b([A-E])\b\)?/.exec(answer.replace(/\\(?:textbf|mathrm|text|mathbf)\s*\{/g, "").replace(/[{}]/g, ""));
+    oldMC = !!lm;
+  }
+  return oldMC || !!(answer && answer.length <= 60 && !/^(proof|none)$/i.test(answer));
 }

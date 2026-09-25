@@ -6,6 +6,8 @@
 // answer lives inside \boxed{...} in the solution, and there are no A-E choices.
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { substituteFigures } from "./figures";
+import { splitChoices, answerLetter } from "./choices";
 
 const REPO = "EleutherAI/hendrycks_math";
 const VENDOR = join(process.cwd(), "data", "vendor", "math");
@@ -120,48 +122,72 @@ async function fetchSplit(config: string, split: string): Promise<any[]> {
   return rows;
 }
 
-export type ImportStats = { imported: number; skippedAsy: number; skippedNoAnswer: number };
+export type ImportStats = { imported: number; skippedAsy: number; skippedNoAnswer: number; withFigure: number; mc: number };
 
 export async function importMath(): Promise<{ problems: any[]; stats: ImportStats }> {
   const problems: any[] = [];
-  const stats: ImportStats = { imported: 0, skippedAsy: 0, skippedNoAnswer: 0 };
-  let n = 0;
+  const stats: ImportStats = { imported: 0, skippedAsy: 0, skippedNoAnswer: 0, withFigure: 0, mc: 0 };
+  // Numbering must be stable across re-imports: `number` is part of the seed key, and
+  // a student's attempts point at the row behind it. Rows the first release imported
+  // (no figure in the statement) keep their sequential numbers; rows that became
+  // importable later (rendered figures) are numbered after them.
+  const legacy: any[] = [];
+  const added: any[] = [];
 
   for (const { config, topic } of SUBJECTS) {
     for (const split of SPLITS) {
       const rows = await fetchSplit(config, split);
 
       for (const row of rows) {
-        const statement: string = (row.problem ?? "").trim();
-        const solution: string = (row.solution ?? "").trim();
+        let statement: string = (row.problem ?? "").trim();
+        let solution: string = (row.solution ?? "").trim();
         if (!statement) continue;
+        const isLegacy = !/\[asy\]/i.test(statement);
 
-        // An [asy] block is an Asymptote figure that this dataset ships as source code,
-        // not a rendered image. Without a renderer the problem is unsolvable, so skip it
-        // rather than show a statement that references a figure the user cannot see.
-        if (/\[asy\]/i.test(statement)) {
+        // An [asy] block is an Asymptote figure shipped as source. scripts/render-diagrams.ts
+        // renders them to public/diagrams; a statement whose figure did not render is
+        // unsolvable and is skipped. A solution figure that is missing is just dropped.
+        const fig = substituteFigures(statement, { required: true });
+        if (fig.missing) {
           stats.skippedAsy++;
           continue;
         }
+        statement = fig.text;
+        solution = substituteFigures(solution, { required: false }).text;
 
-        const answer = extractBoxed(solution);
+        let answer = extractBoxed(solution);
         if (!answer) {
           stats.skippedNoAnswer++;
           continue;
         }
 
+        // Rows transcribed from the AMC keep their five choices in the statement.
+        // Split them out so the app can serve the problem as multiple choice.
+        let choices: Record<string, string> | null = null;
+        const split = splitChoices(statement);
+        if (split) {
+          const letter = answerLetter(answer, split.choices);
+          if (letter) {
+            choices = split.choices;
+            answer = letter;
+            statement = split.stem;
+            stats.mc++;
+          }
+        }
+        if (fig.paths.length) stats.withFigure++;
+
         const lvl = parseLevel(row.level) ?? 3;
-        n++;
-        problems.push({
+        (isLegacy ? legacy : added).push({
           contestId: MATH_CONTEST.id,
           year: 0, // the dataset strips contest attribution
           round: config,
-          number: n,
+          number: 0, // assigned below
           statement,
-          choices: null,
+          choices,
           answer,
-          hasDiagram: false,
+          hasDiagram: fig.paths.length > 0,
           diagramUrl: null,
+          diagramPath: fig.paths[0] ?? null,
           localDifficulty: Math.max(1, Math.min(4, Math.round((lvl * 4) / 5))),
           globalDifficulty: Math.max(1, Math.min(10, lvl * 2)),
           source: "MATH dataset (Hendrycks et al., MIT)",
@@ -173,5 +199,7 @@ export async function importMath(): Promise<{ problems: any[]; stats: ImportStat
       }
     }
   }
+  let n = 0;
+  for (const p of [...legacy, ...added]) { p.number = ++n; problems.push(p); }
   return { problems, stats };
 }

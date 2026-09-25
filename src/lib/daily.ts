@@ -17,7 +17,8 @@ import { buildCalendar, planDayFor, KIND_LABEL, IS_STUDY_DAY } from "./plan";
 import { aopsUrl } from "@/curriculum/calendar";
 import { SKILLS, SKILL_BY_ID } from "@/curriculum/skills";
 import { lessonFor } from "@/curriculum/lessons";
-import { splitMath } from "@/components/Math";
+import { richHtml, texToHtml } from "./richHtml";
+import { normalizeChoiceTex } from "./tex";
 import { projectAmcScore, masteryLevel, ERROR_TAGS, type ErrorTag } from "./mastery";
 import { todayStr, fmtLong, fmtShort, daysBetween, addDays, weekday } from "./dates";
 
@@ -37,9 +38,7 @@ function esc(s: string): string {
 }
 
 function rich(text: string): string {
-  return splitMath(text)
-    .map((seg) => ("text" in seg ? esc(seg.text).replace(/\n/g, "<br/>") : katex.renderToString(seg.tex, { throwOnError: false, displayMode: seg.display })))
-    .join("");
+  return richHtml(text, APP_URL());
 }
 
 let katexCss: string | null = null;
@@ -173,7 +172,7 @@ export async function morning(learner: Learner, date: string, force: boolean, lo
   const problems = items
     .map(
       (it, i) => `<div class="card"><div><span class="tag">${i + 1}</span><span class="tag">${esc(it.roleLabel)}</span>${it.skillName ? `<span class="skill">${esc(it.skillName)}</span>` : ""}<span class="muted" style="float:right">${it.problem.globalDifficulty}/10</span></div>
-      <div style="margin-top:8px">${rich(it.problem.statement)}</div>${Object.keys(it.problem.choices).length ? `<div class="muted" style="margin-top:6px">${Object.entries(it.problem.choices).map(([k, v]) => `<b>${k}</b> ${katex.renderToString(v, { throwOnError: false })}`).join(" &nbsp; ")}</div>` : ""}
+      <div style="margin-top:8px">${rich(it.problem.statement)}</div>${Object.keys(it.problem.choices).length ? `<div class="muted" style="margin-top:6px">${Object.entries(it.problem.choices).map(([k, v]) => `<b>${k}</b> ${texToHtml(normalizeChoiceTex(v), false)}`).join(" &nbsp; ")}</div>` : ""}
       <div class="work"></div><div class="muted">Answer: ________ &nbsp; Sure / Unsure / Guessed</div></div>`
     )
     .join("");

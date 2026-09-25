@@ -63,6 +63,8 @@ async function main() {
   await upserts("lessonProgress", d.lessonProgress.map(dates), (r) => db.lessonProgress.upsert({ where: { id: r.id }, update: r, create: r }));
   await upserts("lessonViews", d.lessonViews.map(dates), (r) => db.lessonView.upsert({ where: { id: r.id }, update: r, create: r }));
   await upserts("mockExams", d.mockExams.map(dates), (r) => db.mockExam.upsert({ where: { id: r.id }, update: r, create: r }));
+  await upserts("classrooms", (d.classrooms ?? []).map(dates), (r) => db.classroom.upsert({ where: { id: r.id }, update: r, create: r }));
+  await upserts("classroomMembers", (d.classroomMembers ?? []).map(dates), (r) => db.classroomMember.upsert({ where: { classroomId_studentId: { classroomId: r.classroomId, studentId: r.studentId } }, update: r, create: r }));
   console.log("done");
 }
 

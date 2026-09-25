@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { isEducator } from "@/lib/classroom";
 import { getLearner, getMasteryMap, planConfig } from "@/lib/learner";
 import { planDayFor, KIND_COLOR, KIND_LABEL, IS_STUDY_DAY, buildCalendar } from "@/lib/plan";
 import { aopsUrl } from "@/curriculum/calendar";
@@ -11,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const learner = await getLearner();
+  if (isEducator(learner)) redirect("/classroom");
   const cfg = planConfig(learner.plan);
   const today = todayStr();
   const day = planDayFor(cfg, today);

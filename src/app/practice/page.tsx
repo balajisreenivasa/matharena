@@ -6,11 +6,13 @@ export const dynamic = "force-dynamic";
 
 const SET_SIZE = 25;
 
-export default async function Practice({ searchParams }: { searchParams: { topic?: string; skill?: string } }) {
+// ?kind=free | mc | diagram narrows to free-response, multiple-choice, or problems with a figure.
+export default async function Practice({ searchParams }: { searchParams: { topic?: string; skill?: string; kind?: string } }) {
   const topicSlug = searchParams.topic;
   const topic = topicSlug ? await db.topic.findUnique({ where: { slug: topicSlug } }) : null;
   const skill = searchParams.skill ? await db.skill.findUnique({ where: { id: searchParams.skill } }) : null;
-  const where = skill ? { skills: { some: { skillId: skill.id } } } : topic ? { topics: { some: { topicId: topic.id } } } : {};
+  const kind = searchParams.kind === "free" ? { choices: null } : searchParams.kind === "mc" ? { NOT: { choices: null } } : searchParams.kind === "diagram" ? { hasDiagram: true } : {};
+  const where = { ...(skill ? { skills: { some: { skillId: skill.id } } } : topic ? { topics: { some: { topicId: topic.id } } } : {}), ...kind };
 
   // The bank holds >12k problems, so never load them all. Take a random window
   // of SET_SIZE so repeat visits get a different set.

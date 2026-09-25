@@ -16,7 +16,8 @@ export default async function SignupPage({ searchParams }: { searchParams: { err
     const email = normalizeEmail(String(form.get("email") ?? ""));
     const password = String(form.get("password") ?? "");
     const grade = parseInt(String(form.get("grade") ?? "8"), 10);
-    const role = String(form.get("role") ?? "student") === "parent" ? "parent" : "student";
+    const roleRaw = String(form.get("role") ?? "student");
+    const role = roleRaw === "parent" || roleRaw === "teacher" ? roleRaw : "student";
     if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect("/signup?error=" + encodeURIComponent("Name and a valid email are required."));
     const pp = passwordProblem(password);
     if (pp) redirect("/signup?error=" + encodeURIComponent(pp));
@@ -47,7 +48,7 @@ export default async function SignupPage({ searchParams }: { searchParams: { err
     });
     const { token, expires } = await createSessionToken(user.id);
     cookies().set(SESSION_COOKIE, token, { httpOnly: true, sameSite: "lax", expires, path: "/" });
-    redirect("/diagnostic");
+    redirect(role === "student" ? "/diagnostic" : "/classroom");
   }
 
   return (
@@ -62,8 +63,9 @@ export default async function SignupPage({ searchParams }: { searchParams: { err
           <label className="block text-sm">Password (6+ characters)<input name="password" type="password" required minLength={6} autoComplete="new-password" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <label>Grade<select name="grade" defaultValue="8" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2">{[5, 6, 7, 8, 9, 10].map((g) => <option key={g} value={g}>{g}</option>)}</select></label>
-            <label>I am a<select name="role" defaultValue="student" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"><option value="student">Student</option><option value="parent">Parent</option></select></label>
+            <label>I am a<select name="role" defaultValue="student" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"><option value="student">Student</option><option value="parent">Parent</option><option value="teacher">Teacher</option></select></label>
           </div>
+          <p className="text-xs text-slate-500">Parents and teachers get a classroom view instead of a study plan: create a classroom, share its code, and follow each student&apos;s progress.</p>
           <button className="w-full rounded-xl bg-slate-900 px-4 py-2.5 font-semibold text-white hover:bg-slate-700">Create profile</button>
         </form>
         <p className="mt-4 text-center text-sm text-slate-600">Already have one? <Link href="/login" className="font-semibold text-blue-700 underline">Sign in</Link></p>

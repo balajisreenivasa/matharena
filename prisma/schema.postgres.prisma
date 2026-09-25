@@ -106,7 +106,7 @@ model User {
   email        String         @unique
   passwordHash String?
   grade        Int?
-  role         String         @default("student") // "student" | "parent"
+  role         String         @default("student") // "student" | "parent" | "teacher"
   lastLoginAt  DateTime?
   createdAt    DateTime       @default(now())
   lessonProgress LessonProgress[]
@@ -116,6 +116,31 @@ model User {
   worksheets   Worksheet[]
   plan         StudyPlan?
   mockExams    MockExam[]
+  classrooms   Classroom[]        // owned (parent/teacher)
+  memberships  ClassroomMember[]  // joined (student)
+}
+
+// A parent's or teacher's group of students. Students join with the code (or the
+// owner adds them by email); the owner then sees every member's progress and plan.
+model Classroom {
+  id        String            @id @default(cuid())
+  name      String
+  code      String            @unique // 6-char join code, e.g. "K7Q2MN"
+  ownerId   String
+  createdAt DateTime          @default(now())
+  owner     User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members   ClassroomMember[]
+}
+
+model ClassroomMember {
+  classroomId String
+  studentId   String
+  joinedAt    DateTime  @default(now())
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  student     User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([classroomId, studentId])
+  @@index([studentId])
 }
 
 // Running estimate of how well the learner knows one skill. `score` is 0..1 and

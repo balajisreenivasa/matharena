@@ -146,15 +146,20 @@ vercel --prod --yes                           # deploy (or connect GitHub in Ver
 ```
 If `prisma/schema.prisma` changed: also `npm run schema:pg` and commit the generated Postgres schema; the deploy applies it.
 
-**When the problem bank changes (re-seed locally, then push the new rows):**
+**When the problem bank changes (re-import locally, then seed the hosted database in place):**
 ```powershell
-npm.cmd run db:export
+npm.cmd run build:data                # render diagrams → import → classify → seed (local SQLite)
+npm.cmd run db:backup                 # safety copy of her hosted progress first
 $env:DATABASE_URL=(Get-Content .env | Select-String '^DATABASE_URL_NEON=').ToString().Split('"')[1]
 $env:PRISMA_CLIENT_PATH="$PWD\node_modules\.prisma\client-pg"
-npx tsx scripts/import-db.ts          # bulk tables only add what's missing; profiles are refreshed
+npx tsx scripts/seed.ts               # upserts problems/choices/solutions/skills by key; profiles untouched
+Remove-Item Env:DATABASE_URL; Remove-Item Env:PRISMA_CLIENT_PATH
+git add public/diagrams data/diagrams.json; git commit -m "Diagrams"; vercel --prod --yes   # the SVGs ship with the site
 ```
-Careful: this overwrites hosted profile/progress rows with the local copies. Run `db:backup` first, and don't do this
-while she is mid-worksheet.
+The seed is an upsert on (contest, year, round, number), so every problem she has attempted keeps its id and
+history; rows that changed key (a Numina problem that became multiple choice) are pruned unless attempted.
+Don't run it while she is mid-worksheet. (`scripts/import-db.ts` still exists for a full restore, but it only
+*adds* problems — it does not update changed statements.)
 
 **Rotate a secret:** `vercel env rm NAME production --yes` then `printf '%s' "newvalue" | vercel env add NAME production`,
 then `vercel --prod --yes`. (The Resend key was pasted in chat once; rotate it in Resend → API Keys when convenient.)

@@ -29,6 +29,8 @@ async function main() {
     lessonProgress: await db.lessonProgress.findMany(),
     lessonViews: await db.lessonView.findMany(),
     mockExams: await db.mockExam.findMany(),
+    classrooms: await db.classroom.findMany(),
+    classroomMembers: await db.classroomMember.findMany(),
   };
   const dir = join(process.cwd(), "data", "export");
   mkdirSync(dir, { recursive: true });

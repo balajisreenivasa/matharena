@@ -6,12 +6,27 @@ import { SKILLS, TOPIC_META, type TopicSlug } from "@/curriculum/skills";
 import { hashPassword, verifyPassword, passwordProblem } from "@/lib/auth";
 import { addDays, fmtShort, todayStr } from "@/lib/dates";
 import { projectAmcScore } from "@/lib/mastery";
+import { isEducator, joinByCode, leaveClassroom, membershipsFor } from "@/lib/classroom";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage({ searchParams }: { searchParams: { msg?: string } }) {
   const learner = await getLearner();
   const today = todayStr();
+  const memberships = isEducator(learner) ? [] : await membershipsFor(learner.id);
+
+  async function join(form: FormData) {
+    "use server";
+    const l = await getLearner();
+    const r = await joinByCode(l.id, String(form.get("code") ?? ""));
+    redirect("/profile?msg=" + encodeURIComponent(r.ok ? `Joined ${r.classroom.name}. Your parent/teacher can now see your progress.` : r.error));
+  }
+  async function leave(form: FormData) {
+    "use server";
+    const l = await getLearner();
+    await leaveClassroom(l.id, String(form.get("classroomId") ?? ""));
+    redirect("/profile?msg=" + encodeURIComponent("Left the classroom."));
+  }
 
   const attempts = await db.attempt.findMany({ where: { userId: learner.id }, select: { isCorrect: true, selected: true, confidence: true, timeSpentSec: true, createdAt: true, problemId: true, problem: { select: { topics: { select: { topic: { select: { slug: true } }, isPrimary: true } } } } } });
   const solvedIds = new Set(attempts.filter((a) => a.isCorrect).map((a) => a.problemId));
@@ -142,6 +157,28 @@ export default async function ProfilePage({ searchParams }: { searchParams: { ms
           ))}
         </div>
       </section>
+
+      {!isEducator(learner) && (
+        <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 text-sm">
+          <h2 className="mb-2 font-bold text-slate-800">Parent / teacher classrooms</h2>
+          {memberships.length === 0 ? (
+            <p className="mb-2 text-slate-600">Not in a classroom. A parent or teacher who creates one gets a 6-character code; enter it here so they can follow your progress.</p>
+          ) : (
+            <ul className="mb-2">
+              {memberships.map((m) => (
+                <li key={m.classroomId} className="flex items-center justify-between border-b border-slate-100 py-1.5 last:border-0">
+                  <span><b>{m.classroom.name}</b> <span className="text-slate-500">· {m.classroom.owner.name} ({m.classroom.owner.role})</span></span>
+                  <form action={leave}><input type="hidden" name="classroomId" value={m.classroomId} /><button className="text-xs text-slate-400 hover:text-red-700">leave</button></form>
+                </li>
+              ))}
+            </ul>
+          )}
+          <form action={join} className="flex gap-2">
+            <input name="code" placeholder="Join code" maxLength={8} required className="w-40 rounded-lg border border-slate-300 px-3 py-2 font-mono uppercase tracking-widest" />
+            <button className="rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-700">Join</button>
+          </form>
+        </section>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
         <form action={rename} className="rounded-2xl border border-slate-200 bg-white p-4 text-sm">

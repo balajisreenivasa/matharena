@@ -34,8 +34,14 @@ npm run dev
 
 Each student creates a profile at `/signup` (name, email, password, grade); everything — plan, worksheets,
 mastery, review queue, lesson progress — belongs to that profile. Sessions are a signed cookie; passwords are
-scrypt-hashed locally. The parent can create a second profile (role: parent) or simply sign in as the student.
-The daily emails loop over every student profile.
+scrypt-hashed locally. The daily emails loop over every student profile.
+
+**Parents and teachers** sign up with role *Parent* or *Teacher* and get a classroom view instead of a study plan
+(`/classroom`). Create a classroom → it gets a 6-character join code → the student enters it on their Profile page
+(or the parent/teacher adds them by the email of their profile). The classroom lists every student with today's
+status, streak, projected AMC 10 score and what they need to do next; each student opens to a full read-only
+report (mastery by skill, the week ahead, recent worksheets, error tags, paper mocks). An educator only ever
+sees members of their own classrooms (`src/lib/classroom.ts`).
 
 ## What's where
 
@@ -74,6 +80,17 @@ and removed by `scripts\unregister-tasks.cmd`. The app must be running for links
 | [AIME 1983–2024](https://huggingface.co/datasets/gneubig/aime-1983-2024) | CC0 | 932 integer-answer problems; only #1–5 are served for AMC 10 prep |
 | [NuminaMath-1.5](https://huggingface.co/datasets/AI-MO/NuminaMath-1.5) `amc_aime` slice | Apache 2.0 (problems © MAA) | Real AMC 8/10/12 transcriptions; A–E choices are split out so in-app mocks can be multiple choice |
 
+**Diagrams.** All three sources ship figures as Asymptote source (`[asy]…[/asy]`), which the first release had to
+skip — most of the geometry bank. `npm run diagrams` renders every figure to `public/diagrams/<sha1>.svg`
+(2,800+ figures; Asymptote 3.x + MiKTeX on the machine that runs it — see CLAUDE.md), and the importers replace
+each block with a `[[diagram:…]]` marker that `RichText` renders inline. The SVGs are committed, so the hosted
+app serves them without any toolchain.
+
+**LaTeX.** The corpora were written for a full TeX engine; `src/lib/tex.ts` repairs what KaTeX cannot take
+(`\$` prices, `tabular` tables, `\mbox`, `\multicolumn`, text-mode markup, paragraph breaks) and the importers
+split A–E choices embedded in statements into real choices. `npx tsx scripts/check-latex.ts` lists anything
+that still fails, by category.
+
 Problems are tagged with the 28 lesson skills and 57 sub-skills by keyword (`src/curriculum/skills.ts`,
 `src/curriculum/subskills.ts`); re-tag with `npm run tag`. Seeding is an upsert, so re-seeding never erases a student's history.
 The AoPS wiki is blocked to scrapers, so past AMC 10 papers are used as *paper* mocks via links, never fetched.
@@ -82,7 +99,7 @@ The AoPS wiki is blocked to scrapers, so past AMC 10 papers are used as *paper* 
 
 ```bash
 npm run typecheck    # tsc
-npm run verify       # answer matcher (36 cases), LaTeX tokenizer, CSV parser, seeded bank, lesson sanity
+npm run verify       # answer matcher, LaTeX tokenizer + repairs, choice splitter, seeded bank (incl. diagrams), lessons, bank-wide KaTeX scan
 npm run test         # Playwright against a running dev server (reuses one on :3000)
 ```
 

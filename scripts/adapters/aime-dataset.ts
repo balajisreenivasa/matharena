@@ -7,6 +7,7 @@
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { localDifficulty, globalDifficulty } from "../contests";
+import { substituteFigures } from "./figures";
 
 const REPO = "gneubig/aime-1983-2024";
 const CSV = "AIME_Dataset_1983_2024.csv";
@@ -127,15 +128,22 @@ export async function importAime(): Promise<{ problems: any[]; stats: AimeStats 
     }
     const year = parseInt((r[iYear] ?? "").trim(), 10);
     const number = parseInt((r[iNum] ?? "").trim(), 10);
-    const statement = (r[iQ] ?? "").trim();
     const answerRaw = (r[iA] ?? "").trim();
     const contestId = contestIdFor(r[iPart]);
 
     // AIME answers are integers 0-999; anything else means a malformed row.
-    if (!year || !number || !statement || !/^\d{1,3}$/.test(answerRaw)) {
+    if (!year || !number || !(r[iQ] ?? "").trim() || !/^\d{1,3}$/.test(answerRaw)) {
       stats.skipped++;
       continue;
     }
+    // Figures: rendered by scripts/render-diagrams.ts; a statement whose figure is
+    // missing cannot be solved, so it is skipped.
+    const fig = substituteFigures((r[iQ] ?? "").trim(), { required: true });
+    if (fig.missing) {
+      stats.skipped++;
+      continue;
+    }
+    const statement = fig.text;
     // The unique index is [contestId, year, round, number] — drop duplicates.
     const key = `${contestId}_${year}_${number}`;
     if (seen.has(key)) {
@@ -152,8 +160,9 @@ export async function importAime(): Promise<{ problems: any[]; stats: AimeStats 
       statement,
       choices: null,
       answer: String(parseInt(answerRaw, 10)), // normalize "007" -> "7"
-      hasDiagram: false,
+      hasDiagram: fig.paths.length > 0,
       diagramUrl: null,
+      diagramPath: fig.paths[0] ?? null,
       localDifficulty: localDifficulty(number, 15),
       globalDifficulty: globalDifficulty(number, 15, 7),
       source: "AIME dataset (CC0)",
