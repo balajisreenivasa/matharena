@@ -18,6 +18,13 @@ export default async function SignupPage({ searchParams }: { searchParams: { err
     const grade = parseInt(String(form.get("grade") ?? "8"), 10);
     const roleRaw = String(form.get("role") ?? "student");
     const role = roleRaw === "parent" || roleRaw === "teacher" ? roleRaw : "student";
+    // Signups are invite-only when SIGNUP_CODE is set (it is, on the hosted site). The
+    // hosted URL is public, and an open form attracted strangers who then received daily mail.
+    const required = (process.env.SIGNUP_CODE ?? "").trim();
+    if (required) {
+      const given = String(form.get("invite") ?? "").trim();
+      if (given.toLowerCase() !== required.toLowerCase()) redirect("/signup?error=" + encodeURIComponent("That invite code isn't right. Ask the person who runs this site for it."));
+    }
     if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect("/signup?error=" + encodeURIComponent("Name and a valid email are required."));
     const pp = passwordProblem(password);
     if (pp) redirect("/signup?error=" + encodeURIComponent(pp));
@@ -58,6 +65,9 @@ export default async function SignupPage({ searchParams }: { searchParams: { err
         <p className="mt-1 text-sm text-slate-600">One per student. The plan, worksheets, mastery and review queue all belong to this profile.</p>
         {searchParams.error && <div className="mt-3 rounded-lg bg-red-100 px-3 py-2 text-sm text-red-800">{searchParams.error}</div>}
         <form action={signup} className="mt-4 space-y-3">
+          {!!process.env.SIGNUP_CODE && (
+            <label className="block text-sm">Invite code<input name="invite" required autoComplete="off" placeholder="from the person who runs this site" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+          )}
           <label className="block text-sm">Name<input name="name" required maxLength={60} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
           <label className="block text-sm">Email<input name="email" type="email" required autoComplete="username" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
           <label className="block text-sm">Password (6+ characters)<input name="password" type="password" required minLength={6} autoComplete="new-password" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
