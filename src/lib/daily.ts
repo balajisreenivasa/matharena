@@ -112,7 +112,18 @@ function saveToOutbox(mail: Mail, slug: string): string | null {
   }
 }
 
+// MAIL_BLOCKLIST: comma-separated addresses or @domains that must never be mailed,
+// whatever a profile says (e.g. a stranger's signup that bounces).
+function blocked(addr: string): boolean {
+  const list = (process.env.MAIL_BLOCKLIST ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  const a = addr.trim().toLowerCase();
+  return list.some((b) => (b.startsWith("@") ? a.endsWith(b) : a === b));
+}
+
 async function send(mail: Mail, slug: string, log: (s: string) => void): Promise<SendResult> {
+  const dropped = [...mail.to, ...(mail.cc ?? [])].filter((a) => a && blocked(a));
+  if (dropped.length) log(`  blocklisted, not sending to: ${dropped.join(", ")}`);
+  mail = { ...mail, to: mail.to.filter((a) => !blocked(a)), cc: mail.cc?.filter((a) => !blocked(a)) };
   const recipients = [...mail.to, ...(mail.cc ?? [])].filter(Boolean);
   const file = saveToOutbox(mail, slug);
   if (!recipients.length) {
